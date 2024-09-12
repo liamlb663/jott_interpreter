@@ -3,6 +3,7 @@ package provided;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+
 import provided.TokenType;
 
 /**
@@ -13,10 +14,12 @@ import provided.TokenType;
 
 import java.util.ArrayList;
 
-
 public class JottTokenizer {
+    static int currentChar = -1;
 
     static void commentHandler(FileReader inputStream) throws IOException {
+        currentChar = -1;
+
         char ch;
         while ((ch = (char)inputStream.read()) != -1) {
             if (ch == '\n') return;
@@ -30,19 +33,25 @@ public class JottTokenizer {
         ArrayList<Token> tokens = new ArrayList<>();
 
         for (;;) {
-            int inputChar = inputStream.read();
-            if (inputChar == -1) break;    // EOF
+            if (currentChar == -1) {
+                int inputChar = inputStream.read();
+                if (inputChar == -1) break;    // EOF
 
-            char ch = (char)inputChar;
+                currentChar = inputChar;
+            }
+            char ch = (char)currentChar;
 
-            if (Character.isWhitespace(ch)) continue;
+            if (Character.isWhitespace(ch)) {
+                currentChar = -1;
+                continue;
+            }
 
             if (ch == '#') {
                 commentHandler(inputStream);
                 continue;
             }
 
-            tokens.add(new Token("" + ch, filename, 0, TokenType.STRING));
+            currentChar = -1;
         }
 
         return tokens;
