@@ -16,17 +16,18 @@ import java.util.ArrayList;
 
 public class JottTokenizer {
     static int currentChar = -1;
+    static int lineNum = 0;
 
     static void commentHandler(FileReader inputStream) throws IOException {
         currentChar = -1;
 
-        char ch;
-        while ((ch = (char)inputStream.read()) != -1) {
-            if (ch == '\n') return;
+        int ch;
+        while ((ch = inputStream.read()) != -1) {
+            if ((char)ch == '\n') {
+                lineNum++;
+                return;
+            }
         }
-
-        // In Case of error I'm not sure what to do?
-        // This could only happen if EOF comes after a '#' which idk what happens
     }
 
     static ArrayList<Token> processFile(String filename, FileReader inputStream) throws IOException {
@@ -42,6 +43,8 @@ public class JottTokenizer {
             char ch = (char)currentChar;
 
             if (Character.isWhitespace(ch)) {
+                if (ch == '\n') lineNum++;
+
                 currentChar = -1;
                 continue;
             }
