@@ -3,7 +3,9 @@ package provided;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.*;
 
+import group22.SyntaxException;
 import provided.TokenType;
 
 /**
@@ -29,7 +31,38 @@ public class JottTokenizer {
         // This could only happen if EOF comes after a '#' which idk what happens
     }
 
-    static ArrayList<Token> processFile(String filename, FileReader inputStream) throws IOException {
+    static Token numberHandlerNumFirst(String filename, FileReader inputStream) throws IOException {
+        Token token = null;
+        String tokenString = "" + currentChar;
+        while((currentChar = inputStream.read()) != -1 && Character.isDigit(currentChar)) {
+            tokenString += currentChar;
+        }
+        currentChar = inputStream.read();
+        if (currentChar == '.') {
+            tokenString += currentChar;
+        } else if (Character.isDigit(currentChar)) {
+            do {
+                tokenString += currentChar;
+            } while ((currentChar = inputStream.read()) != -1 && Character.isDigit(currentChar));
+        }
+        token = new Token(tokenString, filename, 0, TokenType.NUMBER);
+
+        return token;
+    }
+    static Token numberHandlerDotFirst(String filename, FileReader inputStream) throws IOException, SyntaxException {
+        Token token = null;
+        String tokenString = "" + currentChar;
+        while((currentChar = inputStream.read()) != -1 && Character.isDigit(currentChar)) {
+            tokenString += currentChar;
+        }
+        if (tokenString.equals(".")) {
+            throw new SyntaxException();
+        }
+        token = new Token(tokenString, filename, 0, TokenType.NUMBER);
+        return token;
+    }
+
+    static ArrayList<Token> processFile(String filename, FileReader inputStream) throws IOException, SyntaxException {
         ArrayList<Token> tokens = new ArrayList<>();
 
         for (;;) {
@@ -48,6 +81,18 @@ public class JottTokenizer {
 
             if (ch == '#') {
                 commentHandler(inputStream);
+                continue;
+            }
+
+            if (Character.isDigit(ch)){
+                Token t = numberHandlerNumFirst(filename, inputStream);
+                tokens.add(t);
+                continue;
+            }
+
+            if (ch == '.'){
+                Token t = numberHandlerDotFirst(filename, inputStream);
+                tokens.add(t);
                 continue;
             }
 
