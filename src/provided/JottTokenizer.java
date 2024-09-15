@@ -30,6 +30,18 @@ public class JottTokenizer {
         }
     }
 
+    static Token equalsHandler(String filename, FileReader inputStream) throws IOException {
+        Token token = null;
+        //TODO implement
+        return token;
+    }
+
+    static Token angleBracketHandler(String filename, FileReader inputStream) throws IOException {
+        Token token = null;
+        //TODO implement
+        return token;
+    }
+
     static ArrayList<Token> processFile(String filename, FileReader inputStream) throws IOException {
         ArrayList<Token> tokens = new ArrayList<>();
 
@@ -51,6 +63,18 @@ public class JottTokenizer {
 
             if (ch == '#') {
                 commentHandler(inputStream);
+                continue;
+            }
+
+            if (ch == '=') {
+                Token t = equalsHandler(filename, inputStream);
+                tokens.add(t);
+                continue;
+            }
+
+            if (ch == '<' || ch == '>') {
+                Token t = angleBracketHandler(filename, inputStream);
+                tokens.add(t);
                 continue;
             }
 
