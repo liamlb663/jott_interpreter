@@ -88,6 +88,19 @@ public class JottTokenizer {
     }
 
     static ArrayList<Token> processFile(String filename, FileReader inputStream) throws IOException, SyntaxException {
+    static Token equalsHandler(String filename, FileReader inputStream) throws IOException {
+        Token token = null;
+        //TODO implement
+        return token;
+    }
+
+    static Token angleBracketHandler(String filename, FileReader inputStream) throws IOException {
+        Token token = null;
+        //TODO implement
+        return token;
+    }
+
+    static ArrayList<Token> processFile(String filename, FileReader inputStream) throws IOException {
         ArrayList<Token> tokens = new ArrayList<>();
         lineNum = 1;
 
@@ -146,6 +159,18 @@ public class JottTokenizer {
 
             if (ch == '.'){
                 Token t = numberHandlerDotFirst(filename, inputStream);
+                tokens.add(t);
+                continue;
+            }
+
+            if (ch == '=') {
+                Token t = equalsHandler(filename, inputStream);
+                tokens.add(t);
+                continue;
+            }
+
+            if (ch == '<' || ch == '>') {
+                Token t = angleBracketHandler(filename, inputStream);
                 tokens.add(t);
                 continue;
             }
