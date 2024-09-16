@@ -3,6 +3,9 @@ package provided;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.*;
+
+import group22.SyntaxException;
 import provided.TokenType;
 
 /**
@@ -13,10 +16,12 @@ import provided.TokenType;
 
 import java.util.ArrayList;
 
-
 public class JottTokenizer {
+    static int currentChar = -1;
 
     static void commentHandler(FileReader inputStream) throws IOException {
+        currentChar = -1;
+
         char ch;
         while ((ch = (char)inputStream.read()) != -1) {
             if (ch == '\n') return;
@@ -26,23 +31,72 @@ public class JottTokenizer {
         // This could only happen if EOF comes after a '#' which idk what happens
     }
 
-    static ArrayList<Token> processFile(String filename, FileReader inputStream) throws IOException {
+    static Token numberHandlerNumFirst(String filename, FileReader inputStream) throws IOException {
+        Token token = null;
+        String tokenString = "" + currentChar;
+        while((currentChar = inputStream.read()) != -1 && Character.isDigit(currentChar)) {
+            tokenString += currentChar;
+        }
+        currentChar = inputStream.read();
+        if (currentChar == '.') {
+            tokenString += currentChar;
+        } else if (Character.isDigit(currentChar)) {
+            do {
+                tokenString += currentChar;
+            } while ((currentChar = inputStream.read()) != -1 && Character.isDigit(currentChar));
+        }
+        token = new Token(tokenString, filename, 0, TokenType.NUMBER);
+
+        return token;
+    }
+    static Token numberHandlerDotFirst(String filename, FileReader inputStream) throws IOException, SyntaxException {
+        Token token = null;
+        String tokenString = "" + currentChar;
+        while((currentChar = inputStream.read()) != -1 && Character.isDigit(currentChar)) {
+            tokenString += currentChar;
+        }
+        if (tokenString.equals(".")) {
+            throw new SyntaxException();
+        }
+        token = new Token(tokenString, filename, 0, TokenType.NUMBER);
+        return token;
+    }
+
+    static ArrayList<Token> processFile(String filename, FileReader inputStream) throws IOException, SyntaxException {
         ArrayList<Token> tokens = new ArrayList<>();
 
         for (;;) {
-            int inputChar = inputStream.read();
-            if (inputChar == -1) break;    // EOF
+            if (currentChar == -1) {
+                int inputChar = inputStream.read();
+                if (inputChar == -1) break;    // EOF
 
-            char ch = (char)inputChar;
+                currentChar = inputChar;
+            }
+            char ch = (char)currentChar;
 
-            if (Character.isWhitespace(ch)) continue;
+            if (Character.isWhitespace(ch)) {
+                currentChar = -1;
+                continue;
+            }
 
             if (ch == '#') {
                 commentHandler(inputStream);
                 continue;
             }
 
-            tokens.add(new Token("" + ch, filename, 0, TokenType.STRING));
+            if (Character.isDigit(ch)){
+                Token t = numberHandlerNumFirst(filename, inputStream);
+                tokens.add(t);
+                continue;
+            }
+
+            if (ch == '.'){
+                Token t = numberHandlerDotFirst(filename, inputStream);
+                tokens.add(t);
+                continue;
+            }
+
+            currentChar = -1;
         }
 
         return tokens;
