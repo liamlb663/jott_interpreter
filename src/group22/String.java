@@ -40,15 +40,15 @@ public class String extends Token {
     }
 
     public static String processString(FileReader inputStream) throws IOException {
-        java.lang.String currString = "";
+        StringBuilder currString = new StringBuilder();
         int currChar;
 
         while((currChar = inputStream.read()) != -1) {
             if (!isValidStringCharacter((char) currChar)) {
-                currString += (char) currChar; // This won't be used yet
+                currString.append((char) currChar); // This won't be used yet
             } else {
                 if (currChar == '"') {
-                    return new String(null, null, 0, null, currString);
+                    return new String(null, null, 0, null, currString.toString());
                 } else {
                     break;
                 }
