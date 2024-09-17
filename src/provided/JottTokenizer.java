@@ -32,13 +32,25 @@ public class JottTokenizer {
 
     static Token equalsHandler(String filename, FileReader inputStream) throws IOException {
         Token token = null;
-        //TODO implement
+        String tokenString = "" + currentChar;
+        currentChar = inputStream.read();
+        if (currentChar == '=') {
+            tokenString += currentChar;
+            token = new Token(tokenString, filename, 0, TokenType.REL_OP);
+        } else {
+            token = new Token(tokenString, filename, 0, TokenType.ASSIGN);
+        }
         return token;
     }
 
     static Token angleBracketHandler(String filename, FileReader inputStream) throws IOException {
         Token token = null;
-        //TODO implement
+        String tokenString = "" + currentChar;
+        currentChar = inputStream.read();
+        if (currentChar == '=') {
+            tokenString += currentChar;
+        }
+        token = new Token(tokenString, filename, 0, TokenType.REL_OP);
         return token;
     }
 
