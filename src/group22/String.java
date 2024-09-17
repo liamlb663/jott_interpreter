@@ -39,7 +39,7 @@ public class String extends Token {
                 (input >= '0' && input <= '9');
     }
 
-    public static String processString(FileReader inputStream) throws IOException {
+    public static String processString(FileReader inputStream) throws IOException, SyntaxException {
         StringBuilder currString = new StringBuilder();
         int currChar;
 
@@ -55,6 +55,6 @@ public class String extends Token {
             }
         }
 
-        return SyntaxException();
+        throw new SyntaxException("Failed to parse String token");
     }
 }
