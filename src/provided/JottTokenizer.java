@@ -6,6 +6,8 @@ import java.io.InputStream;
 
 import provided.TokenType;
 
+import group22.IdKeyword;
+
 /**
  * This class is responsible for tokenizing Jott code.
  *
@@ -33,6 +35,8 @@ public class JottTokenizer {
     static ArrayList<Token> processFile(String filename, FileReader inputStream) throws IOException {
         ArrayList<Token> tokens = new ArrayList<>();
 
+        IdKeyword idKeywordHandler = new IdKeyword(tokens, filename, lineNum); // Instance variable for IdKeyword
+
         for (;;) {
             if (currentChar == -1) {
                 int inputChar = inputStream.read();
@@ -53,6 +57,19 @@ public class JottTokenizer {
                 commentHandler(inputStream);
                 continue;
             }
+
+            if (Character.isLetter(ch)) {
+                currentChar = idKeywordHandler.processCharacter(ch, inputStream);
+                // If the returned character is EOF exit the loop
+
+                if (currentChar == -1)  {
+                    System.out.println("hi");
+                    break;
+                }
+
+                continue;
+            }
+
 
             currentChar = -1;
         }
