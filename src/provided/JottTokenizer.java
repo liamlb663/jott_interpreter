@@ -54,6 +54,20 @@ public class JottTokenizer {
         return token;
     }
 
+    static Token exclamationHandler(String filename, FileReader inputStream) throws IOException {
+        Token token = null;
+        String tokenString = "" + currentChar;
+        currentChar = inputStream.read();
+        if (currentChar == '=') {
+            tokenString += currentChar;
+        }
+        if (tokenString == '!') {
+            throw new SyntaxException("Exclamation mark must be followed by an equals sign.");
+        }
+        token = new Token(tokenString, filename, 0, TokenType.REL_OP);
+        return token;
+    }
+
     static ArrayList<Token> processFile(String filename, FileReader inputStream) throws IOException {
         ArrayList<Token> tokens = new ArrayList<>();
 
@@ -86,6 +100,12 @@ public class JottTokenizer {
 
             if (ch == '<' || ch == '>') {
                 Token t = angleBracketHandler(filename, inputStream);
+                tokens.add(t);
+                continue;
+            }
+
+            if (ch == '!') {
+                Token t = exclamationHandler(filename, inputStream);
                 tokens.add(t);
                 continue;
             }
