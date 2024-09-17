@@ -32,31 +32,31 @@ public class JottTokenizer {
     }
 
     static Token numberHandlerNumFirst(String filename, FileReader inputStream) throws IOException {
+        boolean decimalSeen = false;
         Token token = null;
-        String tokenString = "" + currentChar;
-        while((currentChar = inputStream.read()) != -1 && Character.isDigit(currentChar)) {
-            tokenString += currentChar;
-        }
-        currentChar = inputStream.read();
-        if (currentChar == '.') {
-            tokenString += currentChar;
-        } else if (Character.isDigit(currentChar)) {
-            do {
-                tokenString += currentChar;
-            } while ((currentChar = inputStream.read()) != -1 && Character.isDigit(currentChar));
+        String tokenString = "" + (char)currentChar;
+        System.out.println(tokenString);
+        while((currentChar = inputStream.read()) != -1) {
+            if(Character.isDigit((char)currentChar)){
+                tokenString += (char)currentChar;
+            } else if ((char)currentChar == '.' && !decimalSeen) {
+                tokenString += (char)currentChar;
+                decimalSeen = true;
+            } else {
+                break;
+            }
         }
         token = new Token(tokenString, filename, 0, TokenType.NUMBER);
-
         return token;
     }
     static Token numberHandlerDotFirst(String filename, FileReader inputStream) throws IOException, SyntaxException {
         Token token = null;
-        String tokenString = "" + currentChar;
-        while((currentChar = inputStream.read()) != -1 && Character.isDigit(currentChar)) {
-            tokenString += currentChar;
+        String tokenString = "" + (char)currentChar;
+        while((currentChar = inputStream.read()) != -1 && Character.isDigit((char)currentChar)) {
+            tokenString += (char)currentChar;
         }
         if (tokenString.equals(".")) {
-            throw new SyntaxException();
+            throw new SyntaxException("Decimal point must be followed by or preceded by a digit.");
         }
         token = new Token(tokenString, filename, 0, TokenType.NUMBER);
         return token;
