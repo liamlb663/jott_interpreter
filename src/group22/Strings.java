@@ -1,4 +1,4 @@
 package group22;
 
-public class String {
+public class Strings {
 }

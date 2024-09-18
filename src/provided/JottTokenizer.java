@@ -1,5 +1,6 @@
 package provided;
 
+import java.lang.String;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 
 public class JottTokenizer {
     static int currentChar = -1;
-    static int lineNum = 0;
+    static int lineNum = 1;
 
     static void commentHandler(FileReader inputStream) throws IOException {
         currentChar = -1;
@@ -32,10 +33,25 @@ public class JottTokenizer {
         }
     }
 
+    static Token idKeywordHandler(String filename, FileReader inputStream) throws IOException {
+        Token token = null;
+        String tokenString = "" + (char) currentChar;
+        while ((currentChar = inputStream.read()) != -1) { // EOF condition
+            if (Character.isLetterOrDigit(currentChar)) {
+                tokenString += (char) currentChar;
+            }
+            else {
+                break;
+            }
+        }
+        // create a new token for the token string that got built
+        token = new Token(tokenString, filename, lineNum, TokenType.ID_KEYWORD);
+        return token;
+    }
+
     static ArrayList<Token> processFile(String filename, FileReader inputStream) throws IOException {
         ArrayList<Token> tokens = new ArrayList<>();
-
-        IdKeyword idKeywordHandler = new IdKeyword(tokens, filename, lineNum); // Instance variable for IdKeyword
+        lineNum = 1;
 
         for (;;) {
             if (currentChar == -1) {
@@ -59,17 +75,10 @@ public class JottTokenizer {
             }
 
             if (Character.isLetter(ch)) {
-                currentChar = idKeywordHandler.processCharacter(ch, inputStream);
-                // If the returned character is EOF exit the loop
-
-                if (currentChar == -1)  {
-                    System.out.println("hi");
-                    break;
-                }
-
+                Token id_keyword = idKeywordHandler(filename, inputStream);
+                tokens.add(id_keyword);
                 continue;
             }
-
 
             currentChar = -1;
         }
