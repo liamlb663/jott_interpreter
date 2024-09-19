@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class JottTokenizer {
     static int currentChar = -1;
-    static int lineNum = 0;
+    static int lineNum = 1; // bro made the line number index at 1
 
     static void commentHandler(FileReader inputStream) throws IOException {
         currentChar = -1;
@@ -78,7 +78,7 @@ public class JottTokenizer {
 
             if (ch == ':') {
                 Token output = colonFcHeaderHandler(inputStream, filename);
-                if (output == null) {
+                if (output != null) {
                     tokens.add(output);
                 }
 
@@ -92,6 +92,12 @@ public class JottTokenizer {
             tokenMap.put('[', TokenType.L_BRACKET);
             tokenMap.put('}', TokenType.R_BRACE);
             tokenMap.put('{', TokenType.L_BRACE);
+            tokenMap.put(';', TokenType.SEMICOLON);
+
+            tokenMap.put('+', TokenType.MATH_OP);
+            tokenMap.put('-', TokenType.MATH_OP);
+            tokenMap.put('*', TokenType.MATH_OP);
+            tokenMap.put('/', TokenType.MATH_OP);
 
             if (tokenMap.containsKey(ch)) {
                 tokens.add(new Token("" + ch, filename, lineNum, tokenMap.get(ch)));
