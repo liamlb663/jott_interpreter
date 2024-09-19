@@ -15,8 +15,6 @@ import group22.SyntaxException;
 
 import java.util.ArrayList;
 
-import static group22.String.isValidStringCharacter;
-
 public class JottTokenizer {
     static int currentChar = -1;
 
@@ -30,6 +28,13 @@ public class JottTokenizer {
 
         // In Case of error I'm not sure what to do?
         // This could only happen if EOF comes after a '#' which idk what happens
+    }
+
+    public static boolean isValidStringCharacter(char input) {
+        return (input == ' ') ||
+                (input >= 'a' && input <= 'z') ||
+                (input >= 'A' && input <= 'Z') ||
+                (input >= '0' && input <= '9');
     }
 
     public static Token processString(String filename, FileReader inputStream, int lineNum) throws IOException, SyntaxException {
