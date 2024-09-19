@@ -13,6 +13,8 @@ import provided.TokenType;
  **/
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JottTokenizer {
     static int currentChar = -1;
@@ -30,15 +32,35 @@ public class JottTokenizer {
         }
     }
 
+    static Token colonFcHeaderHandler(FileReader inputStream, String filename) throws IOException {
+        // Colon has been read
+        currentChar = inputStream.read();
+
+        if (currentChar == -1) {
+            return null;
+        }
+
+        if (currentChar != ':') {
+            if (currentChar == '\n') {
+                lineNum++;
+            }
+
+            // Return without flushing Character
+            return new Token(":", filename, lineNum, TokenType.COLON);
+        }
+
+        // Return and flush Character
+        currentChar = -1;
+        return new Token("::", filename, lineNum, TokenType.FC_HEADER);
+    }
+
     static ArrayList<Token> processFile(String filename, FileReader inputStream) throws IOException {
         ArrayList<Token> tokens = new ArrayList<>();
 
         for (;;) {
             if (currentChar == -1) {
-                int inputChar = inputStream.read();
-                if (inputChar == -1) break;    // EOF
-
-                currentChar = inputChar;
+                currentChar = inputStream.read();
+                if (currentChar == -1) break;    // EOF
             }
             char ch = (char)currentChar;
 
@@ -51,6 +73,29 @@ public class JottTokenizer {
 
             if (ch == '#') {
                 commentHandler(inputStream);
+                continue;
+            }
+
+            if (ch == ':') {
+                Token output = colonFcHeaderHandler(inputStream, filename);
+                if (output == null) {
+                    tokens.add(output);
+                }
+
+                continue;
+            }
+
+            // Top row
+            Map<Character, TokenType> tokenMap = new HashMap<>();
+            tokenMap.put(',', TokenType.COMMA);
+            tokenMap.put(']', TokenType.R_BRACKET);
+            tokenMap.put('[', TokenType.L_BRACKET);
+            tokenMap.put('}', TokenType.R_BRACE);
+            tokenMap.put('{', TokenType.L_BRACE);
+
+            if (tokenMap.containsKey(ch)) {
+                tokens.add(new Token("" + ch, filename, lineNum, tokenMap.get(ch)));
+                currentChar = -1;
                 continue;
             }
 
