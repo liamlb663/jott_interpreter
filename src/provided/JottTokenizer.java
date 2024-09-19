@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class JottTokenizer {
     static int currentChar = -1;
-    static int lineNum = 1; // bro made the line number index at 1
+    static int lineNum = 1;
 
     static void commentHandler(FileReader inputStream) throws IOException {
         currentChar = -1;
@@ -89,6 +89,7 @@ public class JottTokenizer {
 
     static ArrayList<Token> processFile(String filename, FileReader inputStream) throws IOException, SyntaxException {
         ArrayList<Token> tokens = new ArrayList<>();
+        lineNum = 1;
 
         for (;;) {
             if (currentChar == -1) {
