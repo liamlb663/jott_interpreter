@@ -54,7 +54,7 @@ public class JottTokenizer {
         return token;
     }
 
-    static Token exclamationHandler(String filename, FileReader inputStream) throws IOException {
+    static Token exclamationHandler(String filename, FileReader inputStream) throws IOException, SyntaxException {
         Token token = null;
         String tokenString = "" + currentChar;
         currentChar = inputStream.read();
