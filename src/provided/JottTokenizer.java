@@ -87,7 +87,6 @@ public class JottTokenizer {
         return token;
     }
 
-    static ArrayList<Token> processFile(String filename, FileReader inputStream) throws IOException, SyntaxException {
     static Token equalsHandler(String filename, FileReader inputStream) throws IOException {
         Token token = null;
         String tokenString = "" + currentChar;
@@ -119,45 +118,7 @@ public class JottTokenizer {
         if (currentChar == '=') {
             tokenString += currentChar;
         }
-        if (tokenString == '!') {
-            throw new SyntaxException("Exclamation mark must be followed by an equals sign.");
-        }
-        token = new Token(tokenString, filename, lineNum, TokenType.REL_OP);
-        return token;
-    }
-
-    static Token equalsHandler(String filename, FileReader inputStream) throws IOException {
-        Token token = null;
-        String tokenString = "" + currentChar;
-        currentChar = inputStream.read();
-        if (currentChar == '=') {
-            tokenString += currentChar;
-            token = new Token(tokenString, filename, lineNum, TokenType.REL_OP);
-        } else {
-            token = new Token(tokenString, filename, lineNum, TokenType.ASSIGN);
-        }
-        return token;
-    }
-
-    static Token angleBracketHandler(String filename, FileReader inputStream) throws IOException {
-        Token token = null;
-        String tokenString = "" + currentChar;
-        currentChar = inputStream.read();
-        if (currentChar == '=') {
-            tokenString += currentChar;
-        }
-        token = new Token(tokenString, filename, lineNum, TokenType.REL_OP);
-        return token;
-    }
-
-    static Token exclamationHandler(String filename, FileReader inputStream) throws IOException, SyntaxException {
-        Token token = null;
-        String tokenString = "" + currentChar;
-        currentChar = inputStream.read();
-        if (currentChar == '=') {
-            tokenString += currentChar;
-        }
-        if (tokenString == '!') {
+        if (tokenString.equals("!")) {
             throw new SyntaxException("Exclamation mark must be followed by an equals sign.");
         }
         token = new Token(tokenString, filename, lineNum, TokenType.REL_OP);
