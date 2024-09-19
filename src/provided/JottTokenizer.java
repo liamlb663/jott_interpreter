@@ -2,10 +2,9 @@ package provided;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.*;
+import java.io.InputStream;
 
-//import group22.String;
-import group22.SyntaxException;
+import provided.TokenType;
 
 /**
  * This class is responsible for tokenizing Jott code.
@@ -17,17 +16,18 @@ import java.util.ArrayList;
 
 public class JottTokenizer {
     static int currentChar = -1;
+    static int lineNum = 0;
 
     static void commentHandler(FileReader inputStream) throws IOException {
         currentChar = -1;
 
-        char ch;
-        while ((ch = (char)inputStream.read()) != -1) {
-            if (ch == '\n') return;
+        int ch;
+        while ((ch = inputStream.read()) != -1) {
+            if ((char)ch == '\n') {
+                lineNum++;
+                return;
+            }
         }
-
-        // In Case of error I'm not sure what to do?
-        // This could only happen if EOF comes after a '#' which idk what happens
     }
 
     public static boolean isValidStringCharacter(char input) {
@@ -91,27 +91,29 @@ public class JottTokenizer {
 
     static ArrayList<Token> processFile(String filename, FileReader inputStream) throws IOException, SyntaxException {
         ArrayList<Token> tokens = new ArrayList<>();
-        int inputAscii;
-        int lineNum = 1;
-        char currChar;
 
-        while ((inputAscii = inputStream.read()) != -1) {
+        for (;;) {
+            if (currentChar == -1) {
+                int inputChar = inputStream.read();
+                if (inputChar == -1) break;    // EOF
 
-            currChar = (char) inputAscii;
-
-            if (currChar == '\n') {
-                lineNum++;
-            } else if (currChar == '"') {
-                tokens.add(processString(filename, inputStream, lineNum));
-            } else if (currChar == '#') {
-                commentHandler(inputStream);
-            } else if (Character.isDigit(currChar)){
-                Token t = numberHandlerNumFirst(filename, inputStream);
-                tokens.add(t);
-            } else if (currChar == '.'){
-                Token t = numberHandlerDotFirst(filename, inputStream);
-                tokens.add(t);
+                currentChar = inputChar;
             }
+            char ch = (char)currentChar;
+
+            if (Character.isWhitespace(ch)) {
+                if (ch == '\n') lineNum++;
+
+                currentChar = -1;
+                continue;
+            }
+
+            if (ch == '#') {
+                commentHandler(inputStream);
+                continue;
+            }
+
+            currentChar = -1;
         }
 
         return tokens;
