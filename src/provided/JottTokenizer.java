@@ -36,9 +36,9 @@ public class JottTokenizer {
         currentChar = inputStream.read();
         if (currentChar == '=') {
             tokenString += currentChar;
-            token = new Token(tokenString, filename, 0, TokenType.REL_OP);
+            token = new Token(tokenString, filename, lineNum, TokenType.REL_OP);
         } else {
-            token = new Token(tokenString, filename, 0, TokenType.ASSIGN);
+            token = new Token(tokenString, filename, lineNum, TokenType.ASSIGN);
         }
         return token;
     }
@@ -50,7 +50,7 @@ public class JottTokenizer {
         if (currentChar == '=') {
             tokenString += currentChar;
         }
-        token = new Token(tokenString, filename, 0, TokenType.REL_OP);
+        token = new Token(tokenString, filename, lineNum, TokenType.REL_OP);
         return token;
     }
 
@@ -64,7 +64,7 @@ public class JottTokenizer {
         if (tokenString == '!') {
             throw new SyntaxException("Exclamation mark must be followed by an equals sign.");
         }
-        token = new Token(tokenString, filename, 0, TokenType.REL_OP);
+        token = new Token(tokenString, filename, lineNum, TokenType.REL_OP);
         return token;
     }
 
