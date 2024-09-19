@@ -3,7 +3,9 @@ package provided;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.*;
 
+import group22.SyntaxException;
 import provided.TokenType;
 
 /**
@@ -54,7 +56,38 @@ public class JottTokenizer {
         return new Token("::", filename, lineNum, TokenType.FC_HEADER);
     }
 
-    static ArrayList<Token> processFile(String filename, FileReader inputStream) throws IOException {
+    static Token numberHandlerNumFirst(String filename, FileReader inputStream) throws IOException {
+        boolean decimalSeen = false;
+        Token token = null;
+        String tokenString = "" + (char)currentChar;
+
+        while((currentChar = inputStream.read()) != -1) {
+            if(Character.isDigit((char)currentChar)){
+                tokenString += (char)currentChar;
+            } else if ((char)currentChar == '.' && !decimalSeen) {
+                tokenString += (char)currentChar;
+                decimalSeen = true;
+            } else {
+                break;
+            }
+        }
+        token = new Token(tokenString, filename, lineNum, TokenType.NUMBER);
+        return token;
+    }
+    static Token numberHandlerDotFirst(String filename, FileReader inputStream) throws IOException, SyntaxException {
+        Token token = null;
+        String tokenString = "" + (char)currentChar;
+        while((currentChar = inputStream.read()) != -1 && Character.isDigit((char)currentChar)) {
+            tokenString += (char)currentChar;
+        }
+        if (tokenString.equals(".")) {
+            throw new SyntaxException("Decimal point must be followed by or preceded by a digit.");
+        }
+        token = new Token(tokenString, filename, lineNum, TokenType.NUMBER);
+        return token;
+    }
+
+    static ArrayList<Token> processFile(String filename, FileReader inputStream) throws IOException, SyntaxException {
         ArrayList<Token> tokens = new ArrayList<>();
 
         for (;;) {
@@ -102,6 +135,17 @@ public class JottTokenizer {
             if (tokenMap.containsKey(ch)) {
                 tokens.add(new Token("" + ch, filename, lineNum, tokenMap.get(ch)));
                 currentChar = -1;
+            }
+
+            if (Character.isDigit(ch)){
+                Token t = numberHandlerNumFirst(filename, inputStream);
+                tokens.add(t);
+                continue;
+            }
+
+            if (ch == '.'){
+                Token t = numberHandlerDotFirst(filename, inputStream);
+                tokens.add(t);
                 continue;
             }
 
