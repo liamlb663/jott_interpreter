@@ -15,10 +15,12 @@ import provided.TokenType;
  **/
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JottTokenizer {
     static int currentChar = -1;
-    static int lineNum = 0;
+    static int lineNum = 1; // bro made the line number index at 1
 
     static void commentHandler(FileReader inputStream) throws IOException {
         currentChar = -1;
@@ -32,11 +34,33 @@ public class JottTokenizer {
         }
     }
 
+    static Token colonFcHeaderHandler(FileReader inputStream, String filename) throws IOException {
+        // Colon has been read
+        currentChar = inputStream.read();
+
+        if (currentChar == -1) {
+            return null;
+        }
+
+        if (currentChar != ':') {
+            if (currentChar == '\n') {
+                lineNum++;
+            }
+
+            // Return without flushing Character
+            return new Token(":", filename, lineNum, TokenType.COLON);
+        }
+
+        // Return and flush Character
+        currentChar = -1;
+        return new Token("::", filename, lineNum, TokenType.FC_HEADER);
+    }
+
     static Token numberHandlerNumFirst(String filename, FileReader inputStream) throws IOException {
         boolean decimalSeen = false;
         Token token = null;
         String tokenString = "" + (char)currentChar;
-        System.out.println(tokenString);
+
         while((currentChar = inputStream.read()) != -1) {
             if(Character.isDigit((char)currentChar)){
                 tokenString += (char)currentChar;
@@ -47,7 +71,7 @@ public class JottTokenizer {
                 break;
             }
         }
-        token = new Token(tokenString, filename, 0, TokenType.NUMBER);
+        token = new Token(tokenString, filename, lineNum, TokenType.NUMBER);
         return token;
     }
     static Token numberHandlerDotFirst(String filename, FileReader inputStream) throws IOException, SyntaxException {
@@ -59,7 +83,7 @@ public class JottTokenizer {
         if (tokenString.equals(".")) {
             throw new SyntaxException("Decimal point must be followed by or preceded by a digit.");
         }
-        token = new Token(tokenString, filename, 0, TokenType.NUMBER);
+        token = new Token(tokenString, filename, lineNum, TokenType.NUMBER);
         return token;
     }
 
@@ -68,10 +92,8 @@ public class JottTokenizer {
 
         for (;;) {
             if (currentChar == -1) {
-                int inputChar = inputStream.read();
-                if (inputChar == -1) break;    // EOF
-
-                currentChar = inputChar;
+                currentChar = inputStream.read();
+                if (currentChar == -1) break;    // EOF
             }
             char ch = (char)currentChar;
 
@@ -85,6 +107,34 @@ public class JottTokenizer {
             if (ch == '#') {
                 commentHandler(inputStream);
                 continue;
+            }
+
+            if (ch == ':') {
+                Token output = colonFcHeaderHandler(inputStream, filename);
+                if (output != null) {
+                    tokens.add(output);
+                }
+
+                continue;
+            }
+
+            // Top row
+            Map<Character, TokenType> tokenMap = new HashMap<>();
+            tokenMap.put(',', TokenType.COMMA);
+            tokenMap.put(']', TokenType.R_BRACKET);
+            tokenMap.put('[', TokenType.L_BRACKET);
+            tokenMap.put('}', TokenType.R_BRACE);
+            tokenMap.put('{', TokenType.L_BRACE);
+            tokenMap.put(';', TokenType.SEMICOLON);
+
+            tokenMap.put('+', TokenType.MATH_OP);
+            tokenMap.put('-', TokenType.MATH_OP);
+            tokenMap.put('*', TokenType.MATH_OP);
+            tokenMap.put('/', TokenType.MATH_OP);
+
+            if (tokenMap.containsKey(ch)) {
+                tokens.add(new Token("" + ch, filename, lineNum, tokenMap.get(ch)));
+                currentChar = -1;
             }
 
             if (Character.isDigit(ch)){
