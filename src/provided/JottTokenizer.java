@@ -1,5 +1,6 @@
 package provided;
 
+import java.lang.String;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +33,22 @@ public class JottTokenizer {
                 return;
             }
         }
+    }
+
+    static Token idKeywordHandler(String filename, FileReader inputStream) throws IOException {
+        Token token = null;
+        String tokenString = "" + (char) currentChar;
+        while ((currentChar = inputStream.read()) != -1) { // EOF condition
+            if (Character.isLetterOrDigit(currentChar)) {
+                tokenString += (char) currentChar;
+            }
+            else {
+                break;
+            }
+        }
+        // create a new token for the token string that got built
+        token = new Token(tokenString, filename, lineNum, TokenType.ID_KEYWORD);
+        return token;
     }
 
     static Token colonFcHeaderHandler(FileReader inputStream, String filename) throws IOException {
@@ -74,6 +91,7 @@ public class JottTokenizer {
         token = new Token(tokenString, filename, lineNum, TokenType.NUMBER);
         return token;
     }
+  
     static Token numberHandlerDotFirst(String filename, FileReader inputStream) throws IOException, SyntaxException {
         Token token = null;
         String tokenString = "" + (char)currentChar;
@@ -154,6 +172,12 @@ public class JottTokenizer {
                 continue;
             }
 
+            if (Character.isLetter(ch)) {
+                Token id_keyword = idKeywordHandler(filename, inputStream);
+                tokens.add(id_keyword);
+              
+            }
+          
             if (ch == '=') {
                 Token t = equalsHandler(filename, inputStream);
                 tokens.add(t);
