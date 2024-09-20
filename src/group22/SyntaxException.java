@@ -13,8 +13,6 @@ public class SyntaxException extends Exception {
     }
 
     public SyntaxException(String msg, String filename, int lineNumber) {
-        super("Syntax Error\n" +
-                msg + "\n" +
-                filename + ":" + lineNumber);
+        super(msg + "\n" + filename + ":" + lineNumber);
     }
 }

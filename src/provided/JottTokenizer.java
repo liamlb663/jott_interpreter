@@ -1,8 +1,10 @@
 package provided;
 
+import java.lang.String;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.*;
 
 import group22.SyntaxException;
 import provided.TokenType;
@@ -14,6 +16,8 @@ import provided.TokenType;
  **/
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JottTokenizer {
     static int currentChar = -1;
@@ -59,46 +63,128 @@ public class JottTokenizer {
         throw new SyntaxException("Missing ending \" for the String token", filename, lineNum);
     }
 
-    static Token numberHandlerNumFirst(String filename, FileReader inputStream) throws IOException {
+    static Token idKeywordHandler(String filename, FileReader inputStream) throws IOException {
         Token token = null;
-        String tokenString = "" + currentChar;
-        while((currentChar = inputStream.read()) != -1 && Character.isDigit(currentChar)) {
-            tokenString += currentChar;
+        String tokenString = "" + (char) currentChar;
+        while ((currentChar = inputStream.read()) != -1) { // EOF condition
+            if (Character.isLetterOrDigit(currentChar)) {
+                tokenString += (char) currentChar;
+            }
+            else {
+                break;
+            }
         }
-        currentChar = inputStream.read();
-        if (currentChar == '.') {
-            tokenString += currentChar;
-        } else if (Character.isDigit(currentChar)) {
-            do {
-                tokenString += currentChar;
-            } while ((currentChar = inputStream.read()) != -1 && Character.isDigit(currentChar));
-        }
-        token = new Token(tokenString, filename, 0, TokenType.NUMBER);
-
+        // create a new token for the token string that got built
+        token = new Token(tokenString, filename, lineNum, TokenType.ID_KEYWORD);
         return token;
     }
+
+    static Token colonFcHeaderHandler(FileReader inputStream, String filename) throws IOException {
+        // Colon has been read
+        currentChar = inputStream.read();
+
+        if (currentChar == -1) {
+            return null;
+        }
+
+        if (currentChar != ':') {
+            if (currentChar == '\n') {
+                lineNum++;
+            }
+
+            // Return without flushing Character
+            return new Token(":", filename, lineNum, TokenType.COLON);
+        }
+
+        // Return and flush Character
+        currentChar = -1;
+        return new Token("::", filename, lineNum, TokenType.FC_HEADER);
+    }
+
+    static Token numberHandlerNumFirst(String filename, FileReader inputStream) throws IOException {
+        boolean decimalSeen = false;
+        Token token = null;
+        String tokenString = "" + (char)currentChar;
+
+        while((currentChar = inputStream.read()) != -1) {
+            if(Character.isDigit((char)currentChar)){
+                tokenString += (char)currentChar;
+            } else if ((char)currentChar == '.' && !decimalSeen) {
+                tokenString += (char)currentChar;
+                decimalSeen = true;
+            } else {
+                break;
+            }
+        }
+        token = new Token(tokenString, filename, lineNum, TokenType.NUMBER);
+        return token;
+    }
+  
     static Token numberHandlerDotFirst(String filename, FileReader inputStream) throws IOException, SyntaxException {
         Token token = null;
-        String tokenString = "" + currentChar;
-        while((currentChar = inputStream.read()) != -1 && Character.isDigit(currentChar)) {
-            tokenString += currentChar;
+        String tokenString = "" + (char)currentChar;
+        while((currentChar = inputStream.read()) != -1 && Character.isDigit((char)currentChar)) {
+            tokenString += (char)currentChar;
         }
         if (tokenString.equals(".")) {
-            throw new SyntaxException();
+            throw new SyntaxException("Decimal point must be followed by or preceded by a digit.");
         }
-        token = new Token(tokenString, filename, 0, TokenType.NUMBER);
+        token = new Token(tokenString, filename, lineNum, TokenType.NUMBER);
+        return token;
+    }
+
+    static Token equalsHandler(String filename, FileReader inputStream) throws IOException {
+        Token token = null;
+        String tokenString = "" + (char)currentChar;
+        currentChar = inputStream.read();
+        char ch = (char)currentChar;
+        if (ch == '=') {
+            tokenString += ch;
+            token = new Token(tokenString, filename, lineNum, TokenType.REL_OP);
+            currentChar = inputStream.read();
+        } else {
+            token = new Token(tokenString, filename, lineNum, TokenType.ASSIGN);
+        }
+        return token;
+    }
+
+    static Token angleBracketHandler(String filename, FileReader inputStream) throws IOException {
+        Token token = null;
+        String tokenString = "" + (char)currentChar;
+        currentChar = inputStream.read();
+        char ch = (char)currentChar;
+        if (ch == '=') {
+            tokenString += ch;
+            currentChar = inputStream.read();
+        }
+        token = new Token(tokenString, filename, lineNum, TokenType.REL_OP);
+        return token;
+    }
+
+    static Token exclamationHandler(String filename, FileReader inputStream) throws IOException, SyntaxException {
+        Token token = null;
+        String tokenString = "" + (char)currentChar;
+        currentChar = inputStream.read();
+        char ch = (char)currentChar;
+        if (ch == '=') {
+            tokenString += ch;
+            currentChar = inputStream.read();
+        }
+        if (tokenString.equals("!")) {
+            throw new SyntaxException("Exclamation mark must be followed by an equals sign.");
+        }
+        token = new Token(tokenString, filename, lineNum, TokenType.REL_OP);
         return token;
     }
 
     static ArrayList<Token> processFile(String filename, FileReader inputStream) throws IOException, SyntaxException {
         ArrayList<Token> tokens = new ArrayList<>();
+        lineNum = 1;
 
         for (;;) {
             if (currentChar == -1) {
-                int inputChar = inputStream.read();
-                if (inputChar == -1) break;    // EOF
-
-                currentChar = inputChar;
+                currentChar = inputStream.read();
+                if (currentChar == -1) break;    // EOF
             }
             char ch = (char)currentChar;
 
@@ -119,6 +205,70 @@ public class JottTokenizer {
                 continue;
             }
 
+            if (Character.isLetter(ch)) {
+                Token id_keyword = idKeywordHandler(filename, inputStream);
+                tokens.add(id_keyword);
+              
+            }
+          
+            if (ch == '=') {
+                Token t = equalsHandler(filename, inputStream);
+                tokens.add(t);
+                continue;
+            }
+
+            if (ch == '<' || ch == '>') {
+                Token t = angleBracketHandler(filename, inputStream);
+                tokens.add(t);
+                continue;
+            }
+
+            if (ch == '!') {
+                Token t = exclamationHandler(filename, inputStream);
+                tokens.add(t);
+                continue;
+            }
+
+            if (ch == ':') {
+                Token output = colonFcHeaderHandler(inputStream, filename);
+                if (output != null) {
+                    tokens.add(output);
+                }
+
+                continue;
+            }
+
+            // Top row
+            Map<Character, TokenType> tokenMap = new HashMap<>();
+            tokenMap.put(',', TokenType.COMMA);
+            tokenMap.put(']', TokenType.R_BRACKET);
+            tokenMap.put('[', TokenType.L_BRACKET);
+            tokenMap.put('}', TokenType.R_BRACE);
+            tokenMap.put('{', TokenType.L_BRACE);
+            tokenMap.put(';', TokenType.SEMICOLON);
+
+            tokenMap.put('+', TokenType.MATH_OP);
+            tokenMap.put('-', TokenType.MATH_OP);
+            tokenMap.put('*', TokenType.MATH_OP);
+            tokenMap.put('/', TokenType.MATH_OP);
+
+            if (tokenMap.containsKey(ch)) {
+                tokens.add(new Token("" + ch, filename, lineNum, tokenMap.get(ch)));
+                currentChar = -1;
+            }
+
+            if (Character.isDigit(ch)){
+                Token t = numberHandlerNumFirst(filename, inputStream);
+                tokens.add(t);
+                continue;
+            }
+
+            if (ch == '.'){
+                Token t = numberHandlerDotFirst(filename, inputStream);
+                tokens.add(t);
+                continue;
+            }
+
             currentChar = -1;
         }
 
@@ -134,12 +284,11 @@ public class JottTokenizer {
     public static ArrayList<Token> tokenize(String filename){
         try {
             FileReader inputStream = new FileReader(filename);
-
             return processFile(filename, inputStream);
         } catch(IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
-        } catch(Exception e) {
-            System.err.println("Error reading file: " + e.getMessage());
+        } catch(SyntaxException e) {
+            System.err.println("Syntax error: " + e.getMessage());
         }
 
         return null;
