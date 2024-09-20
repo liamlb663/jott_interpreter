@@ -9,8 +9,6 @@ import java.lang.*;
 import group22.SyntaxException;
 import provided.TokenType;
 
-import group22.IdKeyword;
-
 /**
  * This class is responsible for tokenizing Jott code.
  *
@@ -107,6 +105,50 @@ public class JottTokenizer {
         return token;
     }
 
+    static Token equalsHandler(String filename, FileReader inputStream) throws IOException {
+        Token token = null;
+        String tokenString = "" + (char)currentChar;
+        currentChar = inputStream.read();
+        char ch = (char)currentChar;
+        if (ch == '=') {
+            tokenString += ch;
+            token = new Token(tokenString, filename, lineNum, TokenType.REL_OP);
+            currentChar = inputStream.read();
+        } else {
+            token = new Token(tokenString, filename, lineNum, TokenType.ASSIGN);
+        }
+        return token;
+    }
+
+    static Token angleBracketHandler(String filename, FileReader inputStream) throws IOException {
+        Token token = null;
+        String tokenString = "" + (char)currentChar;
+        currentChar = inputStream.read();
+        char ch = (char)currentChar;
+        if (ch == '=') {
+            tokenString += ch;
+            currentChar = inputStream.read();
+        }
+        token = new Token(tokenString, filename, lineNum, TokenType.REL_OP);
+        return token;
+    }
+
+    static Token exclamationHandler(String filename, FileReader inputStream) throws IOException, SyntaxException {
+        Token token = null;
+        String tokenString = "" + (char)currentChar;
+        currentChar = inputStream.read();
+        char ch = (char)currentChar;
+        if (ch == '=') {
+            tokenString += ch;
+            currentChar = inputStream.read();
+        }
+        if (tokenString.equals("!")) {
+            throw new SyntaxException("Exclamation mark must be followed by an equals sign.");
+        }
+        token = new Token(tokenString, filename, lineNum, TokenType.REL_OP);
+        return token;
+    }
+
     static ArrayList<Token> processFile(String filename, FileReader inputStream) throws IOException, SyntaxException {
         ArrayList<Token> tokens = new ArrayList<>();
         lineNum = 1;
@@ -136,6 +178,24 @@ public class JottTokenizer {
               
             }
           
+            if (ch == '=') {
+                Token t = equalsHandler(filename, inputStream);
+                tokens.add(t);
+                continue;
+            }
+
+            if (ch == '<' || ch == '>') {
+                Token t = angleBracketHandler(filename, inputStream);
+                tokens.add(t);
+                continue;
+            }
+
+            if (ch == '!') {
+                Token t = exclamationHandler(filename, inputStream);
+                tokens.add(t);
+                continue;
+            }
+
             if (ch == ':') {
                 Token output = colonFcHeaderHandler(inputStream, filename);
                 if (output != null) {
@@ -195,8 +255,8 @@ public class JottTokenizer {
             return processFile(filename, inputStream);
         } catch(IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
-        } catch(Exception e) {
-            System.err.println("Error reading file: " + e.getMessage());
+        } catch(SyntaxException e) {
+            System.err.println("Syntax error: " + e.getMessage());
         }
 
         return null;
