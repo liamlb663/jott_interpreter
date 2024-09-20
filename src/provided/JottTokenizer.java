@@ -89,12 +89,13 @@ public class JottTokenizer {
 
     static Token equalsHandler(String filename, FileReader inputStream) throws IOException {
         Token token = null;
-        String tokenString = "" + currentChar;
+        String tokenString = "" + (char)currentChar;
         currentChar = inputStream.read();
         char ch = (char)currentChar;
         if (ch == '=') {
             tokenString += ch;
             token = new Token(tokenString, filename, lineNum, TokenType.REL_OP);
+            currentChar = inputStream.read();
         } else {
             token = new Token(tokenString, filename, lineNum, TokenType.ASSIGN);
         }
@@ -103,11 +104,12 @@ public class JottTokenizer {
 
     static Token angleBracketHandler(String filename, FileReader inputStream) throws IOException {
         Token token = null;
-        String tokenString = "" + currentChar;
+        String tokenString = "" + (char)currentChar;
         currentChar = inputStream.read();
         char ch = (char)currentChar;
         if (ch == '=') {
             tokenString += ch;
+            currentChar = inputStream.read();
         }
         token = new Token(tokenString, filename, lineNum, TokenType.REL_OP);
         return token;
@@ -115,11 +117,12 @@ public class JottTokenizer {
 
     static Token exclamationHandler(String filename, FileReader inputStream) throws IOException, SyntaxException {
         Token token = null;
-        String tokenString = "" + currentChar;
+        String tokenString = "" + (char)currentChar;
         currentChar = inputStream.read();
         char ch = (char)currentChar;
         if (ch == '=') {
             tokenString += ch;
+            currentChar = inputStream.read();
         }
         if (tokenString.equals("!")) {
             throw new SyntaxException("Exclamation mark must be followed by an equals sign.");
@@ -205,24 +208,6 @@ public class JottTokenizer {
 
             if (ch == '.'){
                 Token t = numberHandlerDotFirst(filename, inputStream);
-                tokens.add(t);
-                continue;
-            }
-
-            if (ch == '=') {
-                Token t = equalsHandler(filename, inputStream);
-                tokens.add(t);
-                continue;
-            }
-
-            if (ch == '<' || ch == '>') {
-                Token t = angleBracketHandler(filename, inputStream);
-                tokens.add(t);
-                continue;
-            }
-
-            if (ch == '!') {
-                Token t = exclamationHandler(filename, inputStream);
                 tokens.add(t);
                 continue;
             }
