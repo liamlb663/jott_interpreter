@@ -125,7 +125,7 @@ public class JottTokenizer {
             tokenString += (char)currentChar;
         }
         if (tokenString.equals(".")) {
-            throw new SyntaxException("Decimal point must be followed by or preceded by a digit.");
+            throw new SyntaxException("Decimal point must be followed by or preceded by a digit.", filename, lineNum);
         }
         token = new Token(tokenString, filename, lineNum, TokenType.NUMBER);
         return token;
@@ -169,7 +169,7 @@ public class JottTokenizer {
             currentChar = inputStream.read();
         }
         if (tokenString.equals("!")) {
-            throw new SyntaxException("Exclamation mark must be followed by an equals sign.");
+            throw new SyntaxException("Exclamation mark must be followed by an equals sign.", filename, lineNum);
         }
         token = new Token(tokenString, filename, lineNum, TokenType.REL_OP);
         return token;
