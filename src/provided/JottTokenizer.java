@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 
+import group22.SyntaxException;
 import provided.TokenType;
 
 /**
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 
 public class JottTokenizer {
     static int currentChar = -1;
-    static int lineNum = 0;
+    static int lineNum = 1;
 
     static void commentHandler(FileReader inputStream) throws IOException {
         currentChar = -1;
@@ -37,17 +38,17 @@ public class JottTokenizer {
                 (input >= '0' && input <= '9');
     }
 
-    public static Token processString(String filename, FileReader inputStream, int lineNum) throws IOException, SyntaxException {
+    public static Token processString(String filename, FileReader inputStream) throws IOException, SyntaxException {
         StringBuilder currString = new StringBuilder();
-        int currStringChar;
 
-        while((currStringChar = inputStream.read()) != -1) {
-            char asciiToChar = (char) currStringChar;
+        while((currentChar = inputStream.read()) != -1) {
+            char asciiToChar = (char) currentChar;
 
             if (isValidStringCharacter(asciiToChar)) {
                 currString.append(asciiToChar);
             } else {
-                if (currStringChar == '"') {
+                if (asciiToChar == '"') {
+                    currentChar = inputStream.read();
                     return new Token("\"" + currString + "\"", filename, lineNum, TokenType.STRING);
                 } else {
                     throw new SyntaxException("Got invalid character of '" + asciiToChar + "'", filename, lineNum);
@@ -105,6 +106,11 @@ public class JottTokenizer {
                 if (ch == '\n') lineNum++;
 
                 currentChar = -1;
+                continue;
+            }
+
+            if (ch == '"') {
+                tokens.add(processString(filename, inputStream));
                 continue;
             }
 
