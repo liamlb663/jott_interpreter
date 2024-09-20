@@ -35,6 +35,34 @@ public class JottTokenizer {
         }
     }
 
+    public static boolean isValidStringCharacter(char input) {
+        return (input == ' ') ||
+                (input >= 'a' && input <= 'z') ||
+                (input >= 'A' && input <= 'Z') ||
+                (input >= '0' && input <= '9');
+    }
+
+    public static Token processString(String filename, FileReader inputStream) throws IOException, SyntaxException {
+        StringBuilder currString = new StringBuilder();
+
+        while((currentChar = inputStream.read()) != -1) {
+            char asciiToChar = (char) currentChar;
+
+            if (isValidStringCharacter(asciiToChar)) {
+                currString.append(asciiToChar);
+            } else {
+                if (asciiToChar == '"') {
+                    currentChar = inputStream.read();
+                    return new Token("\"" + currString + "\"", filename, lineNum, TokenType.STRING);
+                } else {
+                    throw new SyntaxException("Got invalid character of '" + asciiToChar + "'", filename, lineNum);
+                }
+            }
+        }
+
+        throw new SyntaxException("Missing ending \" for the String token", filename, lineNum);
+    }
+
     static Token idKeywordHandler(String filename, FileReader inputStream) throws IOException {
         Token token = null;
         String tokenString = "" + (char) currentChar;
@@ -167,6 +195,11 @@ public class JottTokenizer {
                 continue;
             }
 
+            if (ch == '"') {
+                tokens.add(processString(filename, inputStream));
+                continue;
+            }
+
             if (ch == '#') {
                 commentHandler(inputStream);
                 continue;
@@ -251,7 +284,6 @@ public class JottTokenizer {
     public static ArrayList<Token> tokenize(String filename){
         try {
             FileReader inputStream = new FileReader(filename);
-
             return processFile(filename, inputStream);
         } catch(IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
