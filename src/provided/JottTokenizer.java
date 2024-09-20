@@ -131,7 +131,7 @@ public class JottTokenizer {
         return token;
     }
 
-    static ArrayList<Token> processFile(String filename, FileReader inputStream) throws IOException {
+    static ArrayList<Token> processFile(String filename, FileReader inputStream) throws IOException, SyntaxException {
         ArrayList<Token> tokens = new ArrayList<>();
         lineNum = 1;
 
@@ -231,8 +231,8 @@ public class JottTokenizer {
             return processFile(filename, inputStream);
         } catch(IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
-        } catch(Exception e) {
-            System.err.println("Error reading file: " + e.getMessage());
+        } catch(SyntaxException e) {
+            System.err.println("Syntax error: " + e.getMessage());
         }
 
         return null;
