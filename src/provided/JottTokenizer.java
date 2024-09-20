@@ -3,22 +3,20 @@ package provided;
 import java.lang.String;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.*;
 
 import group22.SyntaxException;
 import provided.TokenType;
 
-/**
- * This class is responsible for tokenizing Jott code.
- *
- * @author lpa6230,
- **/
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class is responsible for tokenizing Jott code.
+ *
+ * @author lpa6230, mbf1102, jjj7632, aom3091, cng8060
+ */
 public class JottTokenizer {
     static int currentChar = -1;
     static int lineNum = 1;
@@ -208,7 +206,7 @@ public class JottTokenizer {
             if (Character.isLetter(ch)) {
                 Token id_keyword = idKeywordHandler(filename, inputStream);
                 tokens.add(id_keyword);
-              
+                continue;
             }
           
             if (ch == '=') {
