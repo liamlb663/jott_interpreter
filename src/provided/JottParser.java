@@ -8,6 +8,7 @@ package provided;
  */
 
 import java.util.ArrayList;
+import group22.GrammarClasses.*;
 
 public class JottParser {
 
