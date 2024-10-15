@@ -18,13 +18,13 @@ public class Params implements JottTree {
             throw new SyntaxException("Unexpected eof");
         }
         Token currToken = tokens.getFirst();
-        if (currToken.getToken().equals("]")) { //if epsilon
+        if (currToken.getTokenType() == TokenType.R_BRACKET) { //if epsilon
             return new Params(null, null);
         } else { //if <expr><params_t>*...
             Expr exprNode = Expr.parseExpr(tokens);
             ArrayList<ParamsT> paramsTNodes = new ArrayList<>();
             currToken = tokens.getFirst();
-            while (currToken.getToken().equals(",")) {
+            while (currToken.getTokenType() == TokenType.COMMA) {
                 paramsTNodes.add(ParamsT.parseParamsT(tokens));
                 currToken = tokens.getFirst();
             }
