@@ -1,23 +1,14 @@
 package group22.GrammarClasses;
 
 import group22.SyntaxException;
-import provided.JottParser;
 import provided.JottTree;
 import provided.Token;
 import provided.TokenType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class OperandNode implements JottTree {
     private final JottTree subNode;
-    public static final List<TokenType> OPERAND_TYPES = Arrays.asList(
-            TokenType.ID_KEYWORD,
-            TokenType.NUMBER,
-            TokenType.MATH_OP,
-            TokenType.FC_HEADER
-    );
 
     public OperandNode(JottTree node) {
         this.subNode = node;

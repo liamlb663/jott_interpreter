@@ -6,7 +6,6 @@ import provided.Token;
 import provided.TokenType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ExprNode implements JottTree {
     private final ArrayList<JottTree> subNodes;
@@ -24,31 +23,68 @@ public class ExprNode implements JottTree {
         Token firstToken = tokens.get(0);
 
         try {
-            if (OperandNode.OPERAND_TYPES.contains(firstToken.getTokenType())) {
-                if (firstToken.getTokenType() == TokenType.ID_KEYWORD &&
-                        (firstToken.getToken().equals("True") || firstToken.getToken().equals("False"))
-                ) {
-                    // TODO
-                    return new ExprNode(Arrays.asList(Bool.parseBoolNode(firstToken)));
-                }
-
-                Token secondToken = tokens.get(1);
-
-                if ()
-
-                if (secondToken.getTokenType() == TokenType.REL_OP) {
-                    TokenType thirdToken
-                }
-            } else if (firstToken.getTokenType() == TokenType.STRING) {
+            if (firstToken.getTokenType() == TokenType.STRING) {
                 // TODO
-                return new ExprNode(Arrays.asList(StringNode.parseStringNode(firstToken)));
-            } else {
-                throw new SyntaxException(
-                        "Invalid token found when parsing Expr",
-                        firstToken.getFilename(),
-                        firstToken.getLineNum()
-                );
+                return null;
+            } else if (firstToken.getTokenType() == TokenType.ID_KEYWORD &&
+                    (firstToken.getToken().equals("True") || firstToken.getToken().equals("False"))
+            ) {
+                // TODO
+                return null;
             }
+
+            ArrayList<JottTree> validatedNodes = new ArrayList<>();
+
+            while (validatedNodes.size() < 3) {
+                Token currToken = tokens.get(0);
+
+                switch (currToken.getTokenType()) {
+                    case MATH_OP -> {
+                        if (validatedNodes.isEmpty() || validatedNodes.size() == 2) {
+                            validatedNodes.add(OperandNode.parseOperandNode(tokens));
+                        } else {
+                            // TODO
+                            System.out.println("Fix");
+                        }
+                    }
+                    case ID_KEYWORD, NUMBER, FC_HEADER -> {
+                        if (validatedNodes.isEmpty() || validatedNodes.size() == 2) {
+                            validatedNodes.add(OperandNode.parseOperandNode(tokens));
+                        } else {
+                            throw new SyntaxException(
+                                    "Received unexpected " + currToken.getTokenType().toString() + " token",
+                                    currToken.getFilename(),
+                                    currToken.getLineNum()
+                            );
+                        }
+                    }
+                    case REL_OP -> {
+                        if (validatedNodes.size() == 1) {
+                            // TODO
+                            System.out.println("Fix");
+                        } else {
+                            throw new SyntaxException(
+                                    "Received unexpected REL_OP token",
+                                    currToken.getFilename(),
+                                    currToken.getLineNum()
+                            );
+                        }
+                    }
+                    default -> {
+                        if (!validatedNodes.isEmpty()) {
+                            return new ExprNode(validatedNodes);
+                        } else {
+                            throw new SyntaxException(
+                                    "Received unexpected " + currToken.getTokenType().toString() + " token",
+                                    currToken.getFilename(),
+                                    currToken.getLineNum()
+                            );
+                        }
+                    }
+                }
+            }
+
+            return new ExprNode(validatedNodes);
         } catch (UnknownError e) {
             throw new SyntaxException(
                     e.getMessage(),
@@ -60,7 +96,13 @@ public class ExprNode implements JottTree {
 
     @Override
     public String convertToJott() {
-        return null;
+        StringBuilder jottCode = new StringBuilder();
+
+        for (JottTree currNode: subNodes) {
+            jottCode.append(currNode.convertToJott());
+        }
+
+        return jottCode.toString();
     }
 
     @Override
