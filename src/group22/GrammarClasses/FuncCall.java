@@ -26,17 +26,17 @@ public class FuncCall implements JottTree{
             throw new SyntaxException("Should be a colon", currToken.getFilename(), currToken.getLineNum());
         }
         tokens.removeFirst();
-        Id tempIdNode = Id.parseIDNode(tokens);
+        Id idNode = Id.parseIDNode(tokens);
         if (currToken.getTokenType() != TokenType.L_BRACKET) {
             throw new SyntaxException("Should be a left bracket", currToken.getFilename(), currToken.getLineNum());
         }
         tokens.removeFirst();
-        Params tempParamsNode = Params.parseParamsNode(tokens);
+        Params paramsNode = Params.parseParamsNode(tokens);
         if (currToken.getTokenType() != TokenType.R_BRACKET) {
             throw new SyntaxException("Should be a right bracket", currToken.getFilename(), currToken.getLineNum());
         }
         tokens.removeFirst();
-        return new FuncCall(tempIdNode, tempParamsNode);
+        return new FuncCall(idNode, paramsNode);
     }
 
     public String convertToJott() {
