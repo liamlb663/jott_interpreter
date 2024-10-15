@@ -22,33 +22,25 @@ public class TypeNode implements JottTree {
             throw new UnknownError("Unexpected EOF");
         }
 
-        Token currToken = tokens.remove(0);
+        Token currToken = tokens.removeFirst();
 
-        try {
-            if (currToken.getTokenType() == TokenType.ID_KEYWORD) {
-                if (!Arrays.asList(VALID_TYPES).contains(currToken.getToken())) {
-                    throw new SyntaxException(
-                            "Received invalid datatype for Type token",
-                            currToken.getFilename(),
-                            currToken.getLineNum()
-                    );
-                }
-
-                return new TypeNode(currToken);
-            } else {
-                throw new SyntaxException(
-                        "Invalid token found when parsing Type",
-                        currToken.getFilename(),
-                        currToken.getLineNum()
-                );
-            }
-        } catch (UnknownError e) {
+        if (currToken.getTokenType() != TokenType.ID_KEYWORD) {
             throw new SyntaxException(
-                    e.getMessage(),
+                    "Invalid token found when parsing Type",
                     currToken.getFilename(),
                     currToken.getLineNum()
             );
         }
+
+        if (!Arrays.asList(VALID_TYPES).contains(currToken.getToken())) {
+            throw new SyntaxException(
+                    "Received invalid datatype for Type token",
+                    currToken.getFilename(),
+                    currToken.getLineNum()
+            );
+        }
+
+        return new TypeNode(currToken);
     }
 
     @Override

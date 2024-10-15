@@ -6,6 +6,7 @@ import provided.Token;
 import provided.TokenType;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ExprNode implements JottTree {
     private final ArrayList<JottTree> subNodes;
@@ -20,12 +21,11 @@ public class ExprNode implements JottTree {
             throw new UnknownError("Unexpected EOF");
         }
 
-        Token firstToken = tokens.get(0);
+        Token firstToken = tokens.getFirst();
 
         try {
             if (firstToken.getTokenType() == TokenType.STRING) {
-                // TODO
-                return null;
+                return new ExprNode(new ArrayList<>(List.of(StringLiteralNode.parseStringLiteralNode(tokens))));
             } else if (firstToken.getTokenType() == TokenType.ID_KEYWORD &&
                     (firstToken.getToken().equals("True") || firstToken.getToken().equals("False"))
             ) {

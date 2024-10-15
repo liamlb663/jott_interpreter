@@ -20,7 +20,7 @@ public class IdNode implements JottTree {
             throw new UnknownError("Unexpected EOF");
         }
 
-        Token currToken = tokens.remove(0);
+        Token currToken = tokens.removeFirst();
 
         if (currToken.getTokenType() != TokenType.ID_KEYWORD) {
             throw new SyntaxException(

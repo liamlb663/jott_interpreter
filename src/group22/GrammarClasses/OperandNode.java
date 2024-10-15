@@ -20,7 +20,7 @@ public class OperandNode implements JottTree {
             throw new UnknownError("Unexpected EOF when parsing Operand");
         }
 
-        Token currToken = tokens.get(0);
+        Token currToken = tokens.getFirst();
 
         try {
             switch (currToken.getTokenType()) {
@@ -31,7 +31,8 @@ public class OperandNode implements JottTree {
                     return new OperandNode(NumberNode.parseNumberNode(tokens));
                 }
                 case FC_HEADER -> {
-                    return null; // TODO: Fix actual call in FuncCall class :3 | parsedOperand = new OperandNode(FuncCall.parseFunctionCallNode(tokens));
+                    // TODO: Fix actual call in FuncCall class :3 | parsedOperand = new OperandNode(FuncCall.parseFunctionCallNode(tokens));
+                    return null;
                 }
                 case MATH_OP -> {
                     if (!currToken.getToken().equals("-")) {
@@ -52,11 +53,10 @@ public class OperandNode implements JottTree {
                         );
                     }
 
-                    tokens.remove(0);
-                    tokens.remove(0);
+                    tokens.removeFirst();
+                    tokens.removeFirst();
 
-                    tokens.add(
-                            0,
+                    tokens.addFirst(
                             new Token(currToken + nextToken.getToken(),
                                     nextToken.getFilename(),
                                     nextToken.getLineNum(),
