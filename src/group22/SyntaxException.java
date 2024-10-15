@@ -9,8 +9,8 @@ import java.lang.String;
  * @author mbf1102, cng8060
  */
 public class SyntaxException extends Exception {
-    public SyntaxException() {
-
+    public SyntaxException(String msg) {
+        super(msg);
     }
 
     public SyntaxException(String msg, String filename, int lineNumber) {
