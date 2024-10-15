@@ -22,16 +22,19 @@ public class FuncCall implements JottTree{
             throw new SyntaxException("Should be a colon", currToken.getFilename(), currToken.getLineNum());
         }
         tokens.removeFirst();
+        currToken = tokens.getFirst();
         if (currToken.getTokenType() != TokenType.COLON) {
             throw new SyntaxException("Should be a colon", currToken.getFilename(), currToken.getLineNum());
         }
         tokens.removeFirst();
         Id idNode = Id.parseIDNode(tokens);
+        currToken = tokens.getFirst();
         if (currToken.getTokenType() != TokenType.L_BRACKET) {
             throw new SyntaxException("Should be a left bracket", currToken.getFilename(), currToken.getLineNum());
         }
         tokens.removeFirst();
         Params paramsNode = Params.parseParamsNode(tokens);
+        currToken = tokens.getFirst();
         if (currToken.getTokenType() != TokenType.R_BRACKET) {
             throw new SyntaxException("Should be a right bracket", currToken.getFilename(), currToken.getLineNum());
         }
