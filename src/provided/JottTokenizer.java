@@ -53,7 +53,13 @@ public class JottTokenizer {
                     currentChar = inputStream.read();
                     return new Token("\"" + currString + "\"", filename, lineNum, TokenType.STRING);
                 } else {
-                    throw new SyntaxException("Got invalid character of '" + asciiToChar + "'", filename, lineNum);
+                    String errorChar = "'" + asciiToChar + "'";
+
+                    if (Character.isWhitespace(asciiToChar)) {
+                        errorChar = "whitespace that isn't a space";
+                    }
+
+                    throw new SyntaxException("Got invalid character of " + errorChar, filename, lineNum);
                 }
             }
         }
