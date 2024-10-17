@@ -19,40 +19,40 @@ public class IfStmt implements JottTree{
 
     static IfStmt parseIfStmt(ArrayList<Token> tokens) throws SyntaxException {
         if (tokens.isEmpty()) {
-            throw new SyntaxException("Unexpected eof");
+            throw new SyntaxException("Unexpected EOF", "", -1);
         }
-        Token currToken = tokens.getFirst();
+        Token currToken = tokens.get(0);
         if(!(currToken.getTokenType() == TokenType.ID_KEYWORD && currToken.getToken().equals("If"))) {
             throw new SyntaxException("Expected If keyword", currToken.getFilename(), currToken.getLineNum());
         }
-        tokens.removeFirst();
-        currToken = tokens.getFirst();
+        tokens.remove(0);
+        currToken = tokens.get(0);
         if(currToken.getTokenType() != TokenType.L_BRACKET) {
             throw new SyntaxException("Expected left bracket", currToken.getFilename(), currToken.getLineNum());
         }
-        tokens.removeFirst();
+        tokens.remove(0);
         Expr exprNode = Expr.parseExpr(tokens);
-        currToken = tokens.getFirst();
+        currToken = tokens.get(0);
         if(currToken.getTokenType() != TokenType.R_BRACKET) {
             throw new SyntaxException("Expected right bracket", currToken.getFilename(), currToken.getLineNum());
         }
-        tokens.removeFirst();
-        currToken = tokens.getFirst();
+        tokens.remove(0);
+        currToken = tokens.get(0);
         if(currToken.getTokenType() != TokenType.L_BRACE) {
             throw new SyntaxException("Expected left brace", currToken.getFilename(), currToken.getLineNum());
         }
-        tokens.removeFirst();
+        tokens.remove(0);
         Body bodyNode = Body.parseBody(tokens);
-        currToken = tokens.getFirst();
+        currToken = tokens.get(0);
         if(currToken.getTokenType() != TokenType.R_BRACE) {
             throw new SyntaxException("Expected right brace", currToken.getFilename(), currToken.getLineNum());
         }
-        tokens.removeFirst();
+        tokens.remove(0);
         ArrayList<ElseIf> elseIfNodes = new ArrayList<>();
-        currToken = tokens.getFirst();
+        currToken = tokens.get(0);
         while (currToken.getTokenType() == TokenType.ID_KEYWORD && currToken.getToken().equals("Elseif")) {
             elseIfNodes.add(ElseIf.parseElseIf(tokens));
-            currToken  = tokens.getFirst();
+            currToken  = tokens.get(0);
         }
         Else elseNode = Else.parseElse(tokens);
         return new IfStmt(exprNode, bodyNode, elseIfNodes, elseNode);
