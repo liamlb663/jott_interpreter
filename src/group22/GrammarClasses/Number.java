@@ -19,7 +19,7 @@ public class Number implements JottTree {
             throw new UnknownError("Unexpected EOF");
         }
 
-        Token currToken = tokens.removeFirst();
+        Token currToken = tokens.remove(0);
 
         if (currToken.getTokenType() != TokenType.NUMBER) {
             throw new SyntaxException(

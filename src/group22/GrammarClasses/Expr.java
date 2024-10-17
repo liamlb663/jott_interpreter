@@ -21,7 +21,7 @@ public class Expr implements JottTree {
             throw new UnknownError("Unexpected EOF");
         }
 
-        Token firstToken = tokens.getFirst();
+        Token firstToken = tokens.get(0);
 
         try {
             if (firstToken.getTokenType() == TokenType.STRING) {

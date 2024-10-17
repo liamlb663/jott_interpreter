@@ -20,7 +20,7 @@ public class Operand implements JottTree {
             throw new UnknownError("Unexpected EOF when parsing Operand");
         }
 
-        Token currToken = tokens.getFirst();
+        Token currToken = tokens.get(0);
 
         try {
             switch (currToken.getTokenType()) {
@@ -53,10 +53,10 @@ public class Operand implements JottTree {
                         );
                     }
 
-                    tokens.removeFirst();
-                    tokens.removeFirst();
+                    tokens.remove(0);
+                    tokens.remove(0);
 
-                    tokens.addFirst(
+                    tokens.add(0,
                             new Token(currToken + nextToken.getToken(),
                                     nextToken.getFilename(),
                                     nextToken.getLineNum(),

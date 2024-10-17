@@ -47,6 +47,7 @@ public class FuncDefParamsT implements JottTree {
 
     public boolean validateTree() {
         // TO DO
+        return true;
     }
 
     public void execute() {

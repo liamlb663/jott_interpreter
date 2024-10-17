@@ -26,7 +26,7 @@ public class FuncDefParams {
         if (!currToken.getTokenType().equals(TokenType.ID_KEYWORD)) {
             throw new SyntaxException("Expected ID but saw " + currToken.getTokenType().toString(), currToken.getFilename(), currToken.getLineNum());
         }
-        Id id = Id.parse(currToken);
+        Id id = Id.parse(tokens);
         tokens.remove(0);
 
         currToken = tokens.get(0);
@@ -62,6 +62,7 @@ public class FuncDefParams {
 
     public boolean validateTree() {
         // TO DO
+        return true;
     }
 
     public void execute() {

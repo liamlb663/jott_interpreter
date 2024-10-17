@@ -16,7 +16,7 @@ public class Program implements JottTree {
         ArrayList<FunctionDef> functionDefs = new ArrayList<>();
 
         Token currToken = tokens.get(0);
-        while (currToken != null && currToken.getToken() == "Def") {
+        while (currToken != null && currToken.getToken().equals("Def")) {
             FunctionDef function = FunctionDef.parse(tokens);
             functionDefs.add(function);
             tokens.remove(0);
@@ -35,6 +35,7 @@ public class Program implements JottTree {
 
     public boolean validateTree() {
         // TO DO
+        return true;
     }
 
     public void execute() {

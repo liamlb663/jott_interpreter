@@ -20,7 +20,7 @@ public class StringLiteral implements JottTree {
             throw new UnknownError("Unexpected EOF");
         }
 
-        Token firstToken = tokens.removeFirst();
+        Token firstToken = tokens.remove(0);
 
         if (firstToken.getTokenType() != TokenType.STRING) {
             throw new SyntaxException(
