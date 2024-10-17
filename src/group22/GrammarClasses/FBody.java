@@ -27,12 +27,12 @@ public class FBody implements JottTree {
         }
         ArrayList<VarDec> varDecs = new ArrayList<>();
 
-        Token currToken = tokens.getFirst();
+        Token currToken = tokens.get(0);
         while(currToken.getTokenType().equals(TokenType.ID_KEYWORD) && tokenIsType(currToken)) {
             VarDec varDec = VarDec.parse(currToken);
             varDecs.add(varDec);
-            tokens.removeFirst();
-            currToken = tokens.getFirst();
+            tokens.remove(0);
+            currToken = tokens.get(0);
         }
 
         Body body = Body.parse(tokens);

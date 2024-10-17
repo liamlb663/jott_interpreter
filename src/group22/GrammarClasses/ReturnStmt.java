@@ -25,16 +25,16 @@ public class ReturnStmt implements JottTree {
             throw new SyntaxException("Unexpected EOF", "", -1);
         }
 
-        Token currToken = tokens.getFirst();
+        Token currToken = tokens.get(0);
         if(currToken.getTokenType().equals(TokenType.ID_KEYWORD) && currToken.getToken().equals("Return")) {
-            tokens.removeFirst();
-            currToken = tokens.getFirst();
+            tokens.remove(0);
+            currToken = tokens.get(0);
             expr = Expr.parse(currToken);
-            currToken = tokens.getFirst();
+            currToken = tokens.get(0);
             if(!currToken.getTokenType().equals(TokenType.SEMICOLON)) {
                 throw new SyntaxException("Missing semicolon at end of return statement", currToken.getFilename(), currToken.getLineNum());
             } else {
-                tokens.removeFirst();
+                tokens.remove(0);
             }
         }
 

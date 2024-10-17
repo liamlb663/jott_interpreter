@@ -23,12 +23,12 @@ public class Body implements JottTree {
         ArrayList<BodyStmt> bodyStmts = new ArrayList<>();
         ReturnStmt returnStmt = null;
 
-        Token currToken = tokens.getFirst();
+        Token currToken = tokens.get(0);
         while(currToken.getTokenType().equals(TokenType.ID_KEYWORD)) {
             try {
                 BodyStmt bodyStmt = BodyStmt.parse(tokens);
                 bodyStmts.add(bodyStmt);
-                currToken = tokens.getFirst();
+                currToken = tokens.get(0);
             } catch (SyntaxException sE) {
                 returnStmt = ReturnStmt.parse(tokens);
                 break;

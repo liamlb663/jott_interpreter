@@ -21,24 +21,24 @@ public class Asmt implements JottTree {
             throw new SyntaxException("Unexpected EOF", "", -1);
         }
 
-        Token currToken = tokens.getFirst();
+        Token currToken = tokens.get(0);
         if (!currToken.getTokenType().equals(TokenType.ID_KEYWORD)) {
             throw new SyntaxException("Expected ID but saw " + currToken.getTokenType().toString(), currToken.getFilename(), currToken.getLineNum());
         }
         Id id = Id.parse(currToken);
-        tokens.removeFirst();
-        currToken = tokens.getFirst();
+        tokens.remove(0);
+        currToken = tokens.get(0);
         if (!currToken.getTokenType().equals(TokenType.ASSIGN)) {
             throw new SyntaxException("Expected '=' for assignment", currToken.getFilename(), currToken.getLineNum());
         }
-        tokens.removeFirst();
-        currToken = tokens.getFirst();
+        tokens.remove(0);
+        currToken = tokens.get(0);
         Expr expr = Expr.parse(tokens);
-        currToken = tokens.getFirst();
+        currToken = tokens.get(0);
         if (!currToken.getTokenType().equals(TokenType.SEMICOLON)) {
             throw new SyntaxException("Missing semicolon at end of assignment", currToken.getFilename(), currToken.getLineNum());
         }
-        tokens.removeFirst();
+        tokens.remove(0);
 
         return new Asmt(id, expr);
     }

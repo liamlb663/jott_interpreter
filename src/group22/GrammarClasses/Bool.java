@@ -22,11 +22,11 @@ public class Bool implements JottTree {
             throw new SyntaxException("Unexpected EOF", "", -1);
         }
 
-        Token currToken = tokens.getFirst();
+        Token currToken = tokens.get(0);
         if(!(currToken.getTokenType().equals(TokenType.ID_KEYWORD) && isBoolKeyword(currToken))) {
             throw new SyntaxException("Invalid Boolean value", currToken.getFilename(), currToken.getLineNum());
         }
-        tokens.removeFirst();
+        tokens.remove(0);
 
         return new Bool(currToken);
     }

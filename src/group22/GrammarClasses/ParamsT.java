@@ -16,11 +16,11 @@ public class ParamsT implements JottTree {
         if(tokens.isEmpty()){
             throw new SyntaxException("Unexpected EOF", "", -1);
         }
-        Token currToken = tokens.getFirst();
+        Token currToken = tokens.get(0);
         if(!currToken.getTokenType().equals(TokenType.COMMA)) {
             throw new SyntaxException("Comma expected before next parameter", currToken.getFilename(), currToken.getLineNum());
         }
-        tokens.removeFirst();
+        tokens.remove(0);
         if(tokens.isEmpty()) {
             throw new SyntaxException("Paramter expression expected after comma", currToken.getFilename(), currToken.getLineNum());
         }
