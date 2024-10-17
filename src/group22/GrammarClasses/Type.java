@@ -8,15 +8,15 @@ import provided.TokenType;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class TypeNode implements JottTree {
+public class Type implements JottTree {
     private final Token type;
     private static final String[] VALID_TYPES = {"Double", "Integer", "String", "Boolean"};
 
-    public TypeNode(Token type) {
+    public Type(Token type) {
         this.type = type;
     }
 
-    static TypeNode parseTypeNode(ArrayList<Token> tokens) throws SyntaxException {
+    static Type parse(ArrayList<Token> tokens) throws SyntaxException {
         if (tokens.isEmpty()) {
             // TODO: Catch in nodes above
             throw new UnknownError("Unexpected EOF");
@@ -40,7 +40,7 @@ public class TypeNode implements JottTree {
             );
         }
 
-        return new TypeNode(currToken);
+        return new Type(currToken);
     }
 
     @Override

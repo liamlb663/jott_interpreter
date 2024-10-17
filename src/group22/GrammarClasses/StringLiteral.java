@@ -7,14 +7,14 @@ import provided.TokenType;
 
 import java.util.ArrayList;
 
-public class StringLiteralNode implements JottTree {
+public class StringLiteral implements JottTree {
     private final Token stringLiteral;
 
-    public StringLiteralNode(Token stringLiteral) {
+    public StringLiteral(Token stringLiteral) {
         this.stringLiteral = stringLiteral;
     }
 
-    static StringLiteralNode parseStringLiteralNode(ArrayList<Token> tokens) throws SyntaxException {
+    static StringLiteral parse(ArrayList<Token> tokens) throws SyntaxException {
         if (tokens.isEmpty()) {
             // TODO: Catch in nodes above
             throw new UnknownError("Unexpected EOF");
@@ -30,7 +30,7 @@ public class StringLiteralNode implements JottTree {
             );
         }
 
-        return new StringLiteralNode(firstToken);
+        return new StringLiteral(firstToken);
     }
 
     @Override

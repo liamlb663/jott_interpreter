@@ -17,7 +17,7 @@ public class IfStmt implements JottTree{
         this.elseNode = elseNode;
     }
 
-    static IfStmt parseIfStmt(ArrayList<Token> tokens) throws SyntaxException {
+    static IfStmt parse(ArrayList<Token> tokens) throws SyntaxException {
         if (tokens.isEmpty()) {
             throw new SyntaxException("Unexpected EOF", "", -1);
         }
@@ -31,7 +31,7 @@ public class IfStmt implements JottTree{
             throw new SyntaxException("Expected left bracket", currToken.getFilename(), currToken.getLineNum());
         }
         tokens.remove(0);
-        Expr exprNode = Expr.parseExpr(tokens);
+        Expr exprNode = Expr.parse(tokens);
         currToken = tokens.get(0);
         if(currToken.getTokenType() != TokenType.R_BRACKET) {
             throw new SyntaxException("Expected right bracket", currToken.getFilename(), currToken.getLineNum());
@@ -42,7 +42,7 @@ public class IfStmt implements JottTree{
             throw new SyntaxException("Expected left brace", currToken.getFilename(), currToken.getLineNum());
         }
         tokens.remove(0);
-        Body bodyNode = Body.parseBody(tokens);
+        Body bodyNode = Body.parse(tokens);
         currToken = tokens.get(0);
         if(currToken.getTokenType() != TokenType.R_BRACE) {
             throw new SyntaxException("Expected right brace", currToken.getFilename(), currToken.getLineNum());
@@ -51,10 +51,10 @@ public class IfStmt implements JottTree{
         ArrayList<ElseIf> elseIfNodes = new ArrayList<>();
         currToken = tokens.get(0);
         while (currToken.getTokenType() == TokenType.ID_KEYWORD && currToken.getToken().equals("Elseif")) {
-            elseIfNodes.add(ElseIf.parseElseIf(tokens));
+            elseIfNodes.add(ElseIf.parse(tokens));
             currToken  = tokens.get(0);
         }
-        Else elseNode = Else.parseElse(tokens);
+        Else elseNode = Else.parse(tokens);
         return new IfStmt(exprNode, bodyNode, elseIfNodes, elseNode);
     }
 

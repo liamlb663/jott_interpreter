@@ -7,35 +7,34 @@ import provided.TokenType;
 
 import java.util.ArrayList;
 
-public class IdNode implements JottTree {
-    private final Token id;
+public class Number implements JottTree {
+    private final Token number;
 
-    public IdNode(Token id) {
-        this.id = id;
+    public Number(Token number) {
+        this.number = number;
     }
 
-    static IdNode parseIdNode(ArrayList<Token> tokens) throws SyntaxException {
+    static Number parse(ArrayList<Token> tokens) throws SyntaxException {
         if (tokens.isEmpty()) {
-            // TODO: Catch in nodes above
             throw new UnknownError("Unexpected EOF");
         }
 
         Token currToken = tokens.removeFirst();
 
-        if (currToken.getTokenType() != TokenType.ID_KEYWORD) {
+        if (currToken.getTokenType() != TokenType.NUMBER) {
             throw new SyntaxException(
-                    "Didn't receive ID_KEYWORD token when parsing for ID",
+                    "Didn't receive NUMBER token when parsing for number",
                     currToken.getFilename(),
                     currToken.getLineNum()
             );
         }
 
-        return new IdNode(currToken);
+        return new Number(currToken);
     }
 
     @Override
     public String convertToJott() {
-        return this.id.getToken();
+        return this.number.getToken();
     }
 
     @Override
