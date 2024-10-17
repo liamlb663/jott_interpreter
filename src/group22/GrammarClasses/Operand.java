@@ -7,14 +7,14 @@ import provided.TokenType;
 
 import java.util.ArrayList;
 
-public class OperandNode implements JottTree {
+public class Operand implements JottTree {
     private final JottTree subNode;
 
-    public OperandNode(JottTree node) {
+    public Operand(JottTree node) {
         this.subNode = node;
     }
 
-    static JottTree parseOperandNode(ArrayList<Token> tokens) throws SyntaxException {
+    static JottTree parse(ArrayList<Token> tokens) throws SyntaxException {
         if (tokens.isEmpty()) {
             // TODO: Have this caught by parsing function in node above
             throw new UnknownError("Unexpected EOF when parsing Operand");
@@ -25,10 +25,10 @@ public class OperandNode implements JottTree {
         try {
             switch (currToken.getTokenType()) {
                 case ID_KEYWORD -> {
-                    return new OperandNode(IdNode.parseIdNode(tokens));
+                    return new Operand(Id.parse(tokens));
                 }
                 case NUMBER -> {
-                    return new OperandNode(NumberNode.parseNumberNode(tokens));
+                    return new Operand(Number.parse(tokens));
                 }
                 case FC_HEADER -> {
                     // TODO: Fix actual call in FuncCall class :3 | parsedOperand = new OperandNode(FuncCall.parseFunctionCallNode(tokens));
@@ -64,7 +64,7 @@ public class OperandNode implements JottTree {
                             )
                     );
 
-                    return new OperandNode(NumberNode.parseNumberNode(tokens));
+                    return new Operand(Number.parse(tokens));
                 }
                 default -> throw new SyntaxException(
                         "Invalid token found when parsing Operand",

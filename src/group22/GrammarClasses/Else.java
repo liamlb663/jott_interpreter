@@ -11,7 +11,7 @@ public class Else implements JottTree{
         this.bodyNode = bodyNode;
     }
 
-    static Else parseElse(ArrayList<Token> tokens) throws SyntaxException {
+    static Else parse(ArrayList<Token> tokens) throws SyntaxException {
         if (tokens.isEmpty()) {
             throw new SyntaxException("Unexpected EOF", "", -1);
         }
@@ -25,7 +25,7 @@ public class Else implements JottTree{
             throw new SyntaxException("Expected left brace", currToken.getFilename(), currToken.getLineNum());
         }
         tokens.remove(0);
-        Body bodyNode = Body.parseBody(tokens);
+        Body bodyNode = Body.parse(tokens);
         currToken = tokens.get(0);
         if(!(currToken.getTokenType() == TokenType.R_BRACE && currToken.getToken().equals("}"))) {
             throw new SyntaxException("Expected right brace", currToken.getFilename(), currToken.getLineNum());

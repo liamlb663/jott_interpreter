@@ -25,7 +25,7 @@ public class Asmt implements JottTree {
         if (!currToken.getTokenType().equals(TokenType.ID_KEYWORD)) {
             throw new SyntaxException("Expected ID but saw " + currToken.getTokenType().toString(), currToken.getFilename(), currToken.getLineNum());
         }
-        Id id = Id.parse(currToken);
+        Id id = Id.parse(tokens);
         tokens.remove(0);
         currToken = tokens.get(0);
         if (!currToken.getTokenType().equals(TokenType.ASSIGN)) {

@@ -27,7 +27,7 @@ public class WhileLoop implements JottTree{
             throw new SyntaxException("Expected left bracket", currToken.getFilename(), currToken.getLineNum());
         }
         tokens.remove(0);
-        Expr exprNode = Expr.parseExpr(tokens);
+        Expr exprNode = Expr.parse(tokens);
         currToken = tokens.get(0);
         if(!(currToken.getTokenType() == TokenType.R_BRACKET && currToken.getToken().equals("]"))) {
             throw new SyntaxException("Expected right bracket", currToken.getFilename(), currToken.getLineNum());
@@ -38,7 +38,7 @@ public class WhileLoop implements JottTree{
             throw new SyntaxException("Expected left brace", currToken.getFilename(), currToken.getLineNum());
         }
         tokens.remove(0);
-        Body bodyNode = Body.parseBody(tokens);
+        Body bodyNode = Body.parse(tokens);
         currToken = tokens.get(0);
         if(!(currToken.getTokenType() == TokenType.R_BRACE && currToken.getToken().equals("}"))) {
             throw new SyntaxException("Expected right brace", currToken.getFilename(), currToken.getLineNum());

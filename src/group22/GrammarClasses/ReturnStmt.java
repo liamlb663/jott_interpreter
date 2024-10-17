@@ -29,7 +29,7 @@ public class ReturnStmt implements JottTree {
         if(currToken.getTokenType().equals(TokenType.ID_KEYWORD) && currToken.getToken().equals("Return")) {
             tokens.remove(0);
             currToken = tokens.get(0);
-            expr = Expr.parse(currToken);
+            expr = Expr.parse(tokens);
             currToken = tokens.get(0);
             if(!currToken.getTokenType().equals(TokenType.SEMICOLON)) {
                 throw new SyntaxException("Missing semicolon at end of return statement", currToken.getFilename(), currToken.getLineNum());

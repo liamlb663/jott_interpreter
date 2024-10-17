@@ -8,14 +8,14 @@ import provided.TokenType;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExprNode implements JottTree {
+public class Expr implements JottTree {
     private final ArrayList<JottTree> subNodes;
 
-    public ExprNode(ArrayList<JottTree> subNodes) {
+    public Expr(ArrayList<JottTree> subNodes) {
         this.subNodes = subNodes;
     }
 
-    static ExprNode parseExprNode(ArrayList<Token> tokens) throws SyntaxException {
+    static Expr parse(ArrayList<Token> tokens) throws SyntaxException {
         if (tokens.isEmpty()) {
             // TODO: Catch in nodes above
             throw new UnknownError("Unexpected EOF");
@@ -25,7 +25,7 @@ public class ExprNode implements JottTree {
 
         try {
             if (firstToken.getTokenType() == TokenType.STRING) {
-                return new ExprNode(new ArrayList<>(List.of(StringLiteralNode.parseStringLiteralNode(tokens))));
+                return new Expr(new ArrayList<>(List.of(StringLiteral.parse(tokens))));
             } else if (firstToken.getTokenType() == TokenType.ID_KEYWORD &&
                     (firstToken.getToken().equals("True") || firstToken.getToken().equals("False"))
             ) {
@@ -41,7 +41,7 @@ public class ExprNode implements JottTree {
                 switch (currToken.getTokenType()) {
                     case MATH_OP -> {
                         if (validatedNodes.isEmpty() || validatedNodes.size() == 2) {
-                            validatedNodes.add(OperandNode.parseOperandNode(tokens));
+                            validatedNodes.add(Operand.parse(tokens));
                         } else {
                             // TODO
                             System.out.println("Fix");
@@ -49,7 +49,7 @@ public class ExprNode implements JottTree {
                     }
                     case ID_KEYWORD, NUMBER, FC_HEADER -> {
                         if (validatedNodes.isEmpty() || validatedNodes.size() == 2) {
-                            validatedNodes.add(OperandNode.parseOperandNode(tokens));
+                            validatedNodes.add(Operand.parse(tokens));
                         } else {
                             throw new SyntaxException(
                                     "Received unexpected " + currToken.getTokenType().toString() + " token",
@@ -72,7 +72,7 @@ public class ExprNode implements JottTree {
                     }
                     default -> {
                         if (!validatedNodes.isEmpty()) {
-                            return new ExprNode(validatedNodes);
+                            return new Expr(validatedNodes);
                         } else {
                             throw new SyntaxException(
                                     "Received unexpected " + currToken.getTokenType().toString() + " token",
@@ -84,7 +84,7 @@ public class ExprNode implements JottTree {
                 }
             }
 
-            return new ExprNode(validatedNodes);
+            return new Expr(validatedNodes);
         } catch (UnknownError e) {
             throw new SyntaxException(
                     e.getMessage(),

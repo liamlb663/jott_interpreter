@@ -13,7 +13,7 @@ public class Params implements JottTree {
         this.paramsTNodes = paramsTNodes;
     }
 
-    static Params parseParams(ArrayList<Token> tokens) throws SyntaxException {
+    static Params parse(ArrayList<Token> tokens) throws SyntaxException {
         if (tokens.isEmpty()) {
             throw new SyntaxException("Unexpected EOF", "", -1);
         }
@@ -21,11 +21,11 @@ public class Params implements JottTree {
         if (currToken.getTokenType() == TokenType.R_BRACKET) { //if epsilon
             return new Params(null, null);
         } else { //if <expr><params_t>*...
-            Expr exprNode = Expr.parseExpr(tokens);
+            Expr exprNode = Expr.parse(tokens);
             ArrayList<ParamsT> paramsTNodes = new ArrayList<>();
             currToken = tokens.get(0);
             while (currToken.getTokenType() == TokenType.COMMA) {
-                paramsTNodes.add(ParamsT.parseParamsT(tokens));
+                paramsTNodes.add(ParamsT.parse(tokens));
                 currToken = tokens.get(0);
             }
             return new Params(exprNode, paramsTNodes);

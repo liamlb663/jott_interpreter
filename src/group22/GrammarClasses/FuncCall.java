@@ -13,7 +13,7 @@ public class FuncCall implements JottTree{
         this.paramsNode = paramsNode;
     }
 
-    static FuncCall parseFuncCall(ArrayList<Token> tokens) throws SyntaxException {
+    static FuncCall parse(ArrayList<Token> tokens) throws SyntaxException {
         if (tokens.isEmpty()) {
             throw new SyntaxException("Unexpected EOF", "", -1);
         }
@@ -27,13 +27,13 @@ public class FuncCall implements JottTree{
             throw new SyntaxException("Should be a colon", currToken.getFilename(), currToken.getLineNum());
         }
         tokens.remove(0);
-        Id idNode = Id.parseIDNode(tokens);
+        Id idNode = Id.parse(tokens);
         currToken = tokens.get(0);
         if (currToken.getTokenType() != TokenType.L_BRACKET) {
             throw new SyntaxException("Should be a left bracket", currToken.getFilename(), currToken.getLineNum());
         }
         tokens.remove(0);
-        Params paramsNode = Params.parseParamsNode(tokens);
+        Params paramsNode = Params.parse(tokens);
         currToken = tokens.get(0);
         if (currToken.getTokenType() != TokenType.R_BRACKET) {
             throw new SyntaxException("Should be a right bracket", currToken.getFilename(), currToken.getLineNum());
