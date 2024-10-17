@@ -1,12 +1,13 @@
 package group22.GrammarClasses;
 
 import group22.SyntaxException;
+import provided.JottTree;
 import provided.Token;
 import provided.TokenType;
 
 import java.util.ArrayList;
 
-public class ReturnStmt {
+public class ReturnStmt implements JottTree {
     Expr expr;
 
     public ReturnStmt(Expr expr) {

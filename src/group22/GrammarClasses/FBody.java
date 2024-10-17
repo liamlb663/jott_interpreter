@@ -1,12 +1,13 @@
 package group22.GrammarClasses;
 
 import group22.SyntaxException;
+import provided.JottTree;
 import provided.Token;
 import provided.TokenType;
 
 import java.util.ArrayList;
 
-public class FBody {
+public class FBody implements JottTree {
     ArrayList<VarDec> varDecs;
     Body body;
 

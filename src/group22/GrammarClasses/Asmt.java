@@ -1,12 +1,13 @@
 package group22.GrammarClasses;
 
 import group22.SyntaxException;
+import provided.JottTree;
 import provided.Token;
 import provided.TokenType;
 
 import java.util.ArrayList;
 
-public class Asmt {
+public class Asmt implements JottTree {
     Id id;
     Expr expr;
 
