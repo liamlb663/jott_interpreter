@@ -7,14 +7,14 @@ import provided.TokenType;
 
 import java.util.ArrayList;
 
-public class RelOP implements JottTree {
+public class RelOp implements JottTree {
     private final Token operator;
 
-    public RelOP(Token operator) {
+    public RelOp(Token operator) {
         this.operator = operator;
     }
 
-    static RelOP parse(ArrayList<Token> tokens) throws SyntaxException {
+    static RelOp parse(ArrayList<Token> tokens) throws SyntaxException {
         if (tokens.isEmpty()) {
             throw new UnknownError("Unexpected EOF when parsing RelOP");
         }
@@ -23,7 +23,7 @@ public class RelOP implements JottTree {
 
         if (currToken.getTokenType() == TokenType.REL_OP && isValidRelOp(currToken.getToken())) {   // Ditto already done in the tokenizer i think
             tokens.remove(0); // Consume the relational operator
-            return new RelOP(currToken);
+            return new RelOp(currToken);
         } else {
             throw new SyntaxException(
                 "Invalid relational operator",

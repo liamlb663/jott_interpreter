@@ -7,14 +7,14 @@ import provided.TokenType;
 
 import java.util.ArrayList;
 
-public class MathOP implements JottTree {
+public class MathOp implements JottTree {
     private final Token operator;
 
-    public MathOP(Token operator) {
+    public MathOp(Token operator) {
         this.operator = operator;
     }
 
-    static MathOP parse(ArrayList<Token> tokens) throws SyntaxException {
+    static MathOp parse(ArrayList<Token> tokens) throws SyntaxException {
         if (tokens.isEmpty()) {
             throw new UnknownError("Unexpected EOF when parsing MathOP");
         }
@@ -23,7 +23,7 @@ public class MathOP implements JottTree {
 
         if (currToken.getTokenType() == TokenType.MATH_OP && isValidMathOp(currToken.getToken())) { // I think thats checked already
             tokens.remove(0); // Consume the math operator
-            return new MathOP(currToken);
+            return new MathOp(currToken);
         } else {
             throw new SyntaxException(
                 "Invalid mathematical operator",
