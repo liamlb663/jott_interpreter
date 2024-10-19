@@ -1,6 +1,7 @@
 package group22.GrammarClasses;
 
 import group22.SyntaxException;
+import provided.JottParser;
 import provided.JottTree;
 import provided.Token;
 import provided.TokenType;
@@ -16,8 +17,11 @@ public class Operand implements JottTree {
 
     static JottTree parse(ArrayList<Token> tokens) throws SyntaxException {
         if (tokens.isEmpty()) {
-            // TODO: Have this caught by parsing function in node above
-            throw new UnknownError("Unexpected EOF when parsing Operand");
+            throw new SyntaxException(
+                    "Unexpected EOF",
+                    JottParser.getFileName(),
+                    JottParser.getLineNumber()
+            );
         }
 
         Token currToken = tokens.get(0);
@@ -31,8 +35,7 @@ public class Operand implements JottTree {
                     return new Operand(Number.parse(tokens));
                 }
                 case FC_HEADER -> {
-                    // TODO: Fix actual call in FuncCall class :3 | parsedOperand = new OperandNode(FuncCall.parseFunctionCallNode(tokens));
-                    return null;
+                    return new Operand(FuncCall.parse(tokens));
                 }
                 case MATH_OP -> {
                     if (!currToken.getToken().equals("-")) {
@@ -72,13 +75,13 @@ public class Operand implements JottTree {
                         currToken.getLineNum()
                 );
             }
-        } catch (UnknownError e) {
+        } catch (Exception e) {
             // If we get anything that isn't a SyntaxException, that probably means it was an unexpected EOF
             // In this case, use our last saved Token for the filename and line number
             throw new SyntaxException(
-                    e.getMessage(),
-                    currToken.getFilename(),
-                    currToken.getLineNum()
+                    "Unexpected EOF",
+                    JottParser.getFileName(),
+                    JottParser.getLineNumber()
             );
         }
     }

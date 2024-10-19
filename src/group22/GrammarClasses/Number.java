@@ -1,6 +1,7 @@
 package group22.GrammarClasses;
 
 import group22.SyntaxException;
+import provided.JottParser;
 import provided.JottTree;
 import provided.Token;
 import provided.TokenType;
@@ -16,7 +17,11 @@ public class Number implements JottTree {
 
     static Number parse(ArrayList<Token> tokens) throws SyntaxException {
         if (tokens.isEmpty()) {
-            throw new UnknownError("Unexpected EOF");
+            throw new SyntaxException(
+                    "Unexpected EOF",
+                    JottParser.getFileName(),
+                    JottParser.getLineNumber()
+            );
         }
 
         Token currToken = tokens.remove(0);
