@@ -24,11 +24,11 @@ public class BodyStmt implements JottTree {
             switch (currentToken.getTokenType()) {
                 case ID_KEYWORD -> {
                     Token nextToken = tokens.get(1);
-                    if (nextToken.getTokenType() == TokenType.ASSIGN) {
+                    if (nextToken.getTokenType().equals(TokenType.ASSIGN)) {
                         return new BodyStmt(Asmt.parse(tokens));
-                    } else if (currentToken.getToken() == "If"){
+                    } else if (currentToken.getToken().equals("If")){
                         return new BodyStmt(IfStmt.parse(tokens));
-                    } else if (currentToken.getToken() == "While"){
+                    } else if (currentToken.getToken().equals("While")){
                         return new BodyStmt(WhileLoop.parseWhileLoop(tokens));
                     } else {
                         throw new SyntaxException(
