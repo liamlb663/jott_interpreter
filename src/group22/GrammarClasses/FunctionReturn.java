@@ -30,7 +30,7 @@ public class FunctionReturn {
     }
 
     public String convertToJott() {
-        return type.convertToJott();
+        return (type == null ? "Void" : type.convertToJott());
     }
 
     public boolean validateTree() {

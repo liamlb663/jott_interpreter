@@ -73,7 +73,7 @@ public class FunctionDef implements JottTree {
     }
 
     public String convertToJott() {
-        return "Def " + id.convertToJott() + "[" + params.convertToJott() + "]: " +
+        return "Def " + id.convertToJott() + "[" + (params == null ? "" : params.convertToJott()) + "]: " +
                 returnType.convertToJott() + "{" + body.convertToJott() + "}";
     }
 
