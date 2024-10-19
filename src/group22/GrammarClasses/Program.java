@@ -31,6 +31,11 @@ public class Program implements JottTree {
         catch (IndexOutOfBoundsException e) {
             throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
         }
+        catch (SyntaxException e) {
+            // Catch the SyntaxException and return null if it occurs
+            System.err.println("Syntax error: " + e.getMessage());
+            return null;
+        }
     }
 
     public String convertToJott() {
