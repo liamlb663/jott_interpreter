@@ -26,7 +26,7 @@ public class Body implements JottTree {
             ReturnStmt returnStmt = null;
 
             Token currToken = tokens.get(0);
-            while (currToken.getTokenType().equals(TokenType.ID_KEYWORD) || currToken.getTokenType().equals(TokenType.FC_HEADER)) {
+            while ((currToken.getTokenType().equals(TokenType.ID_KEYWORD) && !currToken.getToken().equals("Return")) || currToken.getTokenType().equals(TokenType.FC_HEADER)) {
                 BodyStmt bodyStmt = BodyStmt.parse(tokens);
                 bodyStmts.add(bodyStmt);
                 currToken = tokens.get(0);
