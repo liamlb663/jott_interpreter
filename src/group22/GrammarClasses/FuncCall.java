@@ -42,7 +42,7 @@ public class FuncCall implements JottTree{
     }
 
     public String convertToJott() {
-        return ("::" + this.idNode.convertToJott() + "[" + this.paramsNode.convertToJott() + "];");
+        return ("::" + this.idNode.convertToJott() + "[" + this.paramsNode.convertToJott() + "]");
     }
 
     public boolean validateTree() {

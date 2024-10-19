@@ -68,7 +68,7 @@ public class BodyStmt implements JottTree {
 
     @Override
     public String convertToJott() {
-        return subNode.convertToJott();
+        return subNode.convertToJott() + (subNode instanceof FuncCall ? ";" : "");
     }
 
     @Override
