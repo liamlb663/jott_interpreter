@@ -13,7 +13,7 @@ public class BodyStmt implements JottTree {
         this.subNode = node;
     }
 
-    static JottTree parse(ArrayList<Token> tokens) throws SyntaxException {
+    static BodyStmt parse(ArrayList<Token> tokens) throws SyntaxException {
         if (tokens.isEmpty()) {
             throw new UnknownError("Unexpected EOF when parsing Operand");
         }

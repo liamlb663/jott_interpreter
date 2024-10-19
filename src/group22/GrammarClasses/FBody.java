@@ -31,9 +31,8 @@ public class FBody implements JottTree {
 
             Token currToken = tokens.get(0);
             while (currToken.getTokenType().equals(TokenType.ID_KEYWORD) && tokenIsType(currToken)) {
-                VarDec varDec = VarDec.parse(currToken);
+                VarDec varDec = VarDec.parse(tokens);
                 varDecs.add(varDec);
-                tokens.remove(0);
                 currToken = tokens.get(0);
             }
 

@@ -16,7 +16,7 @@ public class VarDec implements JottTree {
         this.id = id;
     }
 
-    static JottTree parse(ArrayList<Token> tokens) throws SyntaxException {
+    static VarDec parse(ArrayList<Token> tokens) throws SyntaxException {
         if (tokens.size() < 3) {
             throw new SyntaxException("Unexpected EOF when parsing VarDec", "", -1);
         }
