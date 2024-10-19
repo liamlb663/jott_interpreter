@@ -26,16 +26,12 @@ public class Body implements JottTree {
             ReturnStmt returnStmt = null;
 
             Token currToken = tokens.get(0);
-            while (currToken.getTokenType().equals(TokenType.ID_KEYWORD)) {
-                try {
-                    BodyStmt bodyStmt = BodyStmt.parse(tokens);
-                    bodyStmts.add(bodyStmt);
-                    currToken = tokens.get(0);
-                } catch (SyntaxException sE) {
-                    returnStmt = ReturnStmt.parse(tokens);
-                    break;
-                }
+            while (currToken.getTokenType().equals(TokenType.ID_KEYWORD) || currToken.getTokenType().equals(TokenType.FC_HEADER)) {
+                BodyStmt bodyStmt = BodyStmt.parse(tokens);
+                bodyStmts.add(bodyStmt);
+                currToken = tokens.get(0);
             }
+            returnStmt = ReturnStmt.parse(tokens);
 
             if (returnStmt == null) {
                 throw new SyntaxException("Missing return statement in body", currToken.getFilename(), currToken.getLineNum());

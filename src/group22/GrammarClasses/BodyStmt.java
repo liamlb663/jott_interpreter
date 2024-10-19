@@ -39,7 +39,17 @@ public class BodyStmt implements JottTree {
                     }
                 }
                 case FC_HEADER -> {
-                    return new BodyStmt(FuncCall.parse(tokens));
+                    FuncCall funcCall = FuncCall.parse(tokens);
+                    currentToken = tokens.get(0);
+                    if (!currentToken.getTokenType().equals(TokenType.SEMICOLON)) {
+                        throw new SyntaxException(
+                                "Expected semicolon",
+                                currentToken.getFilename(),
+                                currentToken.getLineNum()
+                        );
+                    }
+                    tokens.remove(0);
+                    return new BodyStmt(funcCall);
                 }
                 default -> throw new SyntaxException(
                     "Invalid token found when parsing BodyStmt",

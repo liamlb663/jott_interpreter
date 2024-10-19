@@ -20,7 +20,11 @@ public class Program implements JottTree {
             while (currToken != null && currToken.getToken().equals("Def")) {
                 FunctionDef function = FunctionDef.parse(tokens);
                 functionDefs.add(function);
-                currToken = tokens.get(0);
+                if (tokens.isEmpty()) {
+                    currToken = null;
+                } else {
+                    currToken = tokens.get(0);
+                }
             }
             return new Program(functionDefs);
         }

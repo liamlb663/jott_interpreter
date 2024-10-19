@@ -17,6 +17,11 @@ public class FunctionReturn {
 
     public static FunctionReturn parse(ArrayList<Token> tokens) throws SyntaxException {
         try {
+            Token currToken = tokens.get(0);
+            if (currToken.getToken().equals("Void")) {
+                tokens.remove(0);
+                return new FunctionReturn(null);
+            }
             Type type = Type.parse(tokens);
             return new FunctionReturn(type);
         } catch (IndexOutOfBoundsException e) {

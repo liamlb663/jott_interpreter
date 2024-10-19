@@ -25,6 +25,11 @@ public class FuncDefParams {
             }
 
             Token currToken = tokens.get(0);
+
+            if (currToken.getTokenType().equals(TokenType.R_BRACKET)) {
+                return new FuncDefParams(null, null, null);
+            }
+
             if (!currToken.getTokenType().equals(TokenType.ID_KEYWORD)) {
                 throw new SyntaxException("Expected ID but saw " + currToken.getTokenType().toString(), currToken.getFilename(), currToken.getLineNum());
             }

@@ -38,7 +38,11 @@ public class FunctionDef implements JottTree {
                 throw new SyntaxException("Expected '[' but got " + currToken.getTokenType().toString(), currToken.getFilename(), currToken.getLineNum());
             }
             tokens.remove(0);
-            FuncDefParams params = FuncDefParams.parse(tokens);
+            currToken = tokens.get(0);
+            FuncDefParams params = null;
+            if (!currToken.getTokenType().equals(TokenType.R_BRACKET)) {
+                params = FuncDefParams.parse(tokens);
+            }
             currToken = tokens.get(0);
             if (!currToken.getTokenType().equals(TokenType.R_BRACKET)) {
                 throw new SyntaxException("Expected ']' but got " + currToken.getTokenType().toString(), currToken.getFilename(), currToken.getLineNum());
