@@ -13,16 +13,20 @@ public class Program implements JottTree {
     }
 
     public static Program parse(ArrayList<Token> tokens) throws SyntaxException {
-        ArrayList<FunctionDef> functionDefs = new ArrayList<>();
+        try {
+            ArrayList<FunctionDef> functionDefs = new ArrayList<>();
 
-        Token currToken = tokens.get(0);
-        while (currToken != null && currToken.getToken().equals("Def")) {
-            FunctionDef function = FunctionDef.parse(tokens);
-            functionDefs.add(function);
-            tokens.remove(0);
-            currToken = tokens.get(0);
+            Token currToken = tokens.get(0);
+            while (currToken != null && currToken.getToken().equals("Def")) {
+                FunctionDef function = FunctionDef.parse(tokens);
+                functionDefs.add(function);
+                currToken = tokens.get(0);
+            }
+            return new Program(functionDefs);
         }
-        return new Program(functionDefs);
+        catch (IndexOutOfBoundsException e) {
+            throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
+        }
     }
 
     public String convertToJott() {

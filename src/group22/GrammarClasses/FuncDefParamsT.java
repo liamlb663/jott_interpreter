@@ -15,30 +15,34 @@ public class FuncDefParamsT implements JottTree {
     }
 
     public static FuncDefParamsT parse(ArrayList<Token> tokens) throws SyntaxException {
-        if (tokens.isEmpty()) {
-            throw new SyntaxException("Unexpected EOF", "", -1);
-        }
-        Token currToken = tokens.get(0);
-        if(!currToken.getTokenType().equals(TokenType.COMMA)) {
-            throw new SyntaxException("Expected ','", currToken.getFilename(), currToken.getLineNum());
-        }
-        tokens.remove(0);
+        try {
+            if (tokens.isEmpty()) {
+                throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
+            }
+            Token currToken = tokens.get(0);
+            if (!currToken.getTokenType().equals(TokenType.COMMA)) {
+                throw new SyntaxException("Expected ','", currToken.getFilename(), currToken.getLineNum());
+            }
+            tokens.remove(0);
 
-        currToken = tokens.get(0);
-        if (!currToken.getTokenType().equals(TokenType.ID_KEYWORD)) {
-            throw new SyntaxException("Expected ID but saw " + currToken.getTokenType().toString(), currToken.getFilename(), currToken.getLineNum());
-        }
-        Id id = Id.parse(currToken);
-        tokens.remove(0);
+            currToken = tokens.get(0);
+            if (!currToken.getTokenType().equals(TokenType.ID_KEYWORD)) {
+                throw new SyntaxException("Expected ID but saw " + currToken.getTokenType().toString(), currToken.getFilename(), currToken.getLineNum());
+            }
+            Id id = Id.parse(tokens);
 
-        currToken = tokens.get(0);
-        if (!currToken.getTokenType().equals(TokenType.COLON)) {
-            throw new SyntaxException("Expected ':' after ID token", currToken.getFilename(), currToken.getLineNum());
-        }
-        tokens.remove(0);
-        Type type = Type.parse(tokens);
+            currToken = tokens.get(0);
+            if (!currToken.getTokenType().equals(TokenType.COLON)) {
+                throw new SyntaxException("Expected ':' after ID token", currToken.getFilename(), currToken.getLineNum());
+            }
+            tokens.remove(0);
+            Type type = Type.parse(tokens);
 
-        return new FuncDefParamsT(id, type);
+            return new FuncDefParamsT(id, type);
+        }
+        catch (IndexOutOfBoundsException e) {
+            throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
+        }
     }
 
     public String convertToJott() {

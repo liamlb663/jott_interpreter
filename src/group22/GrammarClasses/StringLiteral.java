@@ -1,6 +1,7 @@
 package group22.GrammarClasses;
 
 import group22.SyntaxException;
+import provided.JottParser;
 import provided.JottTree;
 import provided.Token;
 import provided.TokenType;
@@ -16,8 +17,11 @@ public class StringLiteral implements JottTree {
 
     static StringLiteral parse(ArrayList<Token> tokens) throws SyntaxException {
         if (tokens.isEmpty()) {
-            // TODO: Catch in nodes above
-            throw new UnknownError("Unexpected EOF");
+            throw new SyntaxException(
+                    "Unexpected EOF",
+                    JottParser.getFileName(),
+                    JottParser.getLineNumber()
+            );
         }
 
         Token firstToken = tokens.remove(0);

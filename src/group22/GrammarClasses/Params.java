@@ -15,20 +15,24 @@ public class Params implements JottTree {
 
     static Params parse(ArrayList<Token> tokens) throws SyntaxException {
         if (tokens.isEmpty()) {
-            throw new SyntaxException("Unexpected EOF", "", -1);
+            throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
         }
-        Token currToken = tokens.get(0);
-        if (currToken.getTokenType() == TokenType.R_BRACKET) { //if epsilon
-            return new Params(null, null);
-        } else { //if <expr><params_t>*...
-            Expr exprNode = Expr.parse(tokens);
-            ArrayList<ParamsT> paramsTNodes = new ArrayList<>();
-            currToken = tokens.get(0);
-            while (currToken.getTokenType() == TokenType.COMMA) {
-                paramsTNodes.add(ParamsT.parse(tokens));
+        try {
+            Token currToken = tokens.get(0);
+            if (currToken.getTokenType() == TokenType.R_BRACKET) { //if epsilon
+                return new Params(null, null);
+            } else { //if <expr><params_t>*...
+                Expr exprNode = Expr.parse(tokens);
+                ArrayList<ParamsT> paramsTNodes = new ArrayList<>();
                 currToken = tokens.get(0);
+                while (currToken.getTokenType() == TokenType.COMMA) {
+                    paramsTNodes.add(ParamsT.parse(tokens));
+                    currToken = tokens.get(0);
+                }
+                return new Params(exprNode, paramsTNodes);
             }
-            return new Params(exprNode, paramsTNodes);
+        } catch (IndexOutOfBoundsException e) {
+            throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
         }
     }
 

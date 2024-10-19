@@ -1,6 +1,7 @@
 package group22.GrammarClasses;
 
 import group22.SyntaxException;
+import provided.JottParser;
 import provided.Token;
 import provided.TokenType;
 
@@ -15,8 +16,12 @@ public class FunctionReturn {
     }
 
     public static FunctionReturn parse(ArrayList<Token> tokens) throws SyntaxException {
-        Type type = Type.parse(tokens);
-        return new FunctionReturn(type);
+        try {
+            Type type = Type.parse(tokens);
+            return new FunctionReturn(type);
+        } catch (IndexOutOfBoundsException e) {
+            throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
+        }
     }
 
     public String convertToJott() {

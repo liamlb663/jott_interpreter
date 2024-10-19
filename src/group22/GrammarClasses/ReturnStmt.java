@@ -1,6 +1,7 @@
 package group22.GrammarClasses;
 
 import group22.SyntaxException;
+import provided.JottParser;
 import provided.JottTree;
 import provided.Token;
 import provided.TokenType;
@@ -19,26 +20,31 @@ public class ReturnStmt implements JottTree {
     }
 
     public static ReturnStmt parse(ArrayList<Token> tokens) throws SyntaxException {
-        Expr expr = null;
+        try {
+            Expr expr = null;
 
-        if(tokens.isEmpty()){
-            throw new SyntaxException("Unexpected EOF", "", -1);
-        }
-
-        Token currToken = tokens.get(0);
-        if(currToken.getTokenType().equals(TokenType.ID_KEYWORD) && currToken.getToken().equals("Return")) {
-            tokens.remove(0);
-            currToken = tokens.get(0);
-            expr = Expr.parse(tokens);
-            currToken = tokens.get(0);
-            if(!currToken.getTokenType().equals(TokenType.SEMICOLON)) {
-                throw new SyntaxException("Missing semicolon at end of return statement", currToken.getFilename(), currToken.getLineNum());
-            } else {
-                tokens.remove(0);
+            if (tokens.isEmpty()) {
+                throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
             }
-        }
 
-        return new ReturnStmt(expr);
+            Token currToken = tokens.get(0);
+            if (currToken.getTokenType().equals(TokenType.ID_KEYWORD) && currToken.getToken().equals("Return")) {
+                tokens.remove(0);
+                currToken = tokens.get(0);
+                expr = Expr.parse(tokens);
+                currToken = tokens.get(0);
+                if (!currToken.getTokenType().equals(TokenType.SEMICOLON)) {
+                    throw new SyntaxException("Missing semicolon at end of return statement", currToken.getFilename(), currToken.getLineNum());
+                } else {
+                    tokens.remove(0);
+                }
+            }
+
+            return new ReturnStmt(expr);
+        }
+        catch (IndexOutOfBoundsException e) {
+            throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
+        }
     }
     public String convertToJott() {
         if (expr == null) {

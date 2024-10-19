@@ -1,6 +1,7 @@
 package group22.GrammarClasses;
 
 import group22.SyntaxException;
+import provided.JottParser;
 import provided.JottTree;
 import provided.Token;
 import provided.TokenType;
@@ -17,8 +18,11 @@ public class Expr implements JottTree {
 
     static Expr parse(ArrayList<Token> tokens) throws SyntaxException {
         if (tokens.isEmpty()) {
-            // TODO: Catch in nodes above
-            throw new UnknownError("Unexpected EOF");
+            throw new SyntaxException(
+                    "Unexpected EOF",
+                    JottParser.getFileName(),
+                    JottParser.getLineNumber()
+            );
         }
 
         Token firstToken = tokens.get(0);
@@ -29,8 +33,7 @@ public class Expr implements JottTree {
             } else if (firstToken.getTokenType() == TokenType.ID_KEYWORD &&
                     (firstToken.getToken().equals("True") || firstToken.getToken().equals("False"))
             ) {
-                // TODO
-                return null;
+                return new Expr(new ArrayList<>(List.of(Bool.parse(tokens))));
             }
 
             ArrayList<JottTree> validatedNodes = new ArrayList<>();
@@ -43,8 +46,7 @@ public class Expr implements JottTree {
                         if (validatedNodes.isEmpty() || validatedNodes.size() == 2) {
                             validatedNodes.add(Operand.parse(tokens));
                         } else {
-                            // TODO
-                            System.out.println("Fix");
+                            validatedNodes.add(MathOp.parse(tokens));
                         }
                     }
                     case ID_KEYWORD, NUMBER, FC_HEADER -> {
@@ -60,8 +62,7 @@ public class Expr implements JottTree {
                     }
                     case REL_OP -> {
                         if (validatedNodes.size() == 1) {
-                            // TODO
-                            System.out.println("Fix");
+                            validatedNodes.add(RelOp.parse(tokens));
                         } else {
                             throw new SyntaxException(
                                     "Received unexpected REL_OP token",
@@ -85,11 +86,11 @@ public class Expr implements JottTree {
             }
 
             return new Expr(validatedNodes);
-        } catch (UnknownError e) {
+        } catch (Exception e) {
             throw new SyntaxException(
-                    e.getMessage(),
-                    firstToken.getFilename(),
-                    firstToken.getLineNum()
+                    "Unexpected EOF",
+                    JottParser.getFileName(),
+                    JottParser.getLineNumber()
             );
         }
     }
