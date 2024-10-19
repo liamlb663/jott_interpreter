@@ -21,7 +21,7 @@ public class FuncDefParams {
     public static FuncDefParams parse(ArrayList<Token> tokens) throws SyntaxException {
         try {
             if (tokens.isEmpty()) {
-                throw new SyntaxException("Unexpected EOF", "", -1);
+                throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
             }
 
             Token currToken = tokens.get(0);
@@ -29,7 +29,6 @@ public class FuncDefParams {
                 throw new SyntaxException("Expected ID but saw " + currToken.getTokenType().toString(), currToken.getFilename(), currToken.getLineNum());
             }
             Id id = Id.parse(tokens);
-            tokens.remove(0);
 
             currToken = tokens.get(0);
             if (!currToken.getTokenType().equals(TokenType.COLON)) {
@@ -38,13 +37,11 @@ public class FuncDefParams {
             tokens.remove(0);
 
             Type type = Type.parse(tokens);
-            tokens.remove(0);
             ArrayList<FuncDefParamsT> params = new ArrayList<>();
             currToken = tokens.get(0);
             while (currToken != null && currToken.getTokenType().equals(TokenType.COMMA)) {
                 FuncDefParamsT param = FuncDefParamsT.parse(tokens);
                 params.add(param);
-                tokens.remove(0);
                 currToken = tokens.get(0);
             }
 

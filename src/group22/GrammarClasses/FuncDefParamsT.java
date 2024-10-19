@@ -30,7 +30,6 @@ public class FuncDefParamsT implements JottTree {
                 throw new SyntaxException("Expected ID but saw " + currToken.getTokenType().toString(), currToken.getFilename(), currToken.getLineNum());
             }
             Id id = Id.parse(tokens);
-            tokens.remove(0);
 
             currToken = tokens.get(0);
             if (!currToken.getTokenType().equals(TokenType.COLON)) {

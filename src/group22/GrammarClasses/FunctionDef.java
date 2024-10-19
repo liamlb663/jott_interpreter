@@ -24,46 +24,43 @@ public class FunctionDef implements JottTree {
                 throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
             }
             Token currToken = tokens.get(0);
-            if (currToken.getToken() != "Def") {
-                throw new SyntaxException("Expected 'Def' Keyword but got " + currToken.getToken(), "", -1);
+            if (!currToken.getToken().equals("Def")) {
+                throw new SyntaxException("Expected 'Def' Keyword but got " + currToken.getToken(), currToken.getFilename(), currToken.getLineNum());
             }
             tokens.remove(0);
             currToken = tokens.get(0);
             if (!currToken.getTokenType().equals(TokenType.ID_KEYWORD)) {
-                throw new SyntaxException("Expected ID but got " + currToken.getTokenType().toString(), "", -1);
+                throw new SyntaxException("Expected ID but got " + currToken.getTokenType().toString(), currToken.getFilename(), currToken.getLineNum());
             }
             Id id = Id.parse(tokens);
-            tokens.remove(0);
             currToken = tokens.get(0);
             if (!currToken.getTokenType().equals(TokenType.L_BRACKET)) {
-                throw new SyntaxException("Expected '[' but got " + currToken.getTokenType().toString(), "", -1);
+                throw new SyntaxException("Expected '[' but got " + currToken.getTokenType().toString(), currToken.getFilename(), currToken.getLineNum());
             }
             tokens.remove(0);
             FuncDefParams params = FuncDefParams.parse(tokens);
-            tokens.remove(0);
             currToken = tokens.get(0);
             if (!currToken.getTokenType().equals(TokenType.R_BRACKET)) {
-                throw new SyntaxException("Expected ']' but got " + currToken.getTokenType().toString(), "", -1);
+                throw new SyntaxException("Expected ']' but got " + currToken.getTokenType().toString(), currToken.getFilename(), currToken.getLineNum());
             }
             tokens.remove(0);
             currToken = tokens.get(0);
             if (!currToken.getTokenType().equals(TokenType.COLON)) {
-                throw new SyntaxException("Expected ':' but got " + currToken.getTokenType().toString(), "", -1);
+                throw new SyntaxException("Expected ':' but got " + currToken.getTokenType().toString(), currToken.getFilename(), currToken.getLineNum());
             }
             tokens.remove(0);
             FunctionReturn returnType = FunctionReturn.parse(tokens);
-            tokens.remove(0);
             currToken = tokens.get(0);
             if (!currToken.getTokenType().equals(TokenType.L_BRACE)) {
-                throw new SyntaxException("Expected '{' but got " + currToken.getTokenType().toString(), "", -1);
+                throw new SyntaxException("Expected '{' but got " + currToken.getTokenType().toString(), currToken.getFilename(), currToken.getLineNum());
             }
             tokens.remove(0);
             FBody body = FBody.parse(tokens);
-            tokens.remove(0);
             currToken = tokens.get(0);
             if (!currToken.getTokenType().equals(TokenType.R_BRACE)) {
-                throw new SyntaxException("Expected '}' but got " + currToken.getTokenType().toString(), "", -1);
+                throw new SyntaxException("Expected '}' but got " + currToken.getTokenType().toString(), currToken.getFilename(), currToken.getLineNum());
             }
+            tokens.remove(0);
             return new FunctionDef(id, params, returnType, body);
         }
         catch (IndexOutOfBoundsException e) {
