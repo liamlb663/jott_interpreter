@@ -40,7 +40,7 @@ public class StringLiteral implements JottTree {
     @Override
     public String convertToJott() {
         // This is really insecure as escaping the String is really easy, however I don't care
-        return "\"" + stringLiteral.getToken() + "\"";
+        return stringLiteral.getToken();
     }
 
     @Override
