@@ -26,6 +26,10 @@ public class Program implements JottTree {
                     currToken = tokens.get(0);
                 }
             }
+            if (!tokens.isEmpty()) {
+                Token nextToken = tokens.get(0);
+                throw new SyntaxException("Expected EOF, found " + nextToken.getTokenType(), nextToken.getFilename(), nextToken.getLineNum());
+            }
             return new Program(functionDefs);
         }
         catch (IndexOutOfBoundsException e) {
