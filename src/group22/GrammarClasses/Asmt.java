@@ -28,7 +28,7 @@ public class Asmt implements JottTree {
                 throw new SyntaxException("Expected ID but saw " + currToken.getTokenType().toString(), currToken.getFilename(), currToken.getLineNum());
             }
             Id id = Id.parse(tokens);
-            tokens.remove(0);
+
             currToken = tokens.get(0);
             if (!currToken.getTokenType().equals(TokenType.ASSIGN)) {
                 throw new SyntaxException("Expected '=' for assignment", currToken.getFilename(), currToken.getLineNum());

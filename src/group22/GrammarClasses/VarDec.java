@@ -35,6 +35,7 @@ public class VarDec implements JottTree {
                 thirdToken.getLineNum()
             );
         }
+        tokens.remove(0);
 
         return new VarDec(type, id);
     }
