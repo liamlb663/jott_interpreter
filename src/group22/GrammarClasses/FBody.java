@@ -1,6 +1,7 @@
 package group22.GrammarClasses;
 
 import group22.SyntaxException;
+import provided.JottParser;
 import provided.JottTree;
 import provided.Token;
 import provided.TokenType;
@@ -22,22 +23,27 @@ public class FBody implements JottTree {
     }
 
     public static FBody parse(ArrayList<Token> tokens) throws SyntaxException {
-        if(tokens.isEmpty()){
-            throw new SyntaxException("Unexpected EOF", "", -1);
+        try {
+            if (tokens.isEmpty()) {
+                throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
+            }
+            ArrayList<VarDec> varDecs = new ArrayList<>();
+
+            Token currToken = tokens.get(0);
+            while (currToken.getTokenType().equals(TokenType.ID_KEYWORD) && tokenIsType(currToken)) {
+                VarDec varDec = VarDec.parse(currToken);
+                varDecs.add(varDec);
+                tokens.remove(0);
+                currToken = tokens.get(0);
+            }
+
+            Body body = Body.parse(tokens);
+
+            return new FBody(varDecs, body);
         }
-        ArrayList<VarDec> varDecs = new ArrayList<>();
-
-        Token currToken = tokens.get(0);
-        while(currToken.getTokenType().equals(TokenType.ID_KEYWORD) && tokenIsType(currToken)) {
-            VarDec varDec = VarDec.parse(currToken);
-            varDecs.add(varDec);
-            tokens.remove(0);
-            currToken = tokens.get(0);
+        catch (IndexOutOfBoundsException e) {
+            throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
         }
-
-        Body body = Body.parse(tokens);
-
-        return new FBody(varDecs, body);
     }
     public String convertToJott() {
         StringBuilder sB = new StringBuilder();

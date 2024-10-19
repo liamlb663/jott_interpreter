@@ -23,7 +23,7 @@ public class JottParser {
      *         or null upon an error in parsing.
      */
     public static JottTree parse(ArrayList<Token> tokens) throws SyntaxException {
-		if (tokens.size() == 0) {
+		if (tokens.isEmpty()) {
             lineNumber = 0;
             fileName = "";
         } else {

@@ -13,19 +13,24 @@ public class ParamsT implements JottTree {
     }
 
     public static ParamsT parse(ArrayList<Token> tokens) throws SyntaxException {
-        if(tokens.isEmpty()){
-            throw new SyntaxException("Unexpected EOF", "", -1);
+        try {
+            if (tokens.isEmpty()) {
+                throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
+            }
+            Token currToken = tokens.get(0);
+            if (!currToken.getTokenType().equals(TokenType.COMMA)) {
+                throw new SyntaxException("Comma expected before next parameter", currToken.getFilename(), currToken.getLineNum());
+            }
+            tokens.remove(0);
+            if (tokens.isEmpty()) {
+                throw new SyntaxException("Paramter expression expected after comma", currToken.getFilename(), currToken.getLineNum());
+            }
+            Expr exprNode = Expr.parse(tokens);
+            return new ParamsT(exprNode);
         }
-        Token currToken = tokens.get(0);
-        if(!currToken.getTokenType().equals(TokenType.COMMA)) {
-            throw new SyntaxException("Comma expected before next parameter", currToken.getFilename(), currToken.getLineNum());
+        catch (IndexOutOfBoundsException e) {
+            throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
         }
-        tokens.remove(0);
-        if(tokens.isEmpty()) {
-            throw new SyntaxException("Paramter expression expected after comma", currToken.getFilename(), currToken.getLineNum());
-        }
-        Expr exprNode = Expr.parse(tokens);
-        return new ParamsT(exprNode);
     }
     public String convertToJott() {
         String s = ", " + this.exprNode.convertToJott();

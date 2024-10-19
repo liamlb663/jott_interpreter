@@ -1,6 +1,7 @@
 package group22.GrammarClasses;
 
 import group22.SyntaxException;
+import provided.JottParser;
 import provided.JottTree;
 import provided.Token;
 import provided.TokenType;
@@ -19,7 +20,7 @@ public class Bool implements JottTree {
 
     public static Bool parse(ArrayList<Token> tokens) throws SyntaxException {
         if(tokens.isEmpty()){
-            throw new SyntaxException("Unexpected EOF", "", -1);
+            throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
         }
 
         Token currToken = tokens.get(0);

@@ -1,6 +1,7 @@
 package group22.GrammarClasses;
 
 import group22.SyntaxException;
+import provided.JottParser;
 import provided.JottTree;
 import provided.Token;
 import provided.TokenType;
@@ -17,30 +18,34 @@ public class Asmt implements JottTree {
     }
 
     public static Asmt parse(ArrayList<Token> tokens) throws SyntaxException {
-        if(tokens.isEmpty()){
-            throw new SyntaxException("Unexpected EOF", "", -1);
-        }
+        try {
+            if(tokens.isEmpty()){
+                throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
+            }
 
-        Token currToken = tokens.get(0);
-        if (!currToken.getTokenType().equals(TokenType.ID_KEYWORD)) {
-            throw new SyntaxException("Expected ID but saw " + currToken.getTokenType().toString(), currToken.getFilename(), currToken.getLineNum());
-        }
-        Id id = Id.parse(tokens);
-        tokens.remove(0);
-        currToken = tokens.get(0);
-        if (!currToken.getTokenType().equals(TokenType.ASSIGN)) {
-            throw new SyntaxException("Expected '=' for assignment", currToken.getFilename(), currToken.getLineNum());
-        }
-        tokens.remove(0);
-        currToken = tokens.get(0);
-        Expr expr = Expr.parse(tokens);
-        currToken = tokens.get(0);
-        if (!currToken.getTokenType().equals(TokenType.SEMICOLON)) {
-            throw new SyntaxException("Missing semicolon at end of assignment", currToken.getFilename(), currToken.getLineNum());
-        }
-        tokens.remove(0);
+            Token currToken = tokens.get(0);
+            if (!currToken.getTokenType().equals(TokenType.ID_KEYWORD)) {
+                throw new SyntaxException("Expected ID but saw " + currToken.getTokenType().toString(), currToken.getFilename(), currToken.getLineNum());
+            }
+            Id id = Id.parse(tokens);
+            tokens.remove(0);
+            currToken = tokens.get(0);
+            if (!currToken.getTokenType().equals(TokenType.ASSIGN)) {
+                throw new SyntaxException("Expected '=' for assignment", currToken.getFilename(), currToken.getLineNum());
+            }
+            tokens.remove(0);
+            currToken = tokens.get(0);
+            Expr expr = Expr.parse(tokens);
+            currToken = tokens.get(0);
+            if (!currToken.getTokenType().equals(TokenType.SEMICOLON)) {
+                throw new SyntaxException("Missing semicolon at end of assignment", currToken.getFilename(), currToken.getLineNum());
+            }
+            tokens.remove(0);
 
-        return new Asmt(id, expr);
+            return new Asmt(id, expr);
+        } catch (IndexOutOfBoundsException e) {
+            throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
+        }
     }
     public String convertToJott() {
         return id.convertToJott() + "=" + expr.convertToJott() + ";";

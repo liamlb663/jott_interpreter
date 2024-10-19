@@ -1,6 +1,7 @@
 package group22.GrammarClasses;
 
 import group22.SyntaxException;
+import provided.JottParser;
 import provided.JottTree;
 import provided.Token;
 import provided.TokenType;
@@ -17,29 +18,34 @@ public class Body implements JottTree {
     }
 
     public static Body parse(ArrayList<Token> tokens) throws SyntaxException {
-        if(tokens.isEmpty()){
-            throw new SyntaxException("Unexpected EOF", "", -1);
-        }
-        ArrayList<BodyStmt> bodyStmts = new ArrayList<>();
-        ReturnStmt returnStmt = null;
-
-        Token currToken = tokens.get(0);
-        while(currToken.getTokenType().equals(TokenType.ID_KEYWORD)) {
-            try {
-                BodyStmt bodyStmt = BodyStmt.parse(tokens);
-                bodyStmts.add(bodyStmt);
-                currToken = tokens.get(0);
-            } catch (SyntaxException sE) {
-                returnStmt = ReturnStmt.parse(tokens);
-                break;
+        try {
+            if (tokens.isEmpty()) {
+                throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
             }
-        }
+            ArrayList<BodyStmt> bodyStmts = new ArrayList<>();
+            ReturnStmt returnStmt = null;
 
-        if (returnStmt == null) {
-            throw new SyntaxException("Missing return statement in body", currToken.getFilename(), currToken.getLineNum());
-        }
+            Token currToken = tokens.get(0);
+            while (currToken.getTokenType().equals(TokenType.ID_KEYWORD)) {
+                try {
+                    BodyStmt bodyStmt = BodyStmt.parse(tokens);
+                    bodyStmts.add(bodyStmt);
+                    currToken = tokens.get(0);
+                } catch (SyntaxException sE) {
+                    returnStmt = ReturnStmt.parse(tokens);
+                    break;
+                }
+            }
 
-        return new Body(bodyStmts, returnStmt);
+            if (returnStmt == null) {
+                throw new SyntaxException("Missing return statement in body", currToken.getFilename(), currToken.getLineNum());
+            }
+
+            return new Body(bodyStmts, returnStmt);
+        }
+        catch (IndexOutOfBoundsException e) {
+            throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
+        }
     }
     public String convertToJott() {
         StringBuilder sB = new StringBuilder();
