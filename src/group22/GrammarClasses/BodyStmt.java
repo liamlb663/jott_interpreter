@@ -1,4 +1,73 @@
 package group22.GrammarClasses;
 
-public class BodyStmt {
+import group22.SyntaxException;
+import provided.JottTree;
+import provided.Token;
+import provided.TokenType;
+
+import java.util.ArrayList;
+
+public class BodyStmt implements JottTree {
+    private final JottTree subNode;
+    public BodyStmt(JottTree node) {
+        this.subNode = node;
+    }
+
+    static JottTree parse(ArrayList<Token> tokens) throws SyntaxException {
+        if (tokens.isEmpty()) {
+            throw new UnknownError("Unexpected EOF when parsing Operand");
+        }
+
+        Token currentToken = tokens.get(0);
+
+        try {
+            switch (currentToken.getTokenType()) {
+                case ID_KEYWORD -> {
+                    Token nextToken = tokens.get(1);
+                    if (nextToken.getTokenType() == TokenType.ASSIGN) {
+                        return new BodyStmt(Asmt.parse(tokens));
+                    } else if (currentToken.getToken() == "If"){
+                        return new BodyStmt(IfStmt.parse(tokens));
+                    } else if (currentToken.getToken() == "While"){
+                        return new BodyStmt(WhileLoop.parseWhileLoop(tokens));
+                    } else {
+                        throw new SyntaxException(
+                            "Invalid token after ID keyword when parsing BodyStmt",
+                            currentToken.getFilename(),
+                            currentToken.getLineNum()
+                        );
+                    }
+                }
+                case FC_HEADER -> {
+                    return new BodyStmt(FuncCall.parse(tokens));
+                }
+                default -> throw new SyntaxException(
+                    "Invalid token found when parsing BodyStmt",
+                    currentToken.getFilename(),
+                    currentToken.getLineNum()
+                );
+            }
+        } catch (UnknownError e) {
+            throw new SyntaxException(
+                e.getMessage(),
+                currentToken.getFilename(),
+                currentToken.getLineNum()
+            );
+        }
+    }
+
+    @Override
+    public String convertToJott() {
+        return subNode.convertToJott();
+    }
+
+    @Override
+    public boolean validateTree() {
+        return subNode.validateTree();
+    }
+
+    @Override
+    public void execute() {
+        subNode.execute();
+    }
 }
