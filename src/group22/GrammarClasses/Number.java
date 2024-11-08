@@ -44,8 +44,7 @@ public class Number implements JottTree {
 
     @Override
     public boolean validateTree() {
-        // TODO
-        return false;
+        return true;
     }
 
     @Override
