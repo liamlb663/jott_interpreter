@@ -95,6 +95,10 @@ public class Expr implements JottTree {
         }
     }
 
+    private boolean isValidMathExpression() {
+        Token operandOne = Operand.getOperandToken((Operand) subNodes.getFirst());
+    }
+
     @Override
     public String convertToJott() {
         StringBuilder jottCode = new StringBuilder();
@@ -108,7 +112,14 @@ public class Expr implements JottTree {
 
     @Override
     public boolean validateTree() {
-        return false;
+        if (subNodes.size() == 1) {
+            return subNodes.getFirst().validateTree();
+        } else if (MathOp.isValidMathOp(subNodes.get(1).convertToJott())) {
+            // TODO
+
+        } else if (RelOp.isValidRelOp(subNodes.get(1).convertToJott())) {
+            // TODO
+        }
     }
 
     @Override

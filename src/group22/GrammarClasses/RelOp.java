@@ -34,7 +34,7 @@ public class RelOp implements JottTree {
     }
 
     // Helper function to check for valid relational operators
-    private static boolean isValidRelOp(String token) {
+    public static boolean isValidRelOp(String token) {
         return token.equals("==") || token.equals(">=") || token.equals("<=") ||
                token.equals(">") || token.equals("<");
     }

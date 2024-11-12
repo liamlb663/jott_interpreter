@@ -45,7 +45,7 @@ public class StringLiteral implements JottTree {
 
     @Override
     public boolean validateTree() {
-        return false;
+        return true;
     }
 
     @Override

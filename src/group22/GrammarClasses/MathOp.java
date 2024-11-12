@@ -33,7 +33,7 @@ public class MathOp implements JottTree {
         }
     }
 
-    private static boolean isValidMathOp(String token) {
+    public static boolean isValidMathOp(String token) {
         return token.equals("+") || token.equals("-") || token.equals("*") || token.equals("/");
     }
 
