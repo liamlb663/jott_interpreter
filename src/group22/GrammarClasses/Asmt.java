@@ -1,10 +1,12 @@
 package group22.GrammarClasses;
 
+import group22.DataType;
 import group22.SemanticException;
 import group22.SyntaxException;
 import provided.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Asmt implements JottTree {
     Id id;
@@ -67,9 +69,13 @@ public class Asmt implements JottTree {
         return id.convertToJott() + "=" + expr.convertToJott() + ";";
     }
 
-    public boolean validateTree() throws SemanticException {
-        boolean idValid = id.validateTree();
-        boolean exprValid = expr.validateTree();
+    public boolean validateTree(
+            HashMap<String, DataType> functions,
+            HashMap<String, HashMap<String, DataType>> variables,
+            String currentScope
+    ) throws SemanticException {
+        boolean idValid = id.validateTree(functions, variables, currentScope);
+        boolean exprValid = expr.validateTree(functions, variables, currentScope);
 
         if ()
             return false;

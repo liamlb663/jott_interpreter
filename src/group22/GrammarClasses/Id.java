@@ -6,6 +6,7 @@ import group22.SyntaxException;
 import provided.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Id implements JottTree {
     private final Token id;
@@ -60,8 +61,22 @@ public class Id implements JottTree {
     }
 
     @Override
-    public boolean validateTree() {
-        return false;
+    public boolean validateTree(
+            HashMap<String, DataType> functions,
+            HashMap<String, HashMap<String, DataType>> variables,
+            String currentScope
+    ) throws SemanticException {
+        HashMap<String, DataType> currScopeVars = variables.get(currentScope);
+
+        if (currScopeVars.get(id.getToken()) == null) {
+            throw new SemanticException(
+                    id.getToken() + " isn't defined in assignment",
+                    id.getFilename(),
+                    id.getLineNum()
+            );
+        }
+
+        return true;
     }
 
     @Override

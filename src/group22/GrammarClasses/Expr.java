@@ -1,5 +1,6 @@
 package group22.GrammarClasses;
 
+import group22.DataType;
 import group22.SyntaxException;
 import provided.JottParser;
 import provided.JottTree;
@@ -7,6 +8,7 @@ import provided.Token;
 import provided.TokenType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Expr implements JottTree {
@@ -96,7 +98,7 @@ public class Expr implements JottTree {
     }
 
     private boolean isValidMathExpression() {
-        Token operandOne = Operand.getOperandToken((Operand) subNodes.getFirst());
+        Token operandOne = subNodes.getFirst()
     }
 
     @Override
@@ -111,7 +113,11 @@ public class Expr implements JottTree {
     }
 
     @Override
-    public boolean validateTree() {
+    public boolean validateTree(
+            HashMap<String, DataType> functions,
+            HashMap<String, HashMap<String, DataType>> variables,
+            String currentScope
+    ) {
         if (subNodes.size() == 1) {
             return subNodes.getFirst().validateTree();
         } else if (MathOp.isValidMathOp(subNodes.get(1).convertToJott())) {
