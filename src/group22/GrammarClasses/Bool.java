@@ -15,7 +15,7 @@ public class Bool implements JottTree {
     }
 
     private static boolean isBoolKeyword(Token t) {
-        return t.getToken().equals("True") && t.getToken().equals("False");
+        return t.getToken().equals("True") || t.getToken().equals("False");
     }
 
     public static Bool parse(ArrayList<Token> tokens) throws SyntaxException {
@@ -36,8 +36,7 @@ public class Bool implements JottTree {
     }
 
     public boolean validateTree() {
-        //TODO
-        return false;
+        return true;
     }
 
     public void execute() {

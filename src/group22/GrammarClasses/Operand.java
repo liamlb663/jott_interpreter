@@ -1,5 +1,6 @@
 package group22.GrammarClasses;
 
+import group22.DataType;
 import group22.SyntaxException;
 import provided.JottParser;
 import provided.JottTree;
@@ -10,9 +11,11 @@ import java.util.ArrayList;
 
 public class Operand implements JottTree {
     private final JottTree subNode;
+    private final Token subNodeToken;
 
-    public Operand(JottTree node) {
+    public Operand(JottTree node, Token subNodeToken) {
         this.subNode = node;
+        this.subNodeToken = subNodeToken;
     }
 
     static JottTree parse(ArrayList<Token> tokens) throws SyntaxException {
@@ -29,13 +32,13 @@ public class Operand implements JottTree {
         try {
             switch (currToken.getTokenType()) {
                 case ID_KEYWORD -> {
-                    return new Operand(Id.parse(tokens));
+                    return new Operand(Id.parse(tokens), currToken);
                 }
                 case NUMBER -> {
-                    return new Operand(Number.parse(tokens));
+                    return new Operand(Number.parse(tokens), currToken);
                 }
                 case FC_HEADER -> {
-                    return new Operand(FuncCall.parse(tokens));
+                    return new Operand(FuncCall.parse(tokens), currToken);
                 }
                 case MATH_OP -> {
                     if (!currToken.getToken().equals("-")) {
@@ -67,7 +70,7 @@ public class Operand implements JottTree {
                             )
                     );
 
-                    return new Operand(Number.parse(tokens));
+                    return new Operand(Number.parse(tokens), nextToken);
                 }
                 default -> throw new SyntaxException(
                         "Invalid token found when parsing Operand",
@@ -86,6 +89,20 @@ public class Operand implements JottTree {
         }
     }
 
+    DataType getOperandDataType() {
+        if (subNodeToken.getTokenType() == TokenType.FC_HEADER) {
+            // TODO: Check function table and return type of function
+        } else if (subNodeToken.getTokenType() == TokenType.NUMBER) {
+            if (subNodeToken.getToken().contains(".")) {
+                return DataType.DOUBLE;
+            }
+
+            return DataType.INTEGER;
+        } else {
+            // TODO: Check our variable table and return associated datatype
+        }
+    }
+
     @Override
     public String convertToJott() {
         return subNode.convertToJott();
@@ -93,8 +110,7 @@ public class Operand implements JottTree {
 
     @Override
     public boolean validateTree() {
-        // TODO
-        return false;
+        return subNode.validateTree();
     }
 
     @Override

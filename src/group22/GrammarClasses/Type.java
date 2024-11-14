@@ -54,8 +54,7 @@ public class Type implements JottTree {
 
     @Override
     public boolean validateTree() {
-        // TODO
-        return false;
+        return true;
     }
 
     @Override

@@ -45,7 +45,7 @@ public class VarDec implements JottTree {
     }
 
     public boolean validateTree() {
-        //TODO
+        // TODO: We have to check if the variable already exists, if it does then we fail it
         return false;
     }
 
