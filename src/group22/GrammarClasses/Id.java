@@ -1,10 +1,8 @@
 package group22.GrammarClasses;
 
+import group22.SemanticException;
 import group22.SyntaxException;
-import provided.JottParser;
-import provided.JottTree;
-import provided.Token;
-import provided.TokenType;
+import provided.*;
 
 import java.util.ArrayList;
 
@@ -37,14 +35,25 @@ public class Id implements JottTree {
         return new Id(currToken);
     }
 
+    public Token getIdToken() {
+        return id;
+    }
+
     @Override
     public String convertToJott() {
         return this.id.getToken();
     }
 
     @Override
-    public boolean validateTree() {
-        // TODO
+    public boolean validateTree() throws SemanticException {
+        if (!JottValidator.scopeManager.isVarAvailable(id.getToken())) {
+            throw new SemanticException(
+                    id.getToken() + " isn't defined in assignment",
+                    id.getFilename(),
+                    id.getLineNum()
+            );
+        }
+
         return false;
     }
 

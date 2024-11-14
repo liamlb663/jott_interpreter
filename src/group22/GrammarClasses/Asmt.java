@@ -1,10 +1,8 @@
 package group22.GrammarClasses;
 
+import group22.SemanticException;
 import group22.SyntaxException;
-import provided.JottParser;
-import provided.JottTree;
-import provided.Token;
-import provided.TokenType;
+import provided.*;
 
 import java.util.ArrayList;
 
@@ -23,22 +21,35 @@ public class Asmt implements JottTree {
                 throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
             }
 
-            Token currToken = tokens.get(0);
-            if (!currToken.getTokenType().equals(TokenType.ID_KEYWORD)) {
-                throw new SyntaxException("Expected ID but saw " + currToken.getTokenType().toString(), currToken.getFilename(), currToken.getLineNum());
+            Token checkIdToken = tokens.get(0);
+            if (!checkIdToken.getTokenType().equals(TokenType.ID_KEYWORD)) {
+                throw new SyntaxException(
+                        "Expected ID but saw " + checkIdToken.getTokenType().toString(),
+                        checkIdToken.getFilename(),
+                        checkIdToken.getLineNum()
+                );
             }
             Id id = Id.parse(tokens);
 
-            currToken = tokens.get(0);
-            if (!currToken.getTokenType().equals(TokenType.ASSIGN)) {
-                throw new SyntaxException("Expected '=' for assignment", currToken.getFilename(), currToken.getLineNum());
+            Token checkAssignToken = tokens.get(0);
+            if (!checkAssignToken.getTokenType().equals(TokenType.ASSIGN)) {
+                throw new SyntaxException(
+                        "Expected '=' for assignment",
+                        checkAssignToken.getFilename(),
+                        checkAssignToken.getLineNum()
+                );
             }
             tokens.remove(0);
-            currToken = tokens.get(0);
+
             Expr expr = Expr.parse(tokens);
-            currToken = tokens.get(0);
-            if (!currToken.getTokenType().equals(TokenType.SEMICOLON)) {
-                throw new SyntaxException("Missing semicolon at end of assignment", currToken.getFilename(), currToken.getLineNum());
+
+            Token checkSemiToken = tokens.get(0);
+            if (!checkSemiToken.getTokenType().equals(TokenType.SEMICOLON)) {
+                throw new SyntaxException(
+                        "Missing semicolon at end of assignment",
+                        checkSemiToken.getFilename(),
+                        checkSemiToken.getLineNum()
+                );
             }
             tokens.remove(0);
 
@@ -47,13 +58,17 @@ public class Asmt implements JottTree {
             throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
         }
     }
+
     public String convertToJott() {
         return id.convertToJott() + "=" + expr.convertToJott() + ";";
     }
 
-    public boolean validateTree() {
-        //TODO
-        return false;
+    public boolean validateTree() throws SemanticException {
+        boolean idValid = id.validateTree();
+        boolean exprValid = expr.validateTree();
+
+        if ()
+            return false;
     }
 
     public void execute() {
