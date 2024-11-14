@@ -59,6 +59,10 @@ public class Asmt implements JottTree {
         }
     }
 
+    public boolean validate() throws SemanticException {
+        // TODO
+    }
+
     public String convertToJott() {
         return id.convertToJott() + "=" + expr.convertToJott() + ";";
     }

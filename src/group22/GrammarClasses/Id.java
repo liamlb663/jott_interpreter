@@ -1,5 +1,6 @@
 package group22.GrammarClasses;
 
+import group22.DataType;
 import group22.SemanticException;
 import group22.SyntaxException;
 import provided.*;
@@ -35,17 +36,7 @@ public class Id implements JottTree {
         return new Id(currToken);
     }
 
-    public Token getIdToken() {
-        return id;
-    }
-
-    @Override
-    public String convertToJott() {
-        return this.id.getToken();
-    }
-
-    @Override
-    public boolean validateTree() throws SemanticException {
+    public boolean validate() throws SemanticException {
         if (!JottValidator.scopeManager.isVarAvailable(id.getToken())) {
             throw new SemanticException(
                     id.getToken() + " isn't defined in assignment",
@@ -54,6 +45,22 @@ public class Id implements JottTree {
             );
         }
 
+        return true;
+    }
+
+    public DataType getIdDatatype() throws SemanticException {
+        validate();
+
+        //
+    }
+
+    @Override
+    public String convertToJott() {
+        return this.id.getToken();
+    }
+
+    @Override
+    public boolean validateTree() {
         return false;
     }
 
