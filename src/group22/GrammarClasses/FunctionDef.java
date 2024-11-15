@@ -83,13 +83,17 @@ public class FunctionDef implements JottTree {
         id.validateTree();
         returnType.validateTree();
 
-        Program.scopeManager.newScope();
+        Program.scopeManager.newScope(DataType.fromString(returnType.convertToJott()));
             params.validateTree();
             body.validateTree();
         Program.scopeManager.dropScope();
 
         // Declare function after to avoid potential recursion
-        Program.scopeManager.declareFunction(id.convertToJott(), DataType.fromString(returnType.convertToJott()));
+        Program.scopeManager.declareFunction(
+            id.convertToJott(),
+            DataType.fromString(returnType.convertToJott()),
+            params.getParams()
+        );
 
         return true;
     }
