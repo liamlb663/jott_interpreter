@@ -52,7 +52,14 @@ public class Program implements JottTree {
     }
 
     public boolean validateTree() {
-        // TO DO
+        for (FunctionDef funcDef : functionDefs) {
+            funcDef.validateTree();
+        }
+
+        if (!scopeManager.isFunctionDeclared("main")) {
+            throw new SemanticException("Missing main function");
+        }
+
         return true;
     }
 

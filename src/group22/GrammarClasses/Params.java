@@ -1,4 +1,5 @@
 package group22.GrammarClasses;
+import group22.DataType;
 import group22.SyntaxException;
 import provided.*;
 
@@ -45,6 +46,17 @@ public class Params implements JottTree {
             s.append(t.convertToJott());
         }
         return s.toString();
+    }
+
+    public ArrayList<DataType> getTypes() {
+        ArrayList<DataType> output = new ArrayList<>();
+
+        output.add(exprNode.getType());
+        for (ParamsT param : paramsTNodes) {
+            output.add(param.getType());
+        }
+
+        return output;
     }
 
     public boolean validateTree() {

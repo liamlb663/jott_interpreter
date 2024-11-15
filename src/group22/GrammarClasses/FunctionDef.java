@@ -1,6 +1,7 @@
 package group22.GrammarClasses;
 
 import group22.*;
+import group22.GrammarClasses.Program;
 import provided.*;
 
 import java.util.ArrayList;
@@ -78,7 +79,22 @@ public class FunctionDef implements JottTree {
     }
 
     public boolean validateTree() {
-        // TO DO
+
+        id.validateTree();
+        returnType.validateTree();
+
+        Program.scopeManager.newScope(DataType.fromString(returnType.convertToJott()));
+            params.validateTree();
+            body.validateTree();
+        Program.scopeManager.dropScope();
+
+        // Declare function after to avoid potential recursion
+        Program.scopeManager.declareFunction(
+            id.convertToJott(),
+            DataType.fromString(returnType.convertToJott()),
+            params.getParams()
+        );
+
         return true;
     }
 

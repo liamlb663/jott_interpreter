@@ -50,7 +50,7 @@ public class FuncDefParamsT implements JottTree {
     }
 
     public boolean validateTree() {
-        // TO DO
+        Program.scopeManager.declareVariable(id.convertToJott(), DataType.fromString(type.convertToJott()));
         return true;
     }
 

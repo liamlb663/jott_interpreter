@@ -2,8 +2,10 @@ package group22;
 
 import group22.DataType;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Stack;
 
 public class ScopeManager {
@@ -17,29 +19,44 @@ public class ScopeManager {
         }
     }
 
-    public HashMap<String, DataType> functions;
+    private class Function {
+        ArrayList<DataType> parameterTypes;
+        DataType returnType;
+
+        Function(ArrayList<DataType> parameterTypes, DataType returnType) {
+            this.parameterTypes = parameterTypes;
+            this.returnType = returnType;
+        }
+    }
+
+    public HashMap<String, Function> functions;
     public Stack<HashMap<String, Variable>> scopes;
+    public Stack<DataType> returnTypeStack;
 
     public ScopeManager() {
         functions = new HashMap<>();
         scopes = new Stack<>();
         scopes.push(new HashMap<>());
+        returnTypeStack = new Stack<>();
+        returnTypeStack.push(null); // Global scope has no return type
     }
 
-    public void newScope() {
+    public void newScope(DataType returnType) {
         scopes.push(new HashMap<>());
+        returnTypeStack.push(returnType);
     }
 
     public void dropScope() {
         if (scopes.size() > 1) {
             scopes.pop();
+            returnTypeStack.pop();
         } else {
             System.out.println("Cannot drop global scope.");
         }
     }
 
-    public void declareFunction(String func, DataType type) {
-        functions.put(func, type);
+    public void declareFunction(String func, DataType type, ArrayList<DataType> params) {
+        functions.put(func, new Function(params, type));
     }
 
     public void declareVariable(String var, DataType type) {
@@ -59,17 +76,23 @@ public class ScopeManager {
             }
         }
 
-        throw new IllegalArgumentException("Variable " + var + " is not declared in any accessible scope.");
+        throw new IllegalArgumentException("Variable " + var + " is not declared in current scope.");
     }
 
     public Object getVariable(String var) {
-        for (int i = scopes.size() - 1; i >= 0; i--) {
-            HashMap<String, Variable> scope = scopes.get(i);
-            if (scope.containsKey(var)) {
-                return scope.get(var).obj;
-            }
+        HashMap<String, Variable> scope = scopes.peek();
+        if (scope.containsKey(var)) {
+            return scope.get(var).obj;
         }
-        throw new IllegalArgumentException("Variable " + var + " is not declared in any accessible scope.");
+        throw new IllegalArgumentException("Variable " + var + " is not declared in current scope.");
+    }
+
+    public DataType getDataType(String var) {
+        HashMap<String, Variable> scope = scopes.peek();
+        if (scope.containsKey(var)) {
+            return scope.get(var).type;
+        }
+        throw new IllegalArgumentException("Variable " + var + " is not declared in current scope.");
     }
 
     public boolean isVarDeclared(String var) {
@@ -80,9 +103,43 @@ public class ScopeManager {
         return functions.containsKey(func);
     }
 
+    public ArrayList<DataType> getFunctionParameterTypes(String func) {
+        if (functions.containsKey(func)) {
+            return functions.get(func).parameterTypes;
+        }
+        throw new IllegalArgumentException("Function " + func + " is not declared.");
+    }
+
+    public DataType getFunctionReturnType(String func) {
+        if (functions.containsKey(func)) {
+            return functions.get(func).returnType;
+        }
+        throw new IllegalArgumentException("Function " + func + " is not declared.");
+    }
+
+    public DataType getCurrentReturnType() {
+        if (!returnTypeStack.isEmpty()) {
+            return returnTypeStack.peek();
+        }
+        throw new IllegalStateException("No return type set for the current scope.");
+    }
+
+    public void validateReturnType(Object value) {
+        if (returnTypeStack.isEmpty()) {
+            throw new IllegalStateException("No return type set for the current scope.");
+        }
+
+        DataType expectedType = returnTypeStack.peek();
+        if (!expectedType.isCompatible(value)) {
+            throw new IllegalArgumentException("Return value type does not match the function's return type.");
+        }
+    }
+
     public void clearAll() {
         scopes.clear();
         scopes.push(new HashMap<>());
         functions.clear();
+        returnTypeStack.clear();
+        returnTypeStack.push(null);
     }
 }

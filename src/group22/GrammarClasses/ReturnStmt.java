@@ -1,6 +1,9 @@
 package group22.GrammarClasses;
 
+import group22.DataType;
 import group22.SyntaxException;
+import group22.SemanticException;
+import group22.GrammarClasses.Program;
 import provided.JottParser;
 import provided.JottTree;
 import provided.Token;
@@ -55,7 +58,10 @@ public class ReturnStmt implements JottTree {
     }
 
     public boolean validateTree() {
-        //TODO
+        if (Program.scopeManager.getCurrentReturnType() != expr.getType()) {
+            throw new SemanticException("Type Differs from proper return type of function");
+        }
+
         return false;
     }
 

@@ -1,5 +1,7 @@
 package group22.GrammarClasses;
 import group22.SyntaxException;
+import group22.SemanticException;
+import group22.GrammarClasses.Program;
 import provided.*;
 
 import java.util.ArrayList;
@@ -46,7 +48,15 @@ public class FuncCall implements JottTree{
     }
 
     public boolean validateTree() {
-        //TODO
+
+        if (!Program.scopeManager.isFunctionDeclared(idNode.convertToJott())) {
+            throw new SemanticException("Function " + idNode.convertToJott() + " not found!");
+        }
+
+        if (Program.scopeManager.getFunctionParameterTypes(idNode.convertToJott()) != paramsNode.getTypes()) {
+            throw new SemanticException("Function " + idNode.convertToJott() + " called with wrong Parameters!");
+        }
+
         return false;
     }
 

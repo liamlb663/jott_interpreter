@@ -1,10 +1,13 @@
 package group22.GrammarClasses;
 
+import group22.DataType;
 import group22.SyntaxException;
+import group22.GrammarClasses.*;
 import provided.JottParser;
 import provided.Token;
 import provided.TokenType;
 
+import java.awt.List;
 import java.util.ArrayList;
 
 public class FuncDefParams {
@@ -68,8 +71,24 @@ public class FuncDefParams {
         return sB.toString();
     }
 
+    public ArrayList<DataType> getParams() {
+        ArrayList<DataType> output = new ArrayList<>();
+
+        output.add(DataType.fromString(type.convertToJott()));
+        for (FuncDefParamsT param : params) {
+            output.add(DataType.fromString(param.type.convertToJott()));
+        }
+
+        return output;
+    }
+
     public boolean validateTree() {
-        // TO DO
+        Program.scopeManager.declareVariable(id.convertToJott(), DataType.fromString(type.convertToJott()));
+
+        for (FuncDefParamsT param : params) {
+            param.validateTree();
+        }
+
         return true;
     }
 
