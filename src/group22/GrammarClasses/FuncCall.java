@@ -1,4 +1,5 @@
 package group22.GrammarClasses;
+import group22.DataType;
 import group22.SyntaxException;
 import provided.*;
 
@@ -39,6 +40,10 @@ public class FuncCall implements JottTree{
         } catch (IndexOutOfBoundsException e) {
             throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
         }
+    }
+
+    public String getName() {
+        return this.idNode.getName();
     }
 
     public String convertToJott() {

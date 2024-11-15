@@ -51,6 +51,21 @@ public class ElseIf implements JottTree{
         }
     }
 
+    private boolean condIsBool(ScopeManager sm) throws SemanticException {
+        if (exprNode.subNodes.size() == 1) {
+            if (exprNode.subNodes.get(0) instanceof Id id) {
+                return id.getIdDatatype() == DataType.BOOLEAN;
+            } else if (exprNode.subNodes.get(0) instanceof FuncCall fc) {
+                return sm.functions.get(fc.getName()) == DataType.BOOLEAN;
+            }
+            return false;
+        }
+        if (exprNode.subNodes.size() == 3) {
+            return exprNode.subNodes.get(1) instanceof RelOp;
+        }
+        return false;
+    }
+
     public boolean hasReturnStmt() {
         return bodyNode.returnStmt != null;
     }
@@ -59,8 +74,8 @@ public class ElseIf implements JottTree{
         return ("Elseif[" + exprNode.convertToJott() + "]{" +  bodyNode.convertToJott() + "}");
     }
 
-    public boolean validateTree() throws SemanticException {
-        return exprNode.validateTree() && bodyNode.validateTree();
+    public boolean validateTree(ScopeManager sm) throws SemanticException {
+        return exprNode.validateTree(sm) && bodyNode.validateTree(sm) && condIsBool(sm);
     }
 
     public void execute() {

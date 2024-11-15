@@ -1,4 +1,5 @@
 package group22.GrammarClasses;
+import group22.ScopeManager;
 import group22.SyntaxException;
 import provided.*;
 
@@ -56,8 +57,8 @@ public class Else implements JottTree{
         return ("Else{" + bodyNode.convertToJott() + "}");
     }
 
-    public boolean validateTree() {
-        return bodyNode.validateTree();
+    public boolean validateTree(ScopeManager sm) {
+        return bodyNode.validateTree(sm);
     }
 
     public void execute() {

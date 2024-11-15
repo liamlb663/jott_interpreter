@@ -1,4 +1,7 @@
 package group22.GrammarClasses;
+import group22.DataType;
+import group22.ScopeManager;
+import group22.SemanticException;
 import group22.SyntaxException;
 import provided.*;
 
@@ -51,12 +54,33 @@ public class WhileLoop implements JottTree{
         }
     }
 
+    private boolean condIsBool(ScopeManager sm) throws SemanticException {
+        if (exprNode.subNodes.size() == 1) {
+            if (exprNode.subNodes.get(0) instanceof Id id) {
+                return id.getIdDatatype() == DataType.BOOLEAN;
+            } else if (exprNode.subNodes.get(0) instanceof FuncCall fc) {
+                return sm.functions.get(fc.getName()) == DataType.BOOLEAN;
+            }
+            throw new SemanticException("Conditional statement does not evaluate to boolean", "", -1);
+        }
+        if (exprNode.subNodes.size() == 3) {
+            if (!(exprNode.subNodes.get(1) instanceof RelOp)) {
+                throw new SemanticException("Conditional statement does not evaluate to boolean", "", -1);
+            };
+            return true;
+        }
+        throw new SemanticException("Conditional statement does not evaluate to boolean", "", -1);
+    }
+
     public String convertToJott() {
         return ("While[" + exprNode.convertToJott() + "]{" +  bodyNode.convertToJott() + "}");
     }
 
-    public boolean validateTree() {
-        return false;
+    public boolean validateTree(ScopeManager sm) throws SemanticException {
+        boolean exprOk = exprNode.validateTree(sm);
+        boolean bodyOk = bodyNode.validateTree(sm);
+
+        return condIsBool(sm) && exprOk && bodyOk;
     }
 
     public void execute() {

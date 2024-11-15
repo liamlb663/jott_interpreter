@@ -49,6 +49,10 @@ public class Id implements JottTree {
         return true;
     }
 
+    public String getName() {
+        return this.id.getToken();
+    }
+
     public DataType getIdDatatype() throws SemanticException {
         validate();
 

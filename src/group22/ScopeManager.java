@@ -85,6 +85,4 @@ public class ScopeManager {
         scopes.push(new HashMap<>());
         functions.clear();
     }
-
-    public DataType getDatatype
 }

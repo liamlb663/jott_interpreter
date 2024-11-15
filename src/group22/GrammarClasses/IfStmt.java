@@ -75,14 +75,22 @@ public class IfStmt implements JottTree{
         return s.toString();
     }
 
-    private boolean condIsBool() throws SemanticException {
-        if(exprNode.subNodes.size() == 1) {
-            if (exprNode.subNodes.get(0) instanceof Id) {
-                var id = (Id) exprNode.subNodes.get(0);
-                ScopeManager.
+    private boolean condIsBool(ScopeManager sm) throws SemanticException {
+        if (exprNode.subNodes.size() == 1) {
+            if (exprNode.subNodes.get(0) instanceof Id id) {
+                return id.getIdDatatype() == DataType.BOOLEAN;
+            } else if (exprNode.subNodes.get(0) instanceof FuncCall fc) {
+                return sm.functions.get(fc.getName()) == DataType.BOOLEAN;
             }
-            return false;
+            throw new SemanticException("Conditional statement does not evaluate to boolean", "", -1);
         }
+        if (exprNode.subNodes.size() == 3) {
+            if (!(exprNode.subNodes.get(1) instanceof RelOp)) {
+                throw new SemanticException("Conditional statement does not evaluate to boolean", "", -1);
+            };
+            return true;
+        }
+        throw new SemanticException("Conditional statement does not evaluate to boolean", "", -1);
     }
 
     public boolean willReturn() throws SemanticException {
@@ -103,18 +111,20 @@ public class IfStmt implements JottTree{
         return true;
     }
 
-    public boolean validateTree() throws SemanticException {
+    public boolean validateTree(ScopeManager sm) throws SemanticException {
+        boolean exprOk = exprNode.validateTree(sm);
+        boolean bodyOk = bodyNode.validateTree(sm);
         for (ElseIf e : elseIfNodes) {
-            if (!e.validateTree()) {
+            if (!e.validateTree(sm)) {
                 return false;
             }
         }
         if (elseNode != null) {
-            if (!elseNode.validateTree()) {
+            if (!elseNode.validateTree(sm)) {
                 return false;
             }
         }
-        return condIsBool() && uniformReturns() && exprNode.validateTree() && bodyNode.validateTree();
+        return condIsBool(sm) && uniformReturns() && exprOk && bodyOk;
     }
 
     public void execute() {
