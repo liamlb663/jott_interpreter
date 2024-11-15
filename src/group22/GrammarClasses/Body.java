@@ -62,7 +62,7 @@ public class Body implements JottTree {
         if (!returnStmt.validateTree()) {
             return false;
         }
-        //TODO
+
         return true;
     }
 
