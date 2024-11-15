@@ -1,8 +1,12 @@
 package group22.GrammarClasses;
+import group22.DataType;
+import group22.ScopeManager;
+import group22.SemanticException;
 import group22.SyntaxException;
 import provided.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class IfStmt implements JottTree{
     private final Expr exprNode;
@@ -71,9 +75,46 @@ public class IfStmt implements JottTree{
         return s.toString();
     }
 
-    public boolean validateTree() {
-        //TODO
-        return false;
+    private boolean condIsBool() throws SemanticException {
+        if(exprNode.subNodes.size() == 1) {
+            if (exprNode.subNodes.get(0) instanceof Id) {
+                var id = (Id) exprNode.subNodes.get(0);
+                ScopeManager.
+            }
+            return false;
+        }
+    }
+
+    public boolean willReturn() throws SemanticException {
+        return bodyNode.returnStmt != null && uniformReturns();
+    }
+
+    // if IfStmt has a return, then all elseif/else statements need a return
+    private boolean uniformReturns() throws SemanticException {
+        boolean hasReturn = bodyNode.returnStmt != null;
+        for (ElseIf e : elseIfNodes) {
+            if (hasReturn && !e.hasReturnStmt()) {
+                throw new SemanticException("ElseIf statement does not have return statement", "", 0);
+            }
+        }
+        if (elseNode != null && elseNode.hasReturnStmt() != hasReturn) {
+            throw new SemanticException("Else statement does not have return statement, but If statement does", "", 0);
+        }
+        return true;
+    }
+
+    public boolean validateTree() throws SemanticException {
+        for (ElseIf e : elseIfNodes) {
+            if (!e.validateTree()) {
+                return false;
+            }
+        }
+        if (elseNode != null) {
+            if (!elseNode.validateTree()) {
+                return false;
+            }
+        }
+        return condIsBool() && uniformReturns() && exprNode.validateTree() && bodyNode.validateTree();
     }
 
     public void execute() {

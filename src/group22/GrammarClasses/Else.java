@@ -38,6 +38,17 @@ public class Else implements JottTree{
         }
     }
 
+    public boolean hasReturnStmt() {
+//        for (BodyStmt bs : bodyNode.bodyStmts) {
+//            if (bs.subNode instanceof IfStmt) {
+//                var ifStmt = (IfStmt) bs.subNode;
+//                if (ifStmt.elseNode)
+//            }
+//        }
+
+        return bodyNode.returnStmt != null;
+    }
+
     public String convertToJott() {
         if (bodyNode == null) {
             return "";
@@ -46,8 +57,7 @@ public class Else implements JottTree{
     }
 
     public boolean validateTree() {
-        //TODO
-        return false;
+        return bodyNode.validateTree();
     }
 
     public void execute() {

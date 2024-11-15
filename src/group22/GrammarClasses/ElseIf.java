@@ -1,5 +1,5 @@
 package group22.GrammarClasses;
-import group22.SyntaxException;
+import group22.*;
 import provided.*;
 
 import java.util.ArrayList;
@@ -51,13 +51,16 @@ public class ElseIf implements JottTree{
         }
     }
 
+    public boolean hasReturnStmt() {
+        return bodyNode.returnStmt != null;
+    }
+
     public String convertToJott() {
         return ("Elseif[" + exprNode.convertToJott() + "]{" +  bodyNode.convertToJott() + "}");
     }
 
-    public boolean validateTree() {
-        //TODO
-        return false;
+    public boolean validateTree() throws SemanticException {
+        return exprNode.validateTree() && bodyNode.validateTree();
     }
 
     public void execute() {

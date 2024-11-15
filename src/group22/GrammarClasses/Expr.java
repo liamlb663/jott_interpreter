@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Expr implements JottTree {
-    private final ArrayList<JottTree> subNodes;
+    public final ArrayList<JottTree> subNodes;
 
     public Expr(ArrayList<JottTree> subNodes) {
         this.subNodes = subNodes;

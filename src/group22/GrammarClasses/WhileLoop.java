@@ -56,7 +56,6 @@ public class WhileLoop implements JottTree{
     }
 
     public boolean validateTree() {
-        //TODO
         return false;
     }
 
