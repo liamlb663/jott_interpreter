@@ -13,9 +13,13 @@ import java.util.List;
 
 public class Expr implements JottTree {
     public final ArrayList<JottTree> subNodes;
+    public String fileName;
+    public int startingLineNumber;
 
     public Expr(ArrayList<JottTree> subNodes) {
         this.subNodes = subNodes;
+        this.fileName = "";
+        this.startingLineNumber = -1;
     }
 
     static Expr parse(ArrayList<Token> tokens) throws SyntaxException {
@@ -28,14 +32,22 @@ public class Expr implements JottTree {
         }
 
         Token firstToken = tokens.get(0);
+        var fileName = firstToken.getFilename();
+        var startingLineNumber = firstToken.getLineNum();
 
         try {
             if (firstToken.getTokenType() == TokenType.STRING) {
-                return new Expr(new ArrayList<>(List.of(StringLiteral.parse(tokens))));
+                var expr = new Expr(new ArrayList<>(List.of(StringLiteral.parse(tokens))));
+                expr.fileName = fileName;
+                expr.startingLineNumber = startingLineNumber;
+                return expr;
             } else if (firstToken.getTokenType() == TokenType.ID_KEYWORD &&
                     (firstToken.getToken().equals("True") || firstToken.getToken().equals("False"))
             ) {
-                return new Expr(new ArrayList<>(List.of(Bool.parse(tokens))));
+                var expr = new Expr(new ArrayList<>(List.of(Bool.parse(tokens))));
+                expr.fileName = fileName;
+                expr.startingLineNumber = startingLineNumber;
+                return expr;
             }
 
             ArrayList<JottTree> validatedNodes = new ArrayList<>();
@@ -75,7 +87,10 @@ public class Expr implements JottTree {
                     }
                     default -> {
                         if (!validatedNodes.isEmpty()) {
-                            return new Expr(validatedNodes);
+                            var expr = new Expr(validatedNodes);
+                            expr.fileName = fileName;
+                            expr.startingLineNumber = startingLineNumber;
+                            return expr;
                         } else {
                             throw new SyntaxException(
                                     "Received unexpected " + currToken.getTokenType().toString() + " token",
@@ -117,19 +132,8 @@ public class Expr implements JottTree {
     }
 
     @Override
-    public boolean validateTree(
-            HashMap<String, DataType> functions,
-            HashMap<String, HashMap<String, DataType>> variables,
-            String currentScope
-    ) {
-        if (subNodes.size() == 1) {
-            return subNodes.getFirst().validateTree();
-        } else if (MathOp.isValidMathOp(subNodes.get(1).convertToJott())) {
-            // TODO
-
-        } else if (RelOp.isValidRelOp(subNodes.get(1).convertToJott())) {
-            // TODO
-        }
+    public boolean validateTree() {
+        return false;
     }
 
     @Override

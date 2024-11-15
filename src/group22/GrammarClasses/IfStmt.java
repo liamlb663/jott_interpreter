@@ -13,12 +13,16 @@ public class IfStmt implements JottTree{
     private final Body bodyNode;
     private final ArrayList<ElseIf> elseIfNodes;
     private final Else elseNode;
+    private final String filename;
+    private final int conditionalLineNumber;
 
-    public IfStmt(Expr exprNode, Body bodyNode, ArrayList<ElseIf> elseIfNodes, Else elseNode) {
+    public IfStmt(Expr exprNode, Body bodyNode, ArrayList<ElseIf> elseIfNodes, Else elseNode, String filename, int conditionalLineNumber) {
         this.exprNode = exprNode;
         this.bodyNode = bodyNode;
         this.elseIfNodes = elseIfNodes;
         this.elseNode = elseNode;
+        this.filename = filename;
+        this.conditionalLineNumber = conditionalLineNumber;
     }
 
     static IfStmt parse(ArrayList<Token> tokens) throws SyntaxException {
@@ -46,6 +50,8 @@ public class IfStmt implements JottTree{
             if (currToken.getTokenType() != TokenType.L_BRACE) {
                 throw new SyntaxException("Expected left brace", currToken.getFilename(), currToken.getLineNum());
             }
+            var filename = currToken.getFilename();
+            var conditionalLineNumber = currToken.getLineNum();
             tokens.remove(0);
             Body bodyNode = Body.parse(tokens);
             currToken = tokens.get(0);
@@ -60,7 +66,7 @@ public class IfStmt implements JottTree{
                 currToken = tokens.get(0);
             }
             Else elseNode = Else.parse(tokens);
-            return new IfStmt(exprNode, bodyNode, elseIfNodes, elseNode);
+            return new IfStmt(exprNode, bodyNode, elseIfNodes, elseNode, filename, conditionalLineNumber);
         } catch (IndexOutOfBoundsException e) {
             throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
         }
@@ -80,13 +86,17 @@ public class IfStmt implements JottTree{
             if (exprNode.subNodes.get(0) instanceof Id id) {
                 return id.getIdDatatype() == DataType.BOOLEAN;
             } else if (exprNode.subNodes.get(0) instanceof FuncCall fc) {
-                return sm.functions.get(fc.getName()) == DataType.BOOLEAN;
+                return sm.getFunctionReturnType(fc.getName()).equals(DataType.BOOLEAN);
             }
-            throw new SemanticException("Conditional statement does not evaluate to boolean", "", -1);
+            throw new SemanticException("Conditional statement in If statement does not evaluate to boolean",
+                    filename,
+                    conditionalLineNumber);
         }
         if (exprNode.subNodes.size() == 3) {
             if (!(exprNode.subNodes.get(1) instanceof RelOp)) {
-                throw new SemanticException("Conditional statement does not evaluate to boolean", "", -1);
+                throw new SemanticException("Conditional statement in If statement does not evaluate to boolean",
+                        filename,
+                        conditionalLineNumber);
             };
             return true;
         }
@@ -102,11 +112,11 @@ public class IfStmt implements JottTree{
         boolean hasReturn = bodyNode.returnStmt != null;
         for (ElseIf e : elseIfNodes) {
             if (hasReturn && !e.hasReturnStmt()) {
-                throw new SemanticException("ElseIf statement does not have return statement", "", 0);
+                throw new SemanticException("ElseIf statement does not have return statement", e.filename, e.lineNumber);
             }
         }
         if (elseNode != null && elseNode.hasReturnStmt() != hasReturn) {
-            throw new SemanticException("Else statement does not have return statement, but If statement does", "", 0);
+            throw new SemanticException("Else statement does not have return statement, but If statement does", elseNode.filename, elseNode.lineNumber);
         }
         return true;
     }

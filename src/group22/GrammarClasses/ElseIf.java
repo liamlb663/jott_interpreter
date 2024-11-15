@@ -7,10 +7,14 @@ import java.util.ArrayList;
 public class ElseIf implements JottTree{
     private final Expr exprNode;
     private final Body bodyNode;
+    public final String filename;
+    public final int lineNumber;
 
-    public ElseIf(Expr exprNode, Body bodyNode) {
+    public ElseIf(Expr exprNode, Body bodyNode, String filename, int lineNumber) {
         this.exprNode = exprNode;
         this.bodyNode = bodyNode;
+        this.filename = filename;
+        this.lineNumber = lineNumber;
     }
 
     static ElseIf parse(ArrayList<Token> tokens) throws SyntaxException {
@@ -22,6 +26,8 @@ public class ElseIf implements JottTree{
             if (!(currToken.getTokenType() == TokenType.ID_KEYWORD && currToken.getToken().equals("Elseif"))) {
                 throw new SyntaxException("Expected Elseif keyword", currToken.getFilename(), currToken.getLineNum());
             }
+            var filename = currToken.getFilename();
+            var lineNumber = currToken.getLineNum();
             tokens.remove(0);
             currToken = tokens.get(0);
             if (!(currToken.getTokenType() == TokenType.L_BRACKET && currToken.getToken().equals("["))) {
@@ -45,7 +51,7 @@ public class ElseIf implements JottTree{
                 throw new SyntaxException("Expected right brace", currToken.getFilename(), currToken.getLineNum());
             }
             tokens.remove(0);
-            return new ElseIf(exprNode, bodyNode);
+            return new ElseIf(exprNode, bodyNode, filename, lineNumber);
         } catch (IndexOutOfBoundsException e) {
             throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
         }
@@ -56,14 +62,21 @@ public class ElseIf implements JottTree{
             if (exprNode.subNodes.get(0) instanceof Id id) {
                 return id.getIdDatatype() == DataType.BOOLEAN;
             } else if (exprNode.subNodes.get(0) instanceof FuncCall fc) {
-                return sm.functions.get(fc.getName()) == DataType.BOOLEAN;
+                return sm.getFunctionReturnType(fc.getName()).equals(DataType.BOOLEAN);
             }
-            return false;
+            throw new SemanticException("Conditional statement in ElseIf does not evaluate to boolean",
+                    exprNode.fileName,
+                    exprNode.startingLineNumber);
         }
         if (exprNode.subNodes.size() == 3) {
-            return exprNode.subNodes.get(1) instanceof RelOp;
+            if (!(exprNode.subNodes.get(1) instanceof RelOp)) {
+                throw new SemanticException("Conditional statement in ElseIf does not evaluate to boolean",
+                        exprNode.fileName,
+                        exprNode.startingLineNumber);
+            };
+            return true;
         }
-        return false;
+        throw new SemanticException("Conditional statement does not evaluate to boolean", "", -1);
     }
 
     public boolean hasReturnStmt() {
