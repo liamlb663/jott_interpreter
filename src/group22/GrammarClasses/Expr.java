@@ -112,6 +112,10 @@ public class Expr implements JottTree {
         return jottCode.toString();
     }
 
+    public DataType getType() {
+
+    }
+
     @Override
     public boolean validateTree(
             HashMap<String, DataType> functions,
