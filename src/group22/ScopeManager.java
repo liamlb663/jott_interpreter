@@ -87,6 +87,14 @@ public class ScopeManager {
         throw new IllegalArgumentException("Variable " + var + " is not declared in current scope.");
     }
 
+    public DataType getDataType(String var) {
+        HashMap<String, Variable> scope = scopes.peek();
+        if (scope.containsKey(var)) {
+            return scope.get(var).type;
+        }
+        throw new IllegalArgumentException("Variable " + var + " is not declared in current scope.");
+    }
+
     public boolean isVarDeclared(String var) {
         return scopes.peek().containsKey(var);
     }
