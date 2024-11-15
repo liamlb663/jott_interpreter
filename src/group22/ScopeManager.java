@@ -95,7 +95,7 @@ public class ScopeManager {
         return functions.containsKey(func);
     }
 
-    public List<DataType> getFunctionParameterTypes(String func) {
+    public ArrayList<DataType> getFunctionParameterTypes(String func) {
         if (functions.containsKey(func)) {
             return functions.get(func).parameterTypes;
         }
