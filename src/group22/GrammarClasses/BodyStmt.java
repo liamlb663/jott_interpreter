@@ -1,5 +1,6 @@
 package group22.GrammarClasses;
 
+import group22.SemanticException;
 import group22.SyntaxException;
 import provided.JottTree;
 import provided.Token;
@@ -72,7 +73,7 @@ public class BodyStmt implements JottTree {
     }
 
     @Override
-    public boolean validateTree() {
+    public boolean validateTree() throws SemanticException {
         return subNode.validateTree();
     }
 
