@@ -1,12 +1,27 @@
 package group22;
 
+import group22.DataType;
+
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Stack;
 
 public class ScopeManager {
-    private Stack<HashMap<String, Object>> scopes;
+    private class Variable {
+        Object obj;
+        DataType type;
+
+        Variable(Object obj, DataType type) {
+            this.obj = obj;
+            this.type = type;
+        }
+    }
+
+    public HashMap<String, DataType> functions;
+    public Stack<HashMap<String, Variable>> scopes;
 
     public ScopeManager() {
+        functions = new HashMap<>();
         scopes = new Stack<>();
         scopes.push(new HashMap<>());
     }
@@ -23,55 +38,51 @@ public class ScopeManager {
         }
     }
 
-    public void setInt(String name, int value) {
-        scopes.peek().put(name, value);
+    public void declareFunction(String func, DataType type) {
+        functions.put(func, type);
     }
 
-    public void setDouble(String name, double value) {
-        scopes.peek().put(name, value);
+    public void declareVariable(String var, DataType type) {
+        scopes.peek().put(var, new Variable(null, type));
     }
 
-    public void setString(String name, String value) {
-        scopes.peek().put(name, value);
-    }
+    public void setVariable(String var, Object obj) {
+        HashMap<String, Variable> scope = scopes.peek();
 
-    public void setBoolean(String name, boolean value) {
-        scopes.peek().put(name, value);
-    }
-
-    public Integer getInt(String name) {
-        Object value = scopes.peek().get(name);
-        if (value instanceof Integer) {
-            return (Integer) value;
+        if (scope.containsKey(var)) {
+            Variable variable = scope.get(var);
+            if (variable.type.isCompatible(obj)) {
+                variable.obj = obj;
+                return;
+            } else {
+                throw new IllegalArgumentException("Type mismatch for variable " + var);
+            }
         }
-        throw new IllegalArgumentException("Variable " + name + " is not of type int or is not in the current scope.");
+
+        throw new IllegalArgumentException("Variable " + var + " is not declared in any accessible scope.");
     }
 
-    public Double getDouble(String name) {
-        Object value = scopes.peek().get(name);
-        if (value instanceof Double) {
-            return (Double) value;
+    public Object getVariable(String var) {
+        for (int i = scopes.size() - 1; i >= 0; i--) {
+            HashMap<String, Variable> scope = scopes.get(i);
+            if (scope.containsKey(var)) {
+                return scope.get(var).obj;
+            }
         }
-        throw new IllegalArgumentException("Variable " + name + " is not of type double or is not in the current scope.");
+        throw new IllegalArgumentException("Variable " + var + " is not declared in any accessible scope.");
     }
 
-    public String getString(String name) {
-        Object value = scopes.peek().get(name);
-        if (value instanceof String) {
-            return (String) value;
-        }
-        throw new IllegalArgumentException("Variable " + name + " is not of type String or is not in the current scope.");
+    public boolean isVarDeclared(String var) {
+        return scopes.peek().containsKey(var);
     }
 
-    public Boolean getBoolean(String name) {
-        Object value = scopes.peek().get(name);
-        if (value instanceof Boolean) {
-            return (Boolean) value;
-        }
-        throw new IllegalArgumentException("Variable " + name + " is not of type boolean or is not in the current scope.");
+    public boolean isFunctionDeclared(String func) {
+        return functions.containsKey(func);
     }
 
-    public boolean isVarAvailable(String name) {
-        return scopes.peek().containsKey(name);
+    public void clearAll() {
+        scopes.clear();
+        scopes.push(new HashMap<>());
+        functions.clear();
     }
 }
