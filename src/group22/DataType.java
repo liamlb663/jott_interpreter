@@ -27,4 +27,34 @@ public enum DataType {
                 return false; // Undefined behavior for unexpected cases
         }
     }
+
+    public static DataType fromString(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException("Input string cannot be null or empty");
+        }
+
+        switch (value.trim().toUpperCase()) {
+            case "DOUBLE":
+            case "DOUB":
+            case "D":
+                return DOUBLE;
+            case "INTEGER":
+            case "INT":
+            case "I":
+                return INTEGER;
+            case "BOOLEAN":
+            case "BOOL":
+            case "B":
+                return BOOLEAN;
+            case "STRING":
+            case "STR":
+            case "S":
+                return STRING;
+            case "VOID":
+            case "V":
+                return VOID;
+            default:
+                throw new IllegalArgumentException("Unknown DataType: " + value);
+        }
+    }
 }
