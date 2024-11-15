@@ -60,7 +60,7 @@ public class Params implements JottTree {
         return output;
     }
 
-    public boolean validateTree() {
+    public boolean validateTree() throws SemanticException {
         if (!exprNode.validateTree()) {
             return false;
         }
@@ -69,10 +69,13 @@ public class Params implements JottTree {
                 return false;
             }
         }
-        if (paramsTNodes.stream().distinct().count() != paramsTNodes.size()) {
-            throw new SemanticException("")
-            return false;
+        ParamsT dummyParamT = new ParamsT(exprNode);
+        ArrayList<ParamsT> allParamsTNodes = new ArrayList<>(paramsTNodes);
+        allParamsTNodes.add(dummyParamT); //dumb workaround to easily check all params for duplicates
+        if (allParamsTNodes.stream().distinct().count() != allParamsTNodes.size()) {
+            throw new SemanticException("One or more parameters is a duplicate");
         }
+        return true;
     }
 
     public void execute() {
