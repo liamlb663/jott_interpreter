@@ -74,6 +74,4 @@ public class ScopeManager {
     public boolean isVarAvailable(String name) {
         return scopes.peek().containsKey(name);
     }
-
-    public DataType getDatatype
 }

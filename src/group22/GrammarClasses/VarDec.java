@@ -1,5 +1,7 @@
 package group22.GrammarClasses;
 
+import group22.DataType;
+import group22.SemanticException;
 import group22.SyntaxException;
 import provided.JottTree;
 import provided.Token;
@@ -44,7 +46,9 @@ public class VarDec implements JottTree {
         return type.convertToJott() + " " + id.convertToJott() + ";";
     }
 
-    public boolean validateTree() {
+    public boolean validateTree() throws SemanticException {
+        boolean isInScope = id.validateTree();
+        DataType idDatatype = Program.scopeManager.get
         // TODO: We have to check if the variable already exists, if it does then we fail it
         return false;
     }

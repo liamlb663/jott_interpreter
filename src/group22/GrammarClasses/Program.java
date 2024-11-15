@@ -6,7 +6,7 @@ import provided.*;
 import java.util.ArrayList;
 
 public class Program implements JottTree {
-    ScopeManager scopeManager = new ScopeManager();
+    public static ScopeManager scopeManager = new ScopeManager();
     ArrayList<FunctionDef> functionDefs;
 
     public Program(ArrayList<FunctionDef> functionDefs) {

@@ -1,6 +1,7 @@
 package group22.GrammarClasses;
 
 import group22.DataType;
+import group22.ScopeManager;
 import group22.SemanticException;
 import group22.SyntaxException;
 import provided.*;
@@ -37,40 +38,18 @@ public class Id implements JottTree {
         return new Id(currToken);
     }
 
-    public boolean validate() throws SemanticException {
-        if (!JottValidator.scopeManager.isVarAvailable(id.getToken())) {
-            throw new SemanticException(
-                    id.getToken() + " isn't defined in assignment",
-                    id.getFilename(),
-                    id.getLineNum()
-            );
-        }
-
-        return true;
-    }
-
-    public DataType getIdDatatype() throws SemanticException {
-        validate();
-
-        //
-    }
-
     @Override
     public String convertToJott() {
         return this.id.getToken();
     }
 
     @Override
-    public boolean validateTree(
-            HashMap<String, DataType> functions,
-            HashMap<String, HashMap<String, DataType>> variables,
-            String currentScope
-    ) throws SemanticException {
-        HashMap<String, DataType> currScopeVars = variables.get(currentScope);
+    public boolean validateTree() throws SemanticException {
+        boolean isInScope = Program.scopeManager.isVarAvailable(id.getToken());
 
-        if (currScopeVars.get(id.getToken()) == null) {
+        if (!isInScope) {
             throw new SemanticException(
-                    id.getToken() + " isn't defined in assignment",
+                    id.getToken() + " isn't in the current scope",
                     id.getFilename(),
                     id.getLineNum()
             );
