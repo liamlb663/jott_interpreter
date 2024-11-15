@@ -1,5 +1,6 @@
 package group22.GrammarClasses;
 
+import group22.DataType;
 import group22.SemanticException;
 import group22.SyntaxException;
 import provided.JottParser;
@@ -54,6 +55,7 @@ public class Body implements JottTree {
     }
 
     public boolean validateTree() throws SemanticException {
+        boolean returnOK = false;
         for (BodyStmt b : bodyStmts) {
             if (!b.validateTree()) {
                 return false;
@@ -61,6 +63,26 @@ public class Body implements JottTree {
         }
         if (!returnStmt.validateTree()) {
             return false;
+        }
+        if (!Program.scopeManager.getCurrentReturnType().equals(DataType.VOID)) {
+            if (returnStmt != null) {
+                returnOK = true;
+            }
+            else {
+                for (BodyStmt b : bodyStmts) {
+                    if (b.subNode instanceof IfStmt) {
+                        if (((IfStmt) b.subNode).willReturn()) {
+                            returnOK = true;
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            returnOK = true;
+        }
+        if (!returnOK) {
+            throw new SemanticException("Function will not always return a value");
         }
 
         return true;

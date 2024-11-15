@@ -62,7 +62,7 @@ public class ReturnStmt implements JottTree {
             throw new SemanticException("Type Differs from proper return type of function");
         }
 
-        return (expr.validateTree());
+        return (true);
     }
 
     public void execute() {
