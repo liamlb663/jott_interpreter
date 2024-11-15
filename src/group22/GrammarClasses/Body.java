@@ -1,5 +1,6 @@
 package group22.GrammarClasses;
 
+import group22.SemanticException;
 import group22.SyntaxException;
 import provided.JottParser;
 import provided.JottTree;
@@ -52,9 +53,17 @@ public class Body implements JottTree {
         return sB.toString();
     }
 
-    public boolean validateTree() {
+    public boolean validateTree() throws SemanticException {
+        for (BodyStmt b : bodyStmts) {
+            if (!b.validateTree()) {
+                return false;
+            }
+        }
+        if (!returnStmt.validateTree()) {
+            return false;
+        }
         //TODO
-        return false;
+        return true;
     }
 
     public void execute() {
