@@ -1,4 +1,5 @@
 package group22.GrammarClasses;
+import group22.SemanticException;
 import group22.DataType;
 import group22.SyntaxException;
 import provided.*;
@@ -60,8 +61,18 @@ public class Params implements JottTree {
     }
 
     public boolean validateTree() {
-        //TODO
-        return false;
+        if (!exprNode.validateTree()) {
+            return false;
+        }
+        for (ParamsT t : paramsTNodes) {
+            if (!t.validateTree()) {
+                return false;
+            }
+        }
+        if (paramsTNodes.stream().distinct().count() != paramsTNodes.size()) {
+            throw new SemanticException("")
+            return false;
+        }
     }
 
     public void execute() {
