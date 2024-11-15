@@ -1,9 +1,6 @@
 package provided;
 
-import group22.DataType;
 import group22.SemanticException;
-
-import java.util.HashMap;
 
 /**
  * Interface for all Jott parse tree nodes
@@ -23,12 +20,8 @@ public interface JottTree {
 	 * Errors validating will be reported to System.err
      * @return true if valid Jott code; false otherwise
      */
-    public void validateTree(
-			HashMap<String, DataType> functions,
-			HashMap<String, HashMap<String, DataType>> variables,
-			String currentScope
-	) throws SemanticException;
-	
+    public boolean validateTree() throws SemanticException;
+
 	/**
 	 * This will execute the Jott code represented by this JottTree node.
 	 */
