@@ -3,6 +3,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import group22.SemanticException;
 import provided.JottParser;
 import provided.JottTokenizer;
 import provided.JottTree;
@@ -31,13 +32,15 @@ public class Jott {
         try {
             root = JottParser.parse(tokens);
         } catch (Exception e) {
-            System.err.println("Error during parsing: " + e.getMessage());
+            System.err.println("Very Bad Error during parsing: " + e.getMessage());
             e.printStackTrace();
             return;
         }
 
-        // Perform further processing with the parsed tree (if necessary)
-        System.out.println("Parsing completed successfully.");
-        System.out.println("Root of the JottTree: " + root);
+        try {
+            root.validateTree();
+        } catch (SemanticException e) {
+            System.err.println("Semantic Error: " + e.getMessage());
+        }
     }
 }

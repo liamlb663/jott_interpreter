@@ -59,16 +59,12 @@ public class Program implements JottTree {
     }
 
     public boolean validateTree() {
-        try {
-            for (FunctionDef funcDef : functionDefs) {
-                funcDef.validateTree();
-            }
+        for (FunctionDef funcDef : functionDefs) {
+            funcDef.validateTree();
+        }
 
-            if (!scopeManager.isFunctionDeclared("main")) {
-                throw new SemanticException("Missing main function", fileName, fileNumber);
-            }
-        } catch (SemanticException e) {
-            System.err.println("Semantic Error: " + e.getMessage());
+        if (!scopeManager.isFunctionDeclared("main")) {
+            throw new SemanticException("Missing main function", fileName, fileNumber);
         }
 
         return true;
