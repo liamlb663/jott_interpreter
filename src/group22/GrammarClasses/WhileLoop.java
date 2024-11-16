@@ -60,33 +60,24 @@ public class WhileLoop implements JottTree{
         }
     }
 
-    private boolean condIsBool(ScopeManager sm) throws SemanticException {
-        if (exprNode.subNodes.size() == 1) {
-            if (exprNode.subNodes.get(0) instanceof Id id) {
-                return id.getIdDatatype() == DataType.BOOLEAN;
-            } else if (exprNode.subNodes.get(0) instanceof FuncCall fc) {
-                return sm.getFunctionReturnType(fc.getName()).equals(DataType.BOOLEAN);
-            }
-            throw new SemanticException("Conditional statement in While loop does not evaluate to boolean", filename, conditionalLineNumber);
+    private boolean condIsBool() throws SemanticException {
+        if(!exprNode.getDataType().equals(DataType.BOOLEAN)) {
+            throw new SemanticException("Conditional statement in While loop does not evaluate to boolean",
+                    exprNode.fileName,
+                    exprNode.startingLineNumber);
         }
-        if (exprNode.subNodes.size() == 3) {
-            if (!(exprNode.subNodes.get(1) instanceof RelOp)) {
-                throw new SemanticException("Conditional statement in While loop does not evaluate to boolean", filename, conditionalLineNumber);
-            };
-            return true;
-        }
-        throw new SemanticException("Conditional statement does not evaluate to boolean", filename, conditionalLineNumber);
+        return true;
     }
 
     public String convertToJott() {
         return ("While[" + exprNode.convertToJott() + "]{" +  bodyNode.convertToJott() + "}");
     }
 
-    public boolean validateTree(ScopeManager sm) throws SemanticException {
-        boolean exprOk = exprNode.validateTree(sm);
-        boolean bodyOk = bodyNode.validateTree(sm);
+    public boolean validateTree() throws SemanticException {
+        boolean exprOk = exprNode.validateTree();
+        boolean bodyOk = bodyNode.validateTree();
 
-        return condIsBool(sm) && exprOk && bodyOk;
+        return condIsBool() && exprOk && bodyOk;
     }
 
     public void execute() {

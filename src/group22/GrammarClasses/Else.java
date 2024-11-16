@@ -1,5 +1,6 @@
 package group22.GrammarClasses;
 import group22.ScopeManager;
+import group22.SemanticException;
 import group22.SyntaxException;
 import provided.*;
 
@@ -46,13 +47,6 @@ public class Else implements JottTree{
     }
 
     public boolean hasReturnStmt() {
-//        for (BodyStmt bs : bodyNode.bodyStmts) {
-//            if (bs.subNode instanceof IfStmt) {
-//                var ifStmt = (IfStmt) bs.subNode;
-//                if (ifStmt.elseNode)
-//            }
-//        }
-
         return bodyNode.returnStmt != null;
     }
 
@@ -63,8 +57,8 @@ public class Else implements JottTree{
         return ("Else{" + bodyNode.convertToJott() + "}");
     }
 
-    public boolean validateTree(ScopeManager sm) {
-        return bodyNode.validateTree(sm);
+    public boolean validateTree() throws SemanticException {
+        return bodyNode.validateTree();
     }
 
     public void execute() {

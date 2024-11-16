@@ -15,14 +15,16 @@ public class IfStmt implements JottTree{
     private final Else elseNode;
     private final String filename;
     private final int conditionalLineNumber;
+    private final int bodyLineNumber;
 
-    public IfStmt(Expr exprNode, Body bodyNode, ArrayList<ElseIf> elseIfNodes, Else elseNode, String filename, int conditionalLineNumber) {
+    public IfStmt(Expr exprNode, Body bodyNode, ArrayList<ElseIf> elseIfNodes, Else elseNode, String filename, int conditionalLineNumber, int bodyLineNumber) {
         this.exprNode = exprNode;
         this.bodyNode = bodyNode;
         this.elseIfNodes = elseIfNodes;
         this.elseNode = elseNode;
         this.filename = filename;
         this.conditionalLineNumber = conditionalLineNumber;
+        this.bodyLineNumber = bodyLineNumber;
     }
 
     static IfStmt parse(ArrayList<Token> tokens) throws SyntaxException {
@@ -39,6 +41,8 @@ public class IfStmt implements JottTree{
             if (currToken.getTokenType() != TokenType.L_BRACKET) {
                 throw new SyntaxException("Expected left bracket", currToken.getFilename(), currToken.getLineNum());
             }
+            var filename = currToken.getFilename();
+            var conditionalLineNumber = currToken.getLineNum();
             tokens.remove(0);
             Expr exprNode = Expr.parse(tokens);
             currToken = tokens.get(0);
@@ -50,8 +54,7 @@ public class IfStmt implements JottTree{
             if (currToken.getTokenType() != TokenType.L_BRACE) {
                 throw new SyntaxException("Expected left brace", currToken.getFilename(), currToken.getLineNum());
             }
-            var filename = currToken.getFilename();
-            var conditionalLineNumber = currToken.getLineNum();
+            var bodyLineNumber = currToken.getLineNum();
             tokens.remove(0);
             Body bodyNode = Body.parse(tokens);
             currToken = tokens.get(0);
@@ -66,7 +69,7 @@ public class IfStmt implements JottTree{
                 currToken = tokens.get(0);
             }
             Else elseNode = Else.parse(tokens);
-            return new IfStmt(exprNode, bodyNode, elseIfNodes, elseNode, filename, conditionalLineNumber);
+            return new IfStmt(exprNode, bodyNode, elseIfNodes, elseNode, filename, conditionalLineNumber, bodyLineNumber);
         } catch (IndexOutOfBoundsException e) {
             throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
         }
@@ -81,26 +84,13 @@ public class IfStmt implements JottTree{
         return s.toString();
     }
 
-    private boolean condIsBool(ScopeManager sm) throws SemanticException {
-        if (exprNode.subNodes.size() == 1) {
-            if (exprNode.subNodes.get(0) instanceof Id id) {
-                return id.getIdDatatype() == DataType.BOOLEAN;
-            } else if (exprNode.subNodes.get(0) instanceof FuncCall fc) {
-                return sm.getFunctionReturnType(fc.getName()).equals(DataType.BOOLEAN);
-            }
+    private boolean condIsBool() throws SemanticException {
+        if(!exprNode.getDataType().equals(DataType.BOOLEAN)) {
             throw new SemanticException("Conditional statement in If statement does not evaluate to boolean",
-                    filename,
-                    conditionalLineNumber);
+                    exprNode.fileName,
+                    exprNode.startingLineNumber);
         }
-        if (exprNode.subNodes.size() == 3) {
-            if (!(exprNode.subNodes.get(1) instanceof RelOp)) {
-                throw new SemanticException("Conditional statement in If statement does not evaluate to boolean",
-                        filename,
-                        conditionalLineNumber);
-            };
-            return true;
-        }
-        throw new SemanticException("Conditional statement does not evaluate to boolean", "", -1);
+        return true;
     }
 
     public boolean willReturn() throws SemanticException {
@@ -121,20 +111,21 @@ public class IfStmt implements JottTree{
         return true;
     }
 
-    public boolean validateTree(ScopeManager sm) throws SemanticException {
-        boolean exprOk = exprNode.validateTree(sm);
-        boolean bodyOk = bodyNode.validateTree(sm);
+    public boolean validateTree() throws SemanticException {
+        boolean exprOk = exprNode.validateTree();
+        boolean bodyOk = bodyNode.validateTree();
+
         for (ElseIf e : elseIfNodes) {
-            if (!e.validateTree(sm)) {
+            if (!e.validateTree()) {
                 return false;
             }
         }
         if (elseNode != null) {
-            if (!elseNode.validateTree(sm)) {
+            if (!elseNode.validateTree()) {
                 return false;
             }
         }
-        return condIsBool(sm) && uniformReturns() && exprOk && bodyOk;
+        return condIsBool() && uniformReturns() && exprOk && bodyOk;
     }
 
     public void execute() {

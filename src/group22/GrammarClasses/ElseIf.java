@@ -57,26 +57,13 @@ public class ElseIf implements JottTree{
         }
     }
 
-    private boolean condIsBool(ScopeManager sm) throws SemanticException {
-        if (exprNode.subNodes.size() == 1) {
-            if (exprNode.subNodes.get(0) instanceof Id id) {
-                return id.getIdDatatype() == DataType.BOOLEAN;
-            } else if (exprNode.subNodes.get(0) instanceof FuncCall fc) {
-                return sm.getFunctionReturnType(fc.getName()).equals(DataType.BOOLEAN);
-            }
-            throw new SemanticException("Conditional statement in ElseIf does not evaluate to boolean",
+    private boolean condIsBool() throws SemanticException {
+        if(!exprNode.getDataType().equals(DataType.BOOLEAN)) {
+            throw new SemanticException("Conditional statement in ElseIf statement does not evaluate to boolean",
                     exprNode.fileName,
                     exprNode.startingLineNumber);
         }
-        if (exprNode.subNodes.size() == 3) {
-            if (!(exprNode.subNodes.get(1) instanceof RelOp)) {
-                throw new SemanticException("Conditional statement in ElseIf does not evaluate to boolean",
-                        exprNode.fileName,
-                        exprNode.startingLineNumber);
-            };
-            return true;
-        }
-        throw new SemanticException("Conditional statement does not evaluate to boolean", "", -1);
+        return true;
     }
 
     public boolean hasReturnStmt() {
@@ -87,8 +74,8 @@ public class ElseIf implements JottTree{
         return ("Elseif[" + exprNode.convertToJott() + "]{" +  bodyNode.convertToJott() + "}");
     }
 
-    public boolean validateTree(ScopeManager sm) throws SemanticException {
-        return exprNode.validateTree(sm) && bodyNode.validateTree(sm) && condIsBool(sm);
+    public boolean validateTree() throws SemanticException {
+        return exprNode.validateTree() && bodyNode.validateTree() && condIsBool();
     }
 
     public void execute() {
