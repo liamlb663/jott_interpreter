@@ -57,12 +57,12 @@ public class ReturnStmt implements JottTree {
         }
     }
 
-    public boolean validateTree() {
+    public boolean validateTree() throws SemanticException {
         if (Program.scopeManager.getCurrentReturnType() != expr.getType()) {
             throw new SemanticException("Type Differs from proper return type of function");
         }
 
-        return false;
+        return (true);
     }
 
     public void execute() {
