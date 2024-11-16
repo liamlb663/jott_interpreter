@@ -53,9 +53,18 @@ public class FBody implements JottTree {
         return sB.toString();
     }
 
-    public boolean validateTree() {
-        //TODO
-        return false;
+    public boolean validateTree() throws SemanticException {
+        // Validate the Variable Declarations
+        for (VarDec varDec : varDecs) {
+            if (!varDec.validateTree()) {
+                return false;
+            }
+        }
+        // Validate the body
+        if (body.validateTree()) {
+            return false;
+        }
+        return true;
     }
 
     public void execute() {
