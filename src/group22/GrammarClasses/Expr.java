@@ -1,5 +1,6 @@
 package group22.GrammarClasses;
 
+import group22.DataType;
 import group22.SyntaxException;
 import provided.JottParser;
 import provided.JottTree;

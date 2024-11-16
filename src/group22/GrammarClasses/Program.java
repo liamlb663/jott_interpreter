@@ -58,7 +58,7 @@ public class Program implements JottTree {
         return sb.toString();
     }
 
-    public boolean validateTree() {
+    public boolean validateTree() throws SemanticException {
         for (FunctionDef funcDef : functionDefs) {
             funcDef.validateTree();
         }
