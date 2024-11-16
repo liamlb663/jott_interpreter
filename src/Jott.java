@@ -43,7 +43,7 @@ public class Jott {
         try {
             root.validateTree();
         } catch (SemanticException e) {
-            System.err.println("Semantic Error: " + e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
 }
