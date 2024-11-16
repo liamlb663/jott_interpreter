@@ -1,4 +1,6 @@
 package group22.GrammarClasses;
+import group22.DataType;
+import group22.SemanticException;
 import group22.SyntaxException;
 import provided.*;
 
@@ -9,12 +11,18 @@ public class IfStmt implements JottTree{
     private final Body bodyNode;
     private final ArrayList<ElseIf> elseIfNodes;
     private final Else elseNode;
+    private final String filename;
+    private final int conditionalLineNumber;
+    private final int bodyLineNumber;
 
-    public IfStmt(Expr exprNode, Body bodyNode, ArrayList<ElseIf> elseIfNodes, Else elseNode) {
+    public IfStmt(Expr exprNode, Body bodyNode, ArrayList<ElseIf> elseIfNodes, Else elseNode, String filename, int conditionalLineNumber, int bodyLineNumber) {
         this.exprNode = exprNode;
         this.bodyNode = bodyNode;
         this.elseIfNodes = elseIfNodes;
         this.elseNode = elseNode;
+        this.filename = filename;
+        this.conditionalLineNumber = conditionalLineNumber;
+        this.bodyLineNumber = bodyLineNumber;
     }
 
     static IfStmt parse(ArrayList<Token> tokens) throws SyntaxException {
@@ -31,6 +39,8 @@ public class IfStmt implements JottTree{
             if (currToken.getTokenType() != TokenType.L_BRACKET) {
                 throw new SyntaxException("Expected left bracket", currToken.getFilename(), currToken.getLineNum());
             }
+            var filename = currToken.getFilename();
+            var conditionalLineNumber = currToken.getLineNum();
             tokens.remove(0);
             Expr exprNode = Expr.parse(tokens);
             currToken = tokens.get(0);
@@ -42,6 +52,7 @@ public class IfStmt implements JottTree{
             if (currToken.getTokenType() != TokenType.L_BRACE) {
                 throw new SyntaxException("Expected left brace", currToken.getFilename(), currToken.getLineNum());
             }
+            var bodyLineNumber = currToken.getLineNum();
             tokens.remove(0);
             Body bodyNode = Body.parse(tokens);
             currToken = tokens.get(0);
@@ -56,10 +67,37 @@ public class IfStmt implements JottTree{
                 currToken = tokens.get(0);
             }
             Else elseNode = Else.parse(tokens);
-            return new IfStmt(exprNode, bodyNode, elseIfNodes, elseNode);
+            return new IfStmt(exprNode, bodyNode, elseIfNodes, elseNode, filename, conditionalLineNumber, bodyLineNumber);
         } catch (IndexOutOfBoundsException e) {
             throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
         }
+    }
+
+    private boolean condIsBool() throws SemanticException {
+        if(!exprNode.getDataType().equals(DataType.BOOLEAN)) {
+            throw new SemanticException("Conditional statement in If statement does not evaluate to boolean",
+                    filename,
+                    conditionalLineNumber);
+        }
+        return true;
+    }
+
+    public boolean willReturn() throws SemanticException {
+        return bodyNode.returnStmt != null && uniformReturns();
+    }
+
+    // if IfStmt has a return, then all elseif/else statements need a return
+    private boolean uniformReturns() throws SemanticException {
+        boolean hasReturn = bodyNode.returnStmt != null;
+        for (ElseIf e : elseIfNodes) {
+            if (hasReturn && !e.hasReturnStmt()) {
+                throw new SemanticException("ElseIf statement does not have return statement", e.filename, e.startingLineNumber);
+            }
+        }
+        if (elseNode != null && elseNode.hasReturnStmt() != hasReturn) {
+            throw new SemanticException("Else statement does not have return statement, but If statement does", elseNode.filename, elseNode.lineNumber);
+        }
+        return true;
     }
 
     public String convertToJott() {
@@ -71,11 +109,22 @@ public class IfStmt implements JottTree{
         return s.toString();
     }
 
-    public boolean validateTree() {
-        //TODO
-        return false;
-    }
+    public boolean validateTree() throws SemanticException {
+        boolean exprOk = exprNode.validateTree();
+        boolean bodyOk = bodyNode.validateTree();
 
+        for (ElseIf e : elseIfNodes) {
+            if (!e.validateTree()) {
+                return false;
+            }
+        }
+        if (elseNode != null) {
+            if (!elseNode.validateTree()) {
+                return false;
+            }
+        }
+        return condIsBool() && uniformReturns() && exprOk && bodyOk;
+    }
     public void execute() {
         //TODO
     }
