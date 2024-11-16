@@ -1,5 +1,8 @@
 package group22.GrammarClasses;
 
+import group22.DataType;
+import group22.ScopeManager;
+import group22.SemanticException;
 import group22.SyntaxException;
 import provided.JottParser;
 import provided.JottTree;
@@ -7,6 +10,8 @@ import provided.Token;
 import provided.TokenType;
 
 import java.util.ArrayList;
+
+import static group22.GrammarClasses.Program.scopeManager;
 
 public class Asmt implements JottTree {
     Id id;
@@ -51,9 +56,35 @@ public class Asmt implements JottTree {
         return id.convertToJott() + "=" + expr.convertToJott() + ";";
     }
 
-    public boolean validateTree() {
-        //TODO
-        return false;
+
+    @Override
+    public boolean validateTree() throws SemanticException {
+        // Get the variable name from the Id class (use the token's token)
+        String varName = id.convertToJott();
+
+        // Check if the variable on the LHS is declared in the current scope
+        if (!scopeManager.isVarDeclared(varName)) {
+            throw new SemanticException(
+                    "Variable " + varName + " is not declared in the current scope",
+                     id.id.getFilename(), id.id.getLineNum()
+            );
+        }
+
+        // Get the type of the LHS variable
+        DataType lhsType = scopeManager.getDataType(varName);
+
+        // Validate the RHS expression
+        DataType rhsType = expr.getType(); // Assuming Expr has a method to get its type
+
+        // Check if the types are compatible
+        if (!lhsType.isCompatible(rhsType)) {
+            throw new SemanticException(
+                    "Type mismatch in assignment: " + lhsType + " cannot be assigned from " + rhsType,
+                    id.id.getFilename(), id.id.getLineNum()
+            );
+        }
+
+        return true;
     }
 
     public void execute() {

@@ -1,5 +1,8 @@
 package group22.GrammarClasses;
 
+import group22.DataType;
+import group22.ScopeManager;
+import group22.SemanticException;
 import group22.SyntaxException;
 import provided.JottParser;
 import provided.JottTree;
@@ -7,6 +10,8 @@ import provided.Token;
 import provided.TokenType;
 
 import java.util.ArrayList;
+
+import static group22.GrammarClasses.Program.scopeManager;
 
 public class FBody implements JottTree {
     ArrayList<VarDec> varDecs;
@@ -53,10 +58,20 @@ public class FBody implements JottTree {
         return sB.toString();
     }
 
-    public boolean validateTree() {
-        //TODO
-        return false;
+    public boolean validateTree() throws SemanticException {
+        // Validate the Variable Declarations
+        for (VarDec varDec : varDecs) {
+            if (!varDec.validateTree()) {
+                return false;
+            }
+        }
+        // Validate the body
+        if (body.validateTree()) {
+            return false;
+        }
+        return true;
     }
+
 
     public void execute() {
         //TODO

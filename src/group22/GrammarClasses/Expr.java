@@ -1,5 +1,8 @@
 package group22.GrammarClasses;
 
+import group22.DataType;
+import group22.ScopeManager;
+import group22.SemanticException;
 import group22.SyntaxException;
 import provided.JottParser;
 import provided.JottTree;
@@ -8,6 +11,9 @@ import provided.TokenType;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static group22.GrammarClasses.Program.scopeManager;
+
 
 public class Expr implements JottTree {
     private final ArrayList<JottTree> subNodes;
@@ -106,14 +112,72 @@ public class Expr implements JottTree {
         return jottCode.toString();
     }
 
-    public DataType getType() {
-
+    public DataType getType() throws SemanticException {
+        // Get type of the subnode (operand, literal, or variable)
+        JottTree subNode = subNodes.get(0);
+        // If the subNode is an ID, fetch its type from the scope
+        if (subNodes.size() == 1 && subNode instanceof Id id) {
+            String varName = id.id.getToken();  // Get the variable's name
+            if (!scopeManager.isVarDeclared(varName)) {
+                throw new SemanticException(
+                        "Variable " + varName + " is not declared in the current scope",
+                        id.id.getFilename(),
+                        id.id.getLineNum()
+                );
+            }
+            return scopeManager.getDataType(varName);  // Return the type of the variable from the scope
+        }
+        // If it's a literal value, determine its type
+        else if (subNodes.size() == 1) {
+            if (subNode instanceof StringLiteral) {
+                return DataType.STRING;  // A string literal
+            } else if (subNode instanceof Bool) {
+                return DataType.BOOLEAN;  // A boolean literal
+            } else if (subNode instanceof Number) {
+                String numValue = ((Number) subNode).number.getToken();  // Get the string representation of the number
+                // Check if the number contains a decimal point (double)
+                if (numValue.contains(".")) {
+                    return DataType.DOUBLE;
+                } else {
+                    return DataType.INTEGER;
+                }
+            }
+        }
+        return DataType.VOID;
     }
 
-    @Override
-    public boolean validateTree() {
-        return false;
+
+    // Validate the expression's tree
+    public boolean validateTree() throws SemanticException {
+        // Handle the validation of each subNode in the expression
+        for (JottTree subNode : subNodes) {
+            // Validate individual subnodes
+            if (!(subNode.validateTree())) {
+                return false;
+            }
+        }
+        // For mathematical or relational operations, ensure operands are compatible
+        if (subNodes.size() > 1) {
+            DataType leftType = subNodes.get(0).getType();
+            DataType rightType = subNodes.get(2).getType();
+            // Check for type compatibility between operands
+            if (leftType != rightType) {
+                throw new SemanticException(
+                        "Type mismatch between operands",
+                        "", -1
+                );
+            }
+            // For mathematical operations, ensure that both operands are numbers (int or double)
+            if (leftType == DataType.STRING || rightType == DataType.STRING) {
+                throw new SemanticException(
+                        "Cannot perform mathematical or relational operations on string type",
+                        "", -1
+                );
+            }
+        }
+        return true;
     }
+
 
     @Override
     public void execute() {
