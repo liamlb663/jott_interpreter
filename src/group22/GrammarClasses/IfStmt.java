@@ -74,7 +74,7 @@ public class IfStmt implements JottTree{
     }
 
     private boolean condIsBool() throws SemanticException {
-        if(!exprNode.getDataType().equals(DataType.BOOLEAN)) {
+        if(!exprNode.getType().equals(DataType.BOOLEAN)) {
             throw new SemanticException("Conditional statement in If statement does not evaluate to boolean",
                     filename,
                     conditionalLineNumber);
