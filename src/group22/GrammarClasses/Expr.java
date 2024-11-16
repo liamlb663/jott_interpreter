@@ -131,8 +131,8 @@ public class Expr implements JottTree {
                         "", -1
                 );
             }
-            // For mathematical operations, ensure that both operands are numbers (int or double)
-            if (leftType == DataType.STRING || rightType == DataType.STRING) {
+            // For mathematical operations, ensure that operands are numbers (int or double)
+            if (leftType == DataType.STRING) {
                 throw new SemanticException(
                         "Cannot perform mathematical or relational operations on string type",
                         "", -1

@@ -60,11 +60,8 @@ public class FBody implements JottTree {
                 return false;
             }
         }
-        // Validate the body
-        if (body.validateTree()) {
-            return false;
-        }
-        return true;
+
+        return (body.validateTree());
     }
 
     public void execute() {
