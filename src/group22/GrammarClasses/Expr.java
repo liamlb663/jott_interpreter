@@ -111,8 +111,35 @@ public class Expr implements JottTree {
     }
 
     @Override
-    public boolean validateTree() {
-        return false;
+    // Validate the expression's tree
+    public boolean validateTree() throws SemanticException {
+        // Handle the validation of each subNode in the expression
+        for (JottTree subNode : subNodes) {
+            // Validate individual subnodes
+            if (!(subNode.validateTree())) {
+                return false;
+            }
+        }
+        // For mathematical or relational operations, ensure operands are compatible
+        if (subNodes.size() > 1) {
+            DataType leftType = subNodes.get(0).getType();
+            DataType rightType = subNodes.get(2).getType();
+            // Check for type compatibility between operands
+            if (leftType != rightType) {
+                throw new SemanticException(
+                        "Type mismatch between operands",
+                        "", -1
+                );
+            }
+            // For mathematical operations, ensure that both operands are numbers (int or double)
+            if (leftType == DataType.STRING || rightType == DataType.STRING) {
+                throw new SemanticException(
+                        "Cannot perform mathematical or relational operations on string type",
+                        "", -1
+                );
+            }
+        }
+        return true;
     }
 
     @Override
