@@ -1,4 +1,5 @@
 package group22.GrammarClasses;
+import group22.SemanticException;
 import group22.SyntaxException;
 import provided.*;
 
@@ -6,9 +7,13 @@ import java.util.ArrayList;
 
 public class Else implements JottTree{
     private final Body bodyNode;
+    public final String filename;
+    public final int lineNumber;
 
-    public Else(Body bodyNode) {
+    public Else(Body bodyNode, String filename, int lineNumber) {
         this.bodyNode = bodyNode;
+        this.filename = filename;
+        this.lineNumber = lineNumber;
     }
 
     static Else parse(ArrayList<Token> tokens) throws SyntaxException {
@@ -17,8 +22,10 @@ public class Else implements JottTree{
         }
         try {
             Token currToken = tokens.get(0);
+            var filename = currToken.getFilename();
+            var lineNumber = currToken.getLineNum();
             if (!(currToken.getTokenType() == TokenType.ID_KEYWORD && currToken.getToken().equals("Else"))) {
-                return new Else(null);
+                return new Else(null, filename, lineNumber);
             }
             tokens.remove(0);
             currToken = tokens.get(0);
@@ -32,10 +39,14 @@ public class Else implements JottTree{
                 throw new SyntaxException("Expected right brace", currToken.getFilename(), currToken.getLineNum());
             }
             tokens.remove(0);
-            return new Else(bodyNode);
+            return new Else(bodyNode, filename, lineNumber);
         } catch (IndexOutOfBoundsException e) {
             throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
         }
+    }
+
+    public boolean hasReturnStmt() {
+        return bodyNode.returnStmt != null;
     }
 
     public String convertToJott() {
@@ -45,11 +56,9 @@ public class Else implements JottTree{
         return ("Else{" + bodyNode.convertToJott() + "}");
     }
 
-    public boolean validateTree() {
-        //TODO
-        return false;
+    public boolean validateTree() throws SemanticException {
+        return bodyNode.validateTree();
     }
-
     public void execute() {
         //TODO
     }

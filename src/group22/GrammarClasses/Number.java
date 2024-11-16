@@ -7,13 +7,16 @@ import provided.JottTree;
 import provided.Token;
 import provided.TokenType;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 
 public class Number implements JottTree {
     private final Token number;
+    private final DataType type;
 
-    public Number(Token number) {
+    public Number(Token number, DataType type) {
         this.number = number;
+        this.type = type;
     }
 
     static Number parse(ArrayList<Token> tokens) throws SyntaxException {
@@ -35,7 +38,12 @@ public class Number implements JottTree {
             );
         }
 
-        return new Number(currToken);
+        DataType type = currToken.getToken().contains(".") ? DataType.DOUBLE : DataType.INTEGER;
+        return new Number(currToken, type);
+    }
+
+    public DataType getDataType() {
+        return this.type;
     }
 
     public DataType getDataType() {
@@ -57,8 +65,7 @@ public class Number implements JottTree {
 
     @Override
     public boolean validateTree() {
-        // TODO
-        return false;
+        return true;
     }
 
     @Override

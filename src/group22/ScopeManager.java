@@ -100,7 +100,12 @@ public class ScopeManager {
     }
 
     public boolean isFunctionDeclared(String func) {
-        return functions.containsKey(func);
+        HashSet<String> builtInFunctions = new HashSet<>();
+        builtInFunctions.add("print");
+        builtInFunctions.add("concat");
+        builtInFunctions.add("length");
+
+        return functions.containsKey(func) || builtInFunctions.contains(func);
     }
 
     public ArrayList<DataType> getFunctionParameterTypes(String func) {
