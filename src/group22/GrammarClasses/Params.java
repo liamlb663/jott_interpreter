@@ -1,4 +1,5 @@
 package group22.GrammarClasses;
+import group22.SemanticException;
 import group22.DataType;
 import group22.SyntaxException;
 import provided.*;
@@ -59,9 +60,22 @@ public class Params implements JottTree {
         return output;
     }
 
-    public boolean validateTree() {
-        //TODO
-        return false;
+    public boolean validateTree() throws SemanticException {
+        if (!exprNode.validateTree()) {
+            return false;
+        }
+        for (ParamsT t : paramsTNodes) {
+            if (!t.validateTree()) {
+                return false;
+            }
+        }
+        ParamsT dummyParamT = new ParamsT(exprNode);
+        ArrayList<ParamsT> allParamsTNodes = new ArrayList<>(paramsTNodes);
+        allParamsTNodes.add(dummyParamT); //dumb workaround to easily check all params for duplicates
+        if (allParamsTNodes.stream().distinct().count() != allParamsTNodes.size()) {
+            throw new SemanticException("One or more parameters is a duplicate");
+        }
+        return true;
     }
 
     public void execute() {
