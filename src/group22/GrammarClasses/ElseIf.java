@@ -1,4 +1,5 @@
 package group22.GrammarClasses;
+import group22.DataType;
 import group22.SyntaxException;
 import provided.*;
 
@@ -50,6 +51,8 @@ public class ElseIf implements JottTree{
             throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
         }
     }
+
+    public DataType getDataType
 
     public String convertToJott() {
         return ("Elseif[" + exprNode.convertToJott() + "]{" +  bodyNode.convertToJott() + "}");

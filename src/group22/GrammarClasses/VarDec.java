@@ -1,6 +1,7 @@
 package group22.GrammarClasses;
 
 import group22.DataType;
+import group22.ScopeManager;
 import group22.SemanticException;
 import group22.SyntaxException;
 import provided.JottTree;
@@ -47,10 +48,26 @@ public class VarDec implements JottTree {
     }
 
     public boolean validateTree() throws SemanticException {
-        boolean isInScope = id.validateTree();
-        DataType idDatatype = Program.scopeManager.get
-        // TODO: We have to check if the variable already exists, if it does then we fail it
-        return false;
+        // Will throw if not valid, so don't need to check boolean value
+        id.validateTree();
+
+        Token idToken = id.getToken();
+        boolean idAlreadyMade = Program.scopeManager.isVarDeclared(idToken.getToken());
+
+        // Check if variable is already made, if it is then there is a problem
+        if (idAlreadyMade) {
+            throw new SemanticException(
+                    "The variable " + idToken.getToken() + " is already declared",
+                    idToken.getFilename(),
+                    idToken.getLineNum()
+            );
+        }
+
+        // This should just be true since parsing validates it, but fuck it why not
+        type.validateTree();
+
+        Program.scopeManager.declareVariable(idToken.getToken(), DataType.fromString(type.convertToJott()));
+        return true;
     }
 
     public void execute() {

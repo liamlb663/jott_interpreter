@@ -37,6 +37,10 @@ public class MathOp implements JottTree {
         return token.equals("+") || token.equals("-") || token.equals("*") || token.equals("/");
     }
 
+    public Token getToken() {
+        return operator;
+    }
+
     @Override
     public String convertToJott() {
         return operator.getToken();

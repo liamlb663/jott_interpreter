@@ -39,6 +39,10 @@ public class RelOp implements JottTree {
                token.equals(">") || token.equals("<");
     }
 
+    public Token getToken() {
+        return operator;
+    }
+
     @Override
     public String convertToJott() {
         return operator.getToken();

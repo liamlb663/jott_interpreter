@@ -1,4 +1,5 @@
 package group22.GrammarClasses;
+import group22.DataType;
 import group22.SyntaxException;
 import group22.SemanticException;
 import group22.GrammarClasses.Program;
@@ -41,6 +42,24 @@ public class FuncCall implements JottTree{
         } catch (IndexOutOfBoundsException e) {
             throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
         }
+    }
+
+    public DataType getDataType() throws SemanticException {
+        Token idToken = idNode.getToken();
+
+        if (!Program.scopeManager.isFunctionDeclared(idToken.getToken())) {
+            throw new SemanticException(
+                    idToken.getToken() + " is being called as a function, but isn't defined",
+                    idToken.getFilename(),
+                    idToken.getLineNum()
+            );
+        }
+
+        return Program.scopeManager.getFunctionReturnType(idNode.convertToJott());
+    }
+
+    public Token getToken() {
+        return idNode.getToken();
     }
 
     public String convertToJott() {

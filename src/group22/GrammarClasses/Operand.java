@@ -1,6 +1,7 @@
 package group22.GrammarClasses;
 
 import group22.DataType;
+import group22.SemanticException;
 import group22.SyntaxException;
 import provided.JottParser;
 import provided.JottTree;
@@ -11,11 +12,9 @@ import java.util.ArrayList;
 
 public class Operand implements JottTree {
     private final JottTree subNode;
-    private final Token subNodeToken;
 
-    public Operand(JottTree node, Token subNodeToken) {
+    public Operand(JottTree node) {
         this.subNode = node;
-        this.subNodeToken = subNodeToken;
     }
 
     static JottTree parse(ArrayList<Token> tokens) throws SyntaxException {
@@ -32,13 +31,13 @@ public class Operand implements JottTree {
         try {
             switch (currToken.getTokenType()) {
                 case ID_KEYWORD -> {
-                    return new Operand(Id.parse(tokens), currToken);
+                    return new Operand(Id.parse(tokens));
                 }
                 case NUMBER -> {
-                    return new Operand(Number.parse(tokens), currToken);
+                    return new Operand(Number.parse(tokens));
                 }
                 case FC_HEADER -> {
-                    return new Operand(FuncCall.parse(tokens), currToken);
+                    return new Operand(FuncCall.parse(tokens));
                 }
                 case MATH_OP -> {
                     if (!currToken.getToken().equals("-")) {
@@ -70,7 +69,7 @@ public class Operand implements JottTree {
                             )
                     );
 
-                    return new Operand(Number.parse(tokens), nextToken);
+                    return new Operand(Number.parse(tokens));
                 }
                 default -> throw new SyntaxException(
                         "Invalid token found when parsing Operand",
@@ -89,17 +88,23 @@ public class Operand implements JottTree {
         }
     }
 
-    DataType getOperandDataType() {
-        if (subNodeToken.getTokenType() == TokenType.FC_HEADER) {
-            // TODO: Check function table and return type of function
-        } else if (subNodeToken.getTokenType() == TokenType.NUMBER) {
-            if (subNodeToken.getToken().contains(".")) {
-                return DataType.DOUBLE;
-            }
-
-            return DataType.INTEGER;
+    public Token getToken() {
+        if (subNode instanceof Id) {
+            return ((Id) subNode).getToken();
+        } else if (subNode instanceof FuncCall) {
+            return ((FuncCall) subNode).getToken();
         } else {
-            // TODO: Check our variable table and return associated datatype
+            return ((Number) subNode).getToken();
+        }
+    }
+
+    public DataType getDataType() throws SemanticException {
+        if (subNode instanceof Id) {
+            return ((Id) subNode).getDataType();
+        } else if (subNode instanceof FuncCall) {
+            return ((FuncCall) subNode).getDataType();
+        } else {
+            return ((Number) subNode).getDataType();
         }
     }
 
@@ -109,7 +114,7 @@ public class Operand implements JottTree {
     }
 
     @Override
-    public boolean validateTree() {
+    public boolean validateTree() throws SemanticException {
         return subNode.validateTree();
     }
 

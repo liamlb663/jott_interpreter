@@ -1,5 +1,6 @@
 package group22.GrammarClasses;
 
+import group22.DataType;
 import group22.SyntaxException;
 import provided.JottParser;
 import provided.JottTree;
@@ -35,6 +36,18 @@ public class Number implements JottTree {
         }
 
         return new Number(currToken);
+    }
+
+    public DataType getDataType() {
+        if (number.getToken().contains(".")) {
+            return DataType.DOUBLE;
+        } else {
+            return DataType.INTEGER;
+        }
+    }
+
+    public Token getToken() {
+        return number;
     }
 
     @Override
