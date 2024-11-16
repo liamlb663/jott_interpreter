@@ -42,8 +42,7 @@ public class ParamsT implements JottTree {
     }
 
     public boolean validateTree() {
-        //TODO
-        return false;
+        return (exprNode.validateTree());
     }
 
     public void execute() {
