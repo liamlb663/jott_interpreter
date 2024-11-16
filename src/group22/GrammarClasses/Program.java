@@ -9,11 +9,18 @@ public class Program implements JottTree {
     static ScopeManager scopeManager = new ScopeManager();
     ArrayList<FunctionDef> functionDefs;
 
-    public Program(ArrayList<FunctionDef> functionDefs) {
+    String fileName;
+    int fileNumber;
+
+    public Program(ArrayList<FunctionDef> functionDefs, String name, int number) {
         this.functionDefs = functionDefs;
+        this.fileName = name;
+        this.fileNumber = number;
     }
 
     public static Program parse(ArrayList<Token> tokens) throws SyntaxException {
+        int number = tokens.getLast().getLineNum();
+        String name = tokens.getLast().getFilename();
         try {
             ArrayList<FunctionDef> functionDefs = new ArrayList<>();
 
@@ -31,7 +38,7 @@ public class Program implements JottTree {
                 Token nextToken = tokens.get(0);
                 throw new SyntaxException("Expected EOF, found " + nextToken.getTokenType(), nextToken.getFilename(), nextToken.getLineNum());
             }
-            return new Program(functionDefs);
+            return new Program(functionDefs, name, number);
         }
         catch (IndexOutOfBoundsException e) {
             throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
@@ -52,12 +59,16 @@ public class Program implements JottTree {
     }
 
     public boolean validateTree() {
-        for (FunctionDef funcDef : functionDefs) {
-            funcDef.validateTree();
-        }
+        try {
+            for (FunctionDef funcDef : functionDefs) {
+                funcDef.validateTree();
+            }
 
-        if (!scopeManager.isFunctionDeclared("main")) {
-            throw new SemanticException("Missing main function");
+            if (!scopeManager.isFunctionDeclared("main")) {
+                throw new SemanticException("Missing main function", fileName, fileNumber);
+            }
+        } catch (SemanticException e) {
+            System.err.println("Semantic Error: " + e.getMessage());
         }
 
         return true;

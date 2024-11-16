@@ -34,7 +34,6 @@ public class FunctionReturn {
     }
 
     public boolean validateTree() {
-        // TO DO
         return true;
     }
 

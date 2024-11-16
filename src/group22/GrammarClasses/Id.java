@@ -9,7 +9,7 @@ import provided.TokenType;
 import java.util.ArrayList;
 
 public class Id implements JottTree {
-    private final Token id;
+    final Token id;
 
     public Id(Token id) {
         this.id = id;
