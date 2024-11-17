@@ -66,6 +66,10 @@ public class Asmt implements JottTree {
             );
         }
 
+        // Check if the Expression and Id nodes are valid when using them
+        expr.validateTree();
+        id.validateTree();
+
         // Get the type of the LHS variable
         DataType lhsType = Program.scopeManager.getDataType(varName);
 
