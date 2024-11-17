@@ -46,14 +46,6 @@ public class Number implements JottTree {
         return this.type;
     }
 
-    public DataType getDataType() {
-        if (number.getToken().contains(".")) {
-            return DataType.DOUBLE;
-        } else {
-            return DataType.INTEGER;
-        }
-    }
-
     public Token getToken() {
         return number;
     }
