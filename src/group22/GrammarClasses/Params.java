@@ -7,8 +7,8 @@ import provided.*;
 import java.util.ArrayList;
 
 public class Params implements JottTree {
-    private final Expr exprNode;
-    private final ArrayList<ParamsT> paramsTNodes;
+    final Expr exprNode;
+    final ArrayList<ParamsT> paramsTNodes;
 
     public Params(Expr exprNode, ArrayList<ParamsT> paramsTNodes) {
         this.exprNode = exprNode;

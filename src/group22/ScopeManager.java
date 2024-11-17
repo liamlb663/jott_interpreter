@@ -2,11 +2,8 @@ package group22;
 
 import group22.DataType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Stack;
+import javax.xml.crypto.Data;
+import java.util.*;
 
 public class ScopeManager {
     private class Variable {
@@ -35,6 +32,12 @@ public class ScopeManager {
 
     public ScopeManager() {
         functions = new HashMap<>();
+        DataType[] concatParams = {DataType.STRING, DataType.STRING};
+        functions.put("concat", new Function(new ArrayList<DataType>(Arrays.asList(concatParams)), DataType.STRING));
+        DataType[] lengthParams = {DataType.STRING};
+        functions.put("length", new Function(new ArrayList<DataType>(Arrays.asList(lengthParams)), DataType.INTEGER));
+        //print is not added here but rather handled in FuncCall's validateTree and execute
+
         scopes = new Stack<>();
         scopes.push(new HashMap<>());
         returnTypeStack = new Stack<>();
@@ -100,12 +103,7 @@ public class ScopeManager {
     }
 
     public boolean isFunctionDeclared(String func) {
-        HashSet<String> builtInFunctions = new HashSet<>();
-        builtInFunctions.add("print");
-        builtInFunctions.add("concat");
-        builtInFunctions.add("length");
-
-        return functions.containsKey(func) || builtInFunctions.contains(func);
+        return functions.containsKey(func);
     }
 
     public ArrayList<DataType> getFunctionParameterTypes(String func) {
