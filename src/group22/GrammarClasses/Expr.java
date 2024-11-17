@@ -9,7 +9,6 @@ import provided.Token;
 import provided.TokenType;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class Expr implements JottTree {
@@ -100,7 +99,7 @@ public class Expr implements JottTree {
 
     public DataType getDataType() throws SemanticException {
         if (subNodes.size() == 1) {
-            JottTree node = subNodes.getFirst();
+            JottTree node = subNodes.get(0);
 
             if (node instanceof Operand) {
                 return ((Operand) node).getDataType();
@@ -111,8 +110,8 @@ public class Expr implements JottTree {
             }
         }
 
-        Operand firstOp = (Operand) subNodes.getFirst();
-        Operand secondOp = (Operand) subNodes.getLast();
+        Operand firstOp = (Operand) subNodes.get(0);
+        Operand secondOp = (Operand) subNodes.get(subNodes.size() - 1);
 
         if (firstOp.getDataType() != secondOp.getDataType()) {
             Token firstOpToken = firstOp.getToken();

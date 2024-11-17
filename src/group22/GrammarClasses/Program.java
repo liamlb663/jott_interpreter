@@ -19,8 +19,8 @@ public class Program implements JottTree {
     }
 
     public static Program parse(ArrayList<Token> tokens) throws SyntaxException {
-        int number = tokens.getLast().getLineNum();
-        String name = tokens.getLast().getFilename();
+        int number = tokens.get(tokens.size() - 1).getLineNum();
+        String name = tokens.get(tokens.size() - 1).getFilename();
         try {
             ArrayList<FunctionDef> functionDefs = new ArrayList<>();
 
