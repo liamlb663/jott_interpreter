@@ -94,7 +94,7 @@ public class IfStmt implements JottTree{
                 throw new SemanticException("ElseIf statement does not have return statement", e.filename, e.startingLineNumber);
             }
         }
-        if (elseNode != null && elseNode.hasReturnStmt() != hasReturn) {
+        if (elseNode.bodyNode != null && elseNode.hasReturnStmt() != hasReturn) {
             throw new SemanticException("Else statement does not have return statement, but If statement does", elseNode.filename, elseNode.lineNumber);
         }
         return true;
@@ -114,14 +114,10 @@ public class IfStmt implements JottTree{
         boolean bodyOk = bodyNode.validateTree();
 
         for (ElseIf e : elseIfNodes) {
-            if (!e.validateTree()) {
-                return false;
-            }
+            e.validateTree();
         }
         if (elseNode != null) {
-            if (!elseNode.validateTree()) {
-                return false;
-            }
+            elseNode.validateTree();
         }
         return condIsBool() && uniformReturns() && exprOk && bodyOk;
     }

@@ -83,16 +83,27 @@ public class FunctionDef implements JottTree {
         id.validateTree();
         returnType.validateTree();
 
+        if (id.convertToJott().equals("main")) {
+            if (params != null) {
+                throw new SemanticException("Main function should not take any parameters", id.id.getFilename(), id.id.getLineNum());
+            }
+            if (returnType.type != null) {
+                throw new SemanticException("Main function should not return any value", id.id.getFilename(), id.id.getLineNum());
+            }
+        }
+
         Program.scopeManager.newScope(DataType.fromString(returnType.convertToJott()));
-            params.validateTree();
+            if (params != null) {params.validateTree();}
             body.validateTree();
         Program.scopeManager.dropScope();
 
         // Declare function after to avoid potential recursion
+        ArrayList<DataType> declareParams = new ArrayList<>();
+        if (params != null) {declareParams = params.getParams();}
         Program.scopeManager.declareFunction(
             id.convertToJott(),
             DataType.fromString(returnType.convertToJott()),
-            params.getParams()
+            declareParams
         );
 
         return true;

@@ -38,7 +38,7 @@ public class Type implements JottTree {
 
         if (!Arrays.asList(VALID_TYPES).contains(currToken.getToken())) {
             throw new SyntaxException(
-                    "Received invalid datatype for Type token",
+                    "Received invalid datatype of " + currToken.getToken() + " for Type token",
                     currToken.getFilename(),
                     currToken.getLineNum()
             );

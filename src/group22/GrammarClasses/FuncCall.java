@@ -68,12 +68,20 @@ public class FuncCall implements JottTree{
 
     public boolean validateTree() throws SemanticException {
 
-        if (!Program.scopeManager.isFunctionDeclared(idNode.convertToJott())) {
-            throw new SemanticException("Function " + idNode.convertToJott() + " not found!", idNode.id.getFilename(), idNode.id.getLineNum());
-        }
+        if (!idNode.convertToJott().equals("print")) {
+            if (!Program.scopeManager.isFunctionDeclared(idNode.convertToJott())) {
+                throw new SemanticException("Function " + idNode.convertToJott() + " not found!", idNode.id.getFilename(), idNode.id.getLineNum());
+            }
 
-        if (Program.scopeManager.getFunctionParameterTypes(idNode.convertToJott()) != paramsNode.getTypes()) {
-            throw new SemanticException("Function " + idNode.convertToJott() + " called with wrong Parameters!", idNode.id.getFilename(), idNode.id.getLineNum());
+            if (!Program.scopeManager.getFunctionParameterTypes(idNode.convertToJott()).equals(paramsNode.getTypes())) {
+                throw new SemanticException("Function " + idNode.convertToJott() + " called with wrong Parameters!", idNode.id.getFilename(), idNode.id.getLineNum());
+            }
+        } else {
+            if (paramsNode.exprNode != null && paramsNode.paramsTNodes.isEmpty()) { //check that exactly one expression was given
+                return false;
+            } else {
+                throw new SemanticException("Function print called with wrong Parameters!", idNode.id.getFilename(), idNode.id.getLineNum());
+            }
         }
 
         return false;
