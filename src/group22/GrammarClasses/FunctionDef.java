@@ -85,10 +85,10 @@ public class FunctionDef implements JottTree {
 
         if (id.convertToJott().equals("main")) {
             if (params != null) {
-                throw new SemanticException("Main function should not take any parameters");
+                throw new SemanticException("Main function should not take any parameters", id.id.getFilename(), id.id.getLineNum());
             }
             if (returnType.type != null) {
-                throw new SemanticException("Main function should not return any value");
+                throw new SemanticException("Main function should not return any value", id.id.getFilename(), id.id.getLineNum());
             }
         }
 

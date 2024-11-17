@@ -13,10 +13,14 @@ import java.util.ArrayList;
 public class Body implements JottTree {
     ArrayList<BodyStmt> bodyStmts;
     ReturnStmt returnStmt;
+    String filename;
+    int lineNumber;
 
-    public Body(ArrayList<BodyStmt> bodyStmts, ReturnStmt returnStmt) {
+    public Body(ArrayList<BodyStmt> bodyStmts, ReturnStmt returnStmt, String filename, int lineNumber) {
         this.bodyStmts = bodyStmts;
         this.returnStmt = returnStmt;
+        this.filename = filename;
+        this.lineNumber = lineNumber;
     }
 
     public static Body parse(ArrayList<Token> tokens) throws SyntaxException {
@@ -28,6 +32,8 @@ public class Body implements JottTree {
             ReturnStmt returnStmt = null;
 
             Token currToken = tokens.get(0);
+            var fileName = currToken.getFilename();
+            var lineNum = currToken.getLineNum();
             while ((currToken.getTokenType().equals(TokenType.ID_KEYWORD) && !currToken.getToken().equals("Return")) || currToken.getTokenType().equals(TokenType.FC_HEADER)) {
                 BodyStmt bodyStmt = BodyStmt.parse(tokens);
                 bodyStmts.add(bodyStmt);
@@ -39,7 +45,7 @@ public class Body implements JottTree {
                 throw new SyntaxException("Missing return statement in body", currToken.getFilename(), currToken.getLineNum());
             }
 
-            return new Body(bodyStmts, returnStmt);
+            return new Body(bodyStmts, returnStmt, fileName, lineNum);
         }
         catch (IndexOutOfBoundsException e) {
             throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
@@ -78,7 +84,7 @@ public class Body implements JottTree {
             returnOK = true;
         }
         if (!returnOK) {
-            throw new SemanticException("Function will not always return a value");
+            throw new SemanticException("Function will not always return a value", filename, lineNumber);
         }
 
         return true;

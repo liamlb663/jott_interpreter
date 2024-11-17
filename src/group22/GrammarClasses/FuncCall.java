@@ -80,7 +80,7 @@ public class FuncCall implements JottTree{
             if (paramsNode.exprNode != null && paramsNode.paramsTNodes.isEmpty()) { //check that exactly one expression was given
                 return false;
             } else {
-                throw new SemanticException("Function print called with wrong Parameters!");
+                throw new SemanticException("Function print called with wrong Parameters!", idNode.id.getFilename(), idNode.id.getLineNum());
             }
         }
 
