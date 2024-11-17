@@ -1,5 +1,7 @@
 package group22.GrammarClasses;
 
+import group22.DataType;
+import group22.SemanticException;
 import group22.SyntaxException;
 import provided.JottParser;
 import provided.JottTree;
@@ -57,7 +59,7 @@ public class Asmt implements JottTree {
         String varName = id.convertToJott();
 
         // Check if the variable on the LHS is declared in the current scope
-        if (!scopeManager.isVarDeclared(varName)) {
+        if (!Program.scopeManager.isVarDeclared(varName)) {
             throw new SemanticException(
                     "Variable " + varName + " is not declared in the current scope",
                     id.id.getFilename(), id.id.getLineNum()
@@ -65,10 +67,10 @@ public class Asmt implements JottTree {
         }
 
         // Get the type of the LHS variable
-        DataType lhsType = scopeManager.getDataType(varName);
+        DataType lhsType = Program.scopeManager.getDataType(varName);
 
         // Validate the RHS expression
-        DataType rhsType = expr.getType(); // Assuming Expr has a method to get its type
+        DataType rhsType = expr.getDataType(); // Assuming Expr has a method to get its type
 
         // Check if the types are compatible
         if (!lhsType.isCompatible(rhsType)) {

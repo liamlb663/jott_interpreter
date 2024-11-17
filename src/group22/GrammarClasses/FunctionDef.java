@@ -78,7 +78,7 @@ public class FunctionDef implements JottTree {
                 returnType.convertToJott() + "{" + body.convertToJott() + "}";
     }
 
-    public boolean validateTree() {
+    public boolean validateTree() throws SemanticException {
 
         id.validateTree();
         returnType.validateTree();

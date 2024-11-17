@@ -61,7 +61,7 @@ public class WhileLoop implements JottTree{
     }
 
     private boolean condIsBool() throws SemanticException {
-        if(!exprNode.getType().equals(DataType.BOOLEAN)) {
+        if(!exprNode.getDataType().equals(DataType.BOOLEAN)) {
             throw new SemanticException("Conditional statement in While loop does not evaluate to boolean",
                     filename,
                     conditionalLineNumber);

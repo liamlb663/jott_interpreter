@@ -37,11 +37,11 @@ public class ParamsT implements JottTree {
         return s;
     }
 
-    public DataType getType() {
+    public DataType getType() throws SemanticException {
         return exprNode.getDataType();
     }
 
-    public boolean validateTree() {
+    public boolean validateTree() throws SemanticException {
         return (exprNode.validateTree());
     }
 

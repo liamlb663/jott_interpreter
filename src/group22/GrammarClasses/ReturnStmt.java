@@ -58,7 +58,7 @@ public class ReturnStmt implements JottTree {
     }
 
     public boolean validateTree() throws SemanticException {
-        if (Program.scopeManager.getCurrentReturnType() != expr.getType()) {
+        if (Program.scopeManager.getCurrentReturnType() != expr.getDataType()) {
             throw new SemanticException("Type Differs from proper return type of function");
         }
 

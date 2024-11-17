@@ -49,7 +49,7 @@ public class Params implements JottTree {
         return s.toString();
     }
 
-    public ArrayList<DataType> getTypes() {
+    public ArrayList<DataType> getTypes() throws SemanticException {
         ArrayList<DataType> output = new ArrayList<>();
 
         output.add(exprNode.getDataType());
