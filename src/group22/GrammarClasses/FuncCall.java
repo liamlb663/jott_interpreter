@@ -69,11 +69,11 @@ public class FuncCall implements JottTree{
     public boolean validateTree() {
 
         if (!Program.scopeManager.isFunctionDeclared(idNode.convertToJott())) {
-            throw new SemanticException("Function " + idNode.convertToJott() + " not found!");
+            throw new SemanticException("Function " + idNode.convertToJott() + " not found!", idNode.id.getFilename(), idNode.id.getLineNum());
         }
 
         if (Program.scopeManager.getFunctionParameterTypes(idNode.convertToJott()) != paramsNode.getTypes()) {
-            throw new SemanticException("Function " + idNode.convertToJott() + " called with wrong Parameters!");
+            throw new SemanticException("Function " + idNode.convertToJott() + " called with wrong Parameters!", idNode.id.getFilename(), idNode.id.getLineNum());
         }
 
         return false;

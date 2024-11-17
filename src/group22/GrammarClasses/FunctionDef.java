@@ -7,10 +7,10 @@ import provided.*;
 import java.util.ArrayList;
 
 public class FunctionDef implements JottTree {
-    private Id id;  // The function name
-    private FuncDefParams params;  // The function parameters
-    private FunctionReturn returnType;  // The function return
-    private FBody body;  // The function body
+    public Id id;  // The function name
+    public FuncDefParams params;  // The function parameters
+    public FunctionReturn returnType;  // The function return
+    public FBody body;  // The function body
 
     public FunctionDef(Id id, FuncDefParams params, FunctionReturn returnType, FBody body) {
         this.id = id;
