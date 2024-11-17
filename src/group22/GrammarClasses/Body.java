@@ -57,13 +57,9 @@ public class Body implements JottTree {
     public boolean validateTree() throws SemanticException {
         boolean returnOK = false;
         for (BodyStmt b : bodyStmts) {
-            if (!b.validateTree()) {
-                return false;
-            }
+            b.validateTree();
         }
-        if (!returnStmt.validateTree()) {
-            return false;
-        }
+        returnStmt.validateTree();
         if (!Program.scopeManager.getCurrentReturnType().equals(DataType.VOID)) {
             if (returnStmt != null) {
                 returnOK = true;

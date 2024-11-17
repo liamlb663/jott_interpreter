@@ -114,14 +114,10 @@ public class IfStmt implements JottTree{
         boolean bodyOk = bodyNode.validateTree();
 
         for (ElseIf e : elseIfNodes) {
-            if (!e.validateTree()) {
-                return false;
-            }
+            e.validateTree();
         }
         if (elseNode != null) {
-            if (!elseNode.validateTree()) {
-                return false;
-            }
+            elseNode.validateTree();
         }
         return condIsBool() && uniformReturns() && exprOk && bodyOk;
     }

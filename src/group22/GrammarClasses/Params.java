@@ -61,13 +61,9 @@ public class Params implements JottTree {
     }
 
     public boolean validateTree() throws SemanticException {
-        if (!exprNode.validateTree()) {
-            return false;
-        }
+        exprNode.validateTree();
         for (ParamsT t : paramsTNodes) {
-            if (!t.validateTree()) {
-                return false;
-            }
+            t.validateTree();
         }
         ParamsT dummyParamT = new ParamsT(exprNode);
         ArrayList<ParamsT> allParamsTNodes = new ArrayList<>(paramsTNodes);
