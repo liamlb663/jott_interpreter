@@ -58,24 +58,32 @@ public class Params implements JottTree {
     public ArrayList<DataType> getTypes() throws SemanticException {
         ArrayList<DataType> output = new ArrayList<>();
 
-        output.add(exprNode.getDataType());
-        for (ParamsT param : paramsTNodes) {
-            output.add(param.getType());
+        if (exprNode != null) {
+            output.add(exprNode.getDataType());
+        }
+        if (paramsTNodes != null) {
+            for (ParamsT param : paramsTNodes) {
+                output.add(param.getType());
+            }
         }
 
         return output;
     }
 
     public boolean validateTree() throws SemanticException {
-        exprNode.validateTree();
-        for (ParamsT t : paramsTNodes) {
-            t.validateTree();
+        if (exprNode != null) {
+            exprNode.validateTree();
         }
-        ParamsT dummyParamT = new ParamsT(exprNode);
-        ArrayList<ParamsT> allParamsTNodes = new ArrayList<>(paramsTNodes);
-        allParamsTNodes.add(dummyParamT); //dumb workaround to easily check all params for duplicates
-        if (allParamsTNodes.stream().distinct().count() != allParamsTNodes.size()) {
-            throw new SemanticException("One or more parameters is a duplicate", filename, lineNumber);
+        if (paramsTNodes != null) {
+            for (ParamsT t : paramsTNodes) {
+                t.validateTree();
+            }
+            ParamsT dummyParamT = new ParamsT(exprNode);
+            ArrayList<ParamsT> allParamsTNodes = new ArrayList<>(paramsTNodes);
+            allParamsTNodes.add(dummyParamT); //dumb workaround to easily check all params for duplicates
+            if (allParamsTNodes.stream().distinct().count() != allParamsTNodes.size()) {
+                throw new SemanticException("One or more parameters is a duplicate", filename, lineNumber);
+            }
         }
         return true;
     }
