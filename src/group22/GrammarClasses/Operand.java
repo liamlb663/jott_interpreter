@@ -1,5 +1,7 @@
 package group22.GrammarClasses;
 
+import group22.DataType;
+import group22.SemanticException;
 import group22.SyntaxException;
 import provided.JottParser;
 import provided.JottTree;
@@ -86,15 +88,34 @@ public class Operand implements JottTree {
         }
     }
 
+    public Token getToken() {
+        if (subNode instanceof Id) {
+            return ((Id) subNode).getToken();
+        } else if (subNode instanceof FuncCall) {
+            return ((FuncCall) subNode).getToken();
+        } else {
+            return ((Number) subNode).getToken();
+        }
+    }
+
+    public DataType getDataType() throws SemanticException {
+        if (subNode instanceof Id) {
+            return ((Id) subNode).getDataType();
+        } else if (subNode instanceof FuncCall) {
+            return ((FuncCall) subNode).getDataType();
+        } else {
+            return ((Number) subNode).getDataType();
+        }
+    }
+
     @Override
     public String convertToJott() {
         return subNode.convertToJott();
     }
 
     @Override
-    public boolean validateTree() {
-        // TODO
-        return false;
+    public boolean validateTree() throws SemanticException {
+        return subNode.validateTree();
     }
 
     @Override

@@ -38,7 +38,7 @@ public class ParamsT implements JottTree {
     }
 
     public DataType getType() {
-        return exprNode.getType();
+        return exprNode.getDataType();
     }
 
     public boolean validateTree() {

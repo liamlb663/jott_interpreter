@@ -1,6 +1,7 @@
 package group22.GrammarClasses;
 
 import group22.DataType;
+import group22.SemanticException;
 import group22.SyntaxException;
 import provided.JottParser;
 import provided.JottTree;
@@ -8,6 +9,7 @@ import provided.Token;
 import provided.TokenType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Expr implements JottTree {
@@ -96,6 +98,39 @@ public class Expr implements JottTree {
         }
     }
 
+    public DataType getDataType() throws SemanticException {
+        if (subNodes.size() == 1) {
+            JottTree node = subNodes.getFirst();
+
+            if (node instanceof Operand) {
+                return ((Operand) node).getDataType();
+            } else if (node instanceof Bool) {
+                return DataType.BOOLEAN;
+            } else {
+                return DataType.STRING;
+            }
+        }
+
+        Operand firstOp = (Operand) subNodes.getFirst();
+        Operand secondOp = (Operand) subNodes.getLast();
+
+        if (firstOp.getDataType() != secondOp.getDataType()) {
+            Token firstOpToken = firstOp.getToken();
+
+            throw new SemanticException(
+                    "Cannot do math operation between two different data types",
+                    firstOpToken.getFilename(),
+                    firstOpToken.getLineNum()
+            );
+        }
+
+        if (subNodes.get(1) instanceof MathOp) {
+            return firstOp.getDataType();
+        } else {
+            return DataType.BOOLEAN;
+        }
+    }
+
     @Override
     public String convertToJott() {
         StringBuilder jottCode = new StringBuilder();
@@ -107,11 +142,6 @@ public class Expr implements JottTree {
         return jottCode.toString();
     }
 
-    public DataType getType() {
-
-    }
-
-    @Override
     // Validate the expression's tree
     public boolean validateTree() throws SemanticException {
         // Handle the validation of each subNode in the expression
@@ -141,6 +171,7 @@ public class Expr implements JottTree {
             }
         }
         return true;
+
     }
 
     @Override

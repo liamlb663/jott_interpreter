@@ -46,6 +46,10 @@ public class Number implements JottTree {
         return this.type;
     }
 
+    public Token getToken() {
+        return number;
+    }
+
     @Override
     public String convertToJott() {
         return this.number.getToken();

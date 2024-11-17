@@ -1,10 +1,9 @@
 package group22.GrammarClasses;
 
+import group22.DataType;
+import group22.SemanticException;
 import group22.SyntaxException;
-import provided.JottParser;
-import provided.JottTree;
-import provided.Token;
-import provided.TokenType;
+import provided.*;
 
 import java.util.ArrayList;
 
@@ -37,13 +36,39 @@ public class Id implements JottTree {
         return new Id(currToken);
     }
 
+    public Token getToken() {
+        return id;
+    }
+
+    public DataType getDataType() throws SemanticException {
+        if (Program.scopeManager.isVarDeclared(id.getToken())) {
+            return Program.scopeManager.getDataType(id.getToken());
+        } else if (Program.scopeManager.isFunctionDeclared(id.getToken())) {
+            return Program.scopeManager.getFunctionReturnType(id.getToken());
+        } else {
+            throw new SemanticException(
+                    id.getToken() + " isn't declared",
+                    id.getFilename(),
+                    id.getLineNum()
+            );
+        }
+    }
+
     @Override
     public String convertToJott() {
         return this.id.getToken();
     }
 
     @Override
-    public boolean validateTree() {
+    public boolean validateTree() throws SemanticException {
+        if (Character.isUpperCase(id.getToken().charAt(0))) {
+            throw new SemanticException(
+                    "Variable name cannot start with capital letter for " + id.getToken(),
+                    id.getFilename(),
+                    id.getLineNum()
+            );
+        }
+
         return true;
     }
 

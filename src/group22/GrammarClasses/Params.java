@@ -52,7 +52,7 @@ public class Params implements JottTree {
     public ArrayList<DataType> getTypes() {
         ArrayList<DataType> output = new ArrayList<>();
 
-        output.add(exprNode.getType());
+        output.add(exprNode.getDataType());
         for (ParamsT param : paramsTNodes) {
             output.add(param.getType());
         }
