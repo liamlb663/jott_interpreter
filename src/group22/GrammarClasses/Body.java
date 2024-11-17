@@ -61,7 +61,7 @@ public class Body implements JottTree {
         }
         returnStmt.validateTree();
         if (!Program.scopeManager.getCurrentReturnType().equals(DataType.VOID)) {
-            if (returnStmt != null) {
+            if (returnStmt.expr != null) {
                 returnOK = true;
             }
             else {
