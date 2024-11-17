@@ -6,7 +6,7 @@ import provided.*;
 import java.util.ArrayList;
 
 public class Else implements JottTree{
-    private final Body bodyNode;
+    public final Body bodyNode;
     public final String filename;
     public final int lineNumber;
 
@@ -46,7 +46,10 @@ public class Else implements JottTree{
     }
 
     public boolean hasReturnStmt() {
-        return bodyNode.returnStmt != null;
+        if (bodyNode != null) {
+            return bodyNode.returnStmt != null;
+        }
+        return false;
     }
 
     public String convertToJott() {
@@ -57,7 +60,10 @@ public class Else implements JottTree{
     }
 
     public boolean validateTree() throws SemanticException {
-        return bodyNode.validateTree();
+        if (bodyNode != null) {
+            bodyNode.validateTree();
+        }
+        return true;
     }
     public void execute() {
         //TODO
