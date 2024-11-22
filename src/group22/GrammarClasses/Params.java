@@ -7,12 +7,16 @@ import provided.*;
 import java.util.ArrayList;
 
 public class Params implements JottTree {
-    private final Expr exprNode;
-    private final ArrayList<ParamsT> paramsTNodes;
+    final Expr exprNode;
+    final ArrayList<ParamsT> paramsTNodes;
+    String filename;
+    int lineNumber;
 
-    public Params(Expr exprNode, ArrayList<ParamsT> paramsTNodes) {
+    public Params(Expr exprNode, ArrayList<ParamsT> paramsTNodes, String filename, int lineNumber) {
         this.exprNode = exprNode;
         this.paramsTNodes = paramsTNodes;
+        this.filename = filename;
+        this.lineNumber = lineNumber;
     }
 
     static Params parse(ArrayList<Token> tokens) throws SyntaxException {
@@ -22,8 +26,10 @@ public class Params implements JottTree {
         try {
             Token currToken = tokens.get(0);
             if (currToken.getTokenType() == TokenType.R_BRACKET) { //if epsilon
-                return new Params(null, null);
+                return new Params(null, null, null, -1);
             } else { //if <expr><params_t>*...
+                var filename = currToken.getFilename();
+                var lineNum = currToken.getLineNum();
                 Expr exprNode = Expr.parse(tokens);
                 ArrayList<ParamsT> paramsTNodes = new ArrayList<>();
                 currToken = tokens.get(0);
@@ -31,7 +37,7 @@ public class Params implements JottTree {
                     paramsTNodes.add(ParamsT.parse(tokens));
                     currToken = tokens.get(0);
                 }
-                return new Params(exprNode, paramsTNodes);
+                return new Params(exprNode, paramsTNodes, filename, lineNum);
             }
         } catch (IndexOutOfBoundsException e) {
             throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
@@ -52,28 +58,32 @@ public class Params implements JottTree {
     public ArrayList<DataType> getTypes() throws SemanticException {
         ArrayList<DataType> output = new ArrayList<>();
 
-        output.add(exprNode.getDataType());
-        for (ParamsT param : paramsTNodes) {
-            output.add(param.getType());
+        if (exprNode != null) {
+            output.add(exprNode.getDataType());
+        }
+        if (paramsTNodes != null) {
+            for (ParamsT param : paramsTNodes) {
+                output.add(param.getType());
+            }
         }
 
         return output;
     }
 
     public boolean validateTree() throws SemanticException {
-        if (!exprNode.validateTree()) {
-            return false;
+        if (exprNode != null) {
+            exprNode.validateTree();
         }
-        for (ParamsT t : paramsTNodes) {
-            if (!t.validateTree()) {
-                return false;
+        if (paramsTNodes != null) {
+            for (ParamsT t : paramsTNodes) {
+                t.validateTree();
             }
-        }
-        ParamsT dummyParamT = new ParamsT(exprNode);
-        ArrayList<ParamsT> allParamsTNodes = new ArrayList<>(paramsTNodes);
-        allParamsTNodes.add(dummyParamT); //dumb workaround to easily check all params for duplicates
-        if (allParamsTNodes.stream().distinct().count() != allParamsTNodes.size()) {
-            throw new SemanticException("One or more parameters is a duplicate");
+            ParamsT dummyParamT = new ParamsT(exprNode);
+            ArrayList<ParamsT> allParamsTNodes = new ArrayList<>(paramsTNodes);
+            allParamsTNodes.add(dummyParamT); //dumb workaround to easily check all params for duplicates
+            if (allParamsTNodes.stream().distinct().count() != allParamsTNodes.size()) {
+                throw new SemanticException("One or more parameters is a duplicate", filename, lineNumber);
+            }
         }
         return true;
     }

@@ -13,13 +13,17 @@ import java.util.ArrayList;
 
 public class ReturnStmt implements JottTree {
     Expr expr;
+    String filename;
+    int lineNumber;
 
-    public ReturnStmt(Expr expr) {
+    public ReturnStmt(Expr expr, String filename, int lineNumber) {
         if (expr == null) {
             this.expr = null;
         } else {
             this.expr = expr;
         }
+        this.filename = filename;
+        this.lineNumber = lineNumber;
     }
 
     public static ReturnStmt parse(ArrayList<Token> tokens) throws SyntaxException {
@@ -31,6 +35,8 @@ public class ReturnStmt implements JottTree {
             }
 
             Token currToken = tokens.get(0);
+            var filename = currToken.getFilename();
+            var lineNum = currToken.getLineNum();
             if (currToken.getTokenType().equals(TokenType.ID_KEYWORD) && currToken.getToken().equals("Return")) {
                 tokens.remove(0);
                 currToken = tokens.get(0);
@@ -43,7 +49,7 @@ public class ReturnStmt implements JottTree {
                 }
             }
 
-            return new ReturnStmt(expr);
+            return new ReturnStmt(expr, filename, lineNum);
         }
         catch (IndexOutOfBoundsException e) {
             throw new SyntaxException("Unexpected EOF", JottParser.getFileName(), JottParser.getLineNumber());
@@ -58,8 +64,10 @@ public class ReturnStmt implements JottTree {
     }
 
     public boolean validateTree() throws SemanticException {
-        if (Program.scopeManager.getCurrentReturnType() != expr.getDataType()) {
-            throw new SemanticException("Type Differs from proper return type of function");
+        if (expr != null) {
+            if (Program.scopeManager.getCurrentReturnType() != expr.getDataType()) {
+                throw new SemanticException("Type Differs from proper return type of function", filename, lineNumber);
+            }
         }
 
         return (true);

@@ -14,13 +14,13 @@ public enum DataType {
 
         switch (this) {
             case INTEGER:
-                return value instanceof Integer;
+                return value == DataType.INTEGER;
             case DOUBLE:
-                return value instanceof Double;
+                return value == DataType.DOUBLE;
             case BOOLEAN:
-                return value instanceof Boolean;
+                return value == DataType.BOOLEAN;
             case STRING:
-                return value instanceof String;
+                return value == DataType.STRING;
             case VOID:
                 return false; // VOID should not have any compatible non-null value
             default:
