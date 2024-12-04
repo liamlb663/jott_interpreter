@@ -49,6 +49,10 @@ public class StringLiteral implements JottTree {
         return true;
     }
 
+    public String getValue() {
+        return this.stringLiteral.getToken();
+    }
+
     @Override
     public void execute() {
 
