@@ -87,6 +87,9 @@ public class FuncCall implements JottTree{
         return false;
     }
 
+    // if print: sout(params.getExpr.execute())
+    // if concat: just concatenate the string tokens and make a new StringLiteral?
+    // if length: ?
     public void execute() {
         //TODO
     }
