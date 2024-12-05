@@ -9,7 +9,6 @@ import provided.Token;
 import provided.TokenType;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.List;
 
 public class Expr implements JottTree {
@@ -135,7 +134,7 @@ public class Expr implements JottTree {
     public String convertToJott() {
         StringBuilder jottCode = new StringBuilder();
 
-        for (JottTree currNode: subNodes) {
+        for (JottTree currNode : subNodes) {
             jottCode.append(currNode.convertToJott());
         }
 
@@ -174,7 +173,7 @@ public class Expr implements JottTree {
 
     }
 
-    private boolean getRelOpValue(String relOp, JottTree aJ, JottTree bJ) throws SemanticException {
+    private Bool getRelOpValue(String relOp, JottTree aJ, JottTree bJ) throws RuntimeException {
         JottTree a = ((Operand) aJ).getSubNode();
         JottTree b = ((Operand) bJ).getSubNode();
 
@@ -188,19 +187,17 @@ public class Expr implements JottTree {
                 aVal = Program.scopeManager.getVariable(aID.getToken().getToken());
                 aType = Program.scopeManager.getDataType(aID.getToken().getToken());
             } else {
-                throw new SemanticException(String.format("Variable %s not defined in current scope", aID.getToken().getToken()), "", -1);
+                throw new RuntimeException(String.format("Variable %s not defined in current scope", aID.getToken().getToken()));
             }
-        }
-        else if (a instanceof Number) {
+        } else if (a instanceof Number) {
             aVal = ((Number) a).getValue();
             aType = ((Number) b).getDataType();
-        }
-        else if (a instanceof FuncCall aFC) {
+        } else if (a instanceof FuncCall aFC) {
             if (Program.scopeManager.isFunctionDeclared(aFC.getToken().getToken())) {
-                aVal = Program.scopeManager.evaluateFunction(aFC);
+                aVal = aFC.evaluateFunction();
                 aType = Program.scopeManager.getFunctionReturnType(aFC.getToken().getToken());
             } else {
-                throw new SemanticException(String.format("Function %s not defined in current scope", aFC.getToken().getToken()), "", -1);
+                throw new RuntimeException(String.format("Function %s not defined in current scope", aFC.getToken().getToken()));
             }
         }
 
@@ -209,92 +206,203 @@ public class Expr implements JottTree {
                 bVal = Program.scopeManager.getVariable(bID.getToken().getToken());
                 bType = Program.scopeManager.getDataType(bID.getToken().getToken());
             } else {
-                throw new SemanticException(String.format("Variable %s not defined in current scope", bID.getToken().getToken()), "", -1);
+                throw new RuntimeException(String.format("Variable %s not defined in current scope", bID.getToken().getToken()));
             }
-        }
-        else if (b instanceof Number) {
+        } else if (b instanceof Number) {
             bVal = ((Number) b).getValue();
             bType = ((Number) b).getDataType();
-        }
-        else if (a instanceof FuncCall) {
+        } else if (a instanceof FuncCall) {
             FuncCall bFC = (FuncCall) b;
             if (Program.scopeManager.isFunctionDeclared(bFC.getToken().getToken())) {
-                bVal = Program.scopeManager.evaluateFunction(bFC);
+                bVal = bFC.evaluateFunction();
                 bType = Program.scopeManager.getFunctionReturnType(bFC.getToken().getToken());
             } else {
-                throw new SemanticException(String.format("Function %s not defined in current scope", bFC.getToken().getToken()), "", -1);
+                throw new RuntimeException(String.format("Function %s not defined in current scope", bFC.getToken().getToken()));
             }
         }
 
-        if(aType == null || bType == null || aVal == null || bVal == null) {
-            return false;
+        if (aType == null || bType == null || aVal == null || bVal == null) {
+            return new Bool(new Token(String.valueOf(false), "", -1, TokenType.STRING));
         }
 
-        if(!aType.equals(bType)) {
-            return false;
+        if (!aType.equals(bType)) {
+            return new Bool(new Token(String.valueOf(false), "", -1, TokenType.STRING));
         }
-        switch(relOp){
+        switch (relOp) {
             case "==":
-                return aVal.equals(bVal);
-                break;
+                return new Bool(new Token(String.valueOf(aVal.equals(bVal)), "", -1, TokenType.STRING));
             case "<=":
-                if(aType.equals(DataType.BOOLEAN) || aType.equals(DataType.STRING)) {
-                    return false; // semantic error?
-                }
-                else if(aType.equals(DataType.DOUBLE)) {
-                    return (double)aVal <= (double)bVal;
-                }
-                else if(aType.equals(DataType.INTEGER)) {
-                    return (int)aVal <= (int)bVal;
+                if (aType.equals(DataType.BOOLEAN) || aType.equals(DataType.STRING)) {
+                    return new Bool(new Token(String.valueOf(false), "", -1, TokenType.STRING));
+                    // semantic error?
+                } else if (aType.equals(DataType.DOUBLE)) {
+                    return new Bool(new Token(String.valueOf((double) aVal <= (double) bVal), "", -1, TokenType.STRING));
+                } else if (aType.equals(DataType.INTEGER)) {
+                    return new Bool(new Token(String.valueOf((int) aVal <= (int) bVal), "", -1, TokenType.STRING));
                 }
                 break;
             case ">=":
-                if(aType.equals(DataType.BOOLEAN) || aType.equals(DataType.STRING)) {
-                    return false; // semantic error?
-                }
-                else if(aType.equals(DataType.DOUBLE)) {
-                    return (double)aVal >= (double)bVal;
-                }
-                else if(aType.equals(DataType.INTEGER)) {
-                    return (int)aVal >= (int)bVal;
+                if (aType.equals(DataType.BOOLEAN) || aType.equals(DataType.STRING)) {
+                    return new Bool(new Token(String.valueOf(false), "", -1, TokenType.STRING));
+                    // semantic error?
+                } else if (aType.equals(DataType.DOUBLE)) {
+                    return new Bool(new Token(String.valueOf((double) aVal >= (double) bVal), "", -1, TokenType.STRING));
+                } else if (aType.equals(DataType.INTEGER)) {
+                    return new Bool(new Token(String.valueOf((int) aVal >= (int) bVal), "", -1, TokenType.STRING));
                 }
                 break;
         }
-
-        return false;
+        return new Bool(new Token(String.valueOf(false), "", -1, TokenType.STRING));
     }
 
-    // list[0] == type; list[1] == value;
-    public List<Object> getValue() throws SemanticException {
-        var list = new ArrayList<>();
-        if(subNodes.size() == 1) {
-            JottTree node = subNodes.get(0);
-            if(node instanceof Operand) {
-                return ((Operand) node).getValue();
+    private Number getMathOpValue(String mathOp, JottTree aJ, JottTree bJ) throws RuntimeException {
+        JottTree a = ((Operand) aJ).getSubNode();
+        JottTree b = ((Operand) bJ).getSubNode();
+
+        Object aVal = null;
+        DataType aType = null;
+        Object bVal = null;
+        DataType bType = null;
+
+        if (a instanceof Id aID) {
+            if (Program.scopeManager.isVarDeclared(aID.getToken().getToken())) {
+                aVal = Program.scopeManager.getVariable(aID.getToken().getToken());
+                aType = Program.scopeManager.getDataType(aID.getToken().getToken());
+            } else {
+                throw new RuntimeException(String.format("Variable %s not defined in current scope", aID.getToken().getToken()));
             }
-            else if (node instanceof StringLiteral) {
-                list.add(DataType.STRING);
-                list.add(((StringLiteral) node).getValue());
-                return list;
-            }
-            else if (node instanceof Bool) {
-                list.add(DataType.BOOLEAN);
-                list.add(((Bool) node).getValue());
-                return list;
+        } else if (a instanceof Number) {
+            aVal = ((Number) a).getValue();
+            aType = ((Number) b).getDataType();
+        } else if (a instanceof FuncCall aFC) {
+            if (Program.scopeManager.isFunctionDeclared(aFC.getToken().getToken())) {
+                aVal = aFC.evaluateFunction();
+                aType = Program.scopeManager.getFunctionReturnType(aFC.getToken().getToken());
+            } else {
+                throw new RuntimeException(String.format("Function %s not defined in current scope", aFC.getToken().getToken()));
             }
         }
-        else {
+
+        if (b instanceof Id bID) {
+            if (Program.scopeManager.isVarDeclared(bID.getToken().getToken())) {
+                bVal = Program.scopeManager.getVariable(bID.getToken().getToken());
+                bType = Program.scopeManager.getDataType(bID.getToken().getToken());
+            } else {
+                throw new RuntimeException(String.format("Variable %s not defined in current scope", bID.getToken().getToken()));
+            }
+        } else if (b instanceof Number) {
+            bVal = ((Number) b).getValue();
+            bType = ((Number) b).getDataType();
+        } else if (a instanceof FuncCall) {
+            FuncCall bFC = (FuncCall) b;
+            if (Program.scopeManager.isFunctionDeclared(bFC.getToken().getToken())) {
+                bVal = bFC.evaluateFunction();
+                bType = Program.scopeManager.getFunctionReturnType(bFC.getToken().getToken());
+            } else {
+                throw new RuntimeException(String.format("Function %s not defined in current scope", bFC.getToken().getToken()));
+            }
+        }
+
+        if (aType == null || bType == null || aVal == null || bVal == null) {
+            throw new RuntimeException("Cannot perform mathematical operation because operand does not exist");
+        }
+
+        if (!aType.equals(bType)) {
+            throw new RuntimeException("Cannot perform mathematical operations on operands of different Types");
+        }
+
+        switch (mathOp) {
+            case "+":
+                if (aType.equals(DataType.INTEGER)) {
+                    return new Number(new Token(
+                            String.valueOf((int) aVal + (int) bVal), "", -1, TokenType.NUMBER),
+                            DataType.INTEGER);
+                } else if (bType.equals(DataType.DOUBLE)) {
+                    return new Number(new Token(
+                            String.valueOf((double) aVal + (double) bVal), "", -1, TokenType.NUMBER),
+                            DataType.DOUBLE);
+                }
+                break;
+            case "-":
+                if (aType.equals(DataType.INTEGER)) {
+                    return new Number(new Token(
+                            String.valueOf((int) aVal - (int) bVal), "", -1, TokenType.NUMBER),
+                            DataType.INTEGER);
+                } else if (bType.equals(DataType.DOUBLE)) {
+                    return new Number(new Token(
+                            String.valueOf((double) aVal - (double) bVal), "", -1, TokenType.NUMBER),
+                            DataType.DOUBLE);
+                }
+                break;
+            case "*":
+                if (aType.equals(DataType.INTEGER)) {
+                    return new Number(new Token(
+                            String.valueOf((int) aVal * (int) bVal), "", -1, TokenType.NUMBER),
+                            DataType.INTEGER);
+                } else if (bType.equals(DataType.DOUBLE)) {
+                    return new Number(new Token(
+                            String.valueOf((double) aVal * (double) bVal), "", -1, TokenType.NUMBER),
+                            DataType.DOUBLE);
+                }
+                break;
+            case "/":
+                if(bType.equals(DataType.INTEGER) && (int) bVal == 0) {
+                    throw new RuntimeException(String.format("Cannot divide by zero! (Dividing %d by %d)", (int) aVal, (int) bVal));
+                }
+                else if(bType.equals(DataType.DOUBLE) && (int) bVal == 0) {
+                    throw new RuntimeException(String.format("Cannot divide by zero! (Dividing %f by %f)", (double) aVal, (double) bVal));
+                }
+
+                if (aType.equals(DataType.INTEGER)) {
+                    return new Number(new Token(
+                            String.valueOf((int) aVal / (int) bVal), "", -1, TokenType.NUMBER),
+                            DataType.INTEGER);
+                } else if (bType.equals(DataType.DOUBLE)) {
+                    return new Number(new Token(
+                            String.valueOf((double) aVal / (double) bVal), "", -1, TokenType.NUMBER),
+                            DataType.DOUBLE);
+                }
+                break;
+        }
+        throw new RuntimeException("Unknown error occurred during mathematical operation.");
+    }
+
+    public JottTree getValue() throws RuntimeException {
+        if (subNodes.size() == 1) {
+            JottTree node = subNodes.get(0);
+            if (node instanceof Operand) {
+                JottTree sub = ((Operand) node).getSubNode();
+                if(sub instanceof Number num) {
+                    return num;
+                }
+                else if (sub instanceof Id id) {
+                    if (Program.scopeManager.isVarDeclared(id.getToken().getToken())) {
+                        return Program.scopeManager.getVariable(id.getToken().getToken());
+                    } else {
+                        throw new RuntimeException(String.format("Variable not defined in scope for expression: %s", convertToJott()));
+                    }
+                }
+                else if (sub instanceof FuncCall fc) {
+                    if (Program.scopeManager.isFunctionDeclared(fc.getToken().getToken())) {
+                        return fc.evaluateFunction();
+                    } else {
+                        throw new RuntimeException(String.format("Function not defined in scope for expression: %s", convertToJott()));
+                    }
+                }
+            } else if (node instanceof StringLiteral) {
+                return node;
+            } else if (node instanceof Bool) {
+                return node;
+            }
+        } else {
             var op = subNodes.get(1);
             if (op instanceof RelOp) {
-                boolean val = getRelOpValue(((RelOp) op).getToken().getToken(), subNodes.get(0), subNodes.get(2));
-                list.add(DataType.BOOLEAN);
-                list.add(val);
-                return list;
-            }
-            else if (op instanceof MathOp) {
-                var val = getMathOpValue(((MathOp) op).getValue(), subNodes.get(0), subNodes.get(2));
+                return getRelOpValue(((RelOp) op).getToken().getToken(), subNodes.get(0), subNodes.get(2));
+            } else if (op instanceof MathOp) {
+                return getMathOpValue(((MathOp) op).getValue(), subNodes.get(0), subNodes.get(2));
             }
         }
+        throw new RuntimeException(String.format("Error occurred while evaluating expression: %s", convertToJott()));
     }
 
     @Override
