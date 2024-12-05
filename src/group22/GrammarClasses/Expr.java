@@ -9,6 +9,7 @@ import provided.Token;
 import provided.TokenType;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.List;
 
 public class Expr implements JottTree {
@@ -171,6 +172,129 @@ public class Expr implements JottTree {
         }
         return true;
 
+    }
+
+    private boolean getRelOpValue(String relOp, JottTree aJ, JottTree bJ) throws SemanticException {
+        JottTree a = ((Operand) aJ).getSubNode();
+        JottTree b = ((Operand) bJ).getSubNode();
+
+        Object aVal = null;
+        DataType aType = null;
+        Object bVal = null;
+        DataType bType = null;
+
+        if (a instanceof Id aID) {
+            if (Program.scopeManager.isVarDeclared(aID.getToken().getToken())) {
+                aVal = Program.scopeManager.getVariable(aID.getToken().getToken());
+                aType = Program.scopeManager.getDataType(aID.getToken().getToken());
+            } else {
+                throw new SemanticException(String.format("Variable %s not defined in current scope", aID.getToken().getToken()), "", -1);
+            }
+        }
+        else if (a instanceof Number) {
+            aVal = ((Number) a).getValue();
+            aType = ((Number) b).getDataType();
+        }
+        else if (a instanceof FuncCall aFC) {
+            if (Program.scopeManager.isFunctionDeclared(aFC.getToken().getToken())) {
+                aVal = Program.scopeManager.evaluateFunction(aFC);
+                aType = Program.scopeManager.getFunctionReturnType(aFC.getToken().getToken());
+            } else {
+                throw new SemanticException(String.format("Function %s not defined in current scope", aFC.getToken().getToken()), "", -1);
+            }
+        }
+
+        if (b instanceof Id bID) {
+            if (Program.scopeManager.isVarDeclared(bID.getToken().getToken())) {
+                bVal = Program.scopeManager.getVariable(bID.getToken().getToken());
+                bType = Program.scopeManager.getDataType(bID.getToken().getToken());
+            } else {
+                throw new SemanticException(String.format("Variable %s not defined in current scope", bID.getToken().getToken()), "", -1);
+            }
+        }
+        else if (b instanceof Number) {
+            bVal = ((Number) b).getValue();
+            bType = ((Number) b).getDataType();
+        }
+        else if (a instanceof FuncCall) {
+            FuncCall bFC = (FuncCall) b;
+            if (Program.scopeManager.isFunctionDeclared(bFC.getToken().getToken())) {
+                bVal = Program.scopeManager.evaluateFunction(bFC);
+                bType = Program.scopeManager.getFunctionReturnType(bFC.getToken().getToken());
+            } else {
+                throw new SemanticException(String.format("Function %s not defined in current scope", bFC.getToken().getToken()), "", -1);
+            }
+        }
+
+        if(aType == null || bType == null || aVal == null || bVal == null) {
+            return false;
+        }
+
+        if(!aType.equals(bType)) {
+            return false;
+        }
+        switch(relOp){
+            case "==":
+                return aVal.equals(bVal);
+                break;
+            case "<=":
+                if(aType.equals(DataType.BOOLEAN) || aType.equals(DataType.STRING)) {
+                    return false; // semantic error?
+                }
+                else if(aType.equals(DataType.DOUBLE)) {
+                    return (double)aVal <= (double)bVal;
+                }
+                else if(aType.equals(DataType.INTEGER)) {
+                    return (int)aVal <= (int)bVal;
+                }
+                break;
+            case ">=":
+                if(aType.equals(DataType.BOOLEAN) || aType.equals(DataType.STRING)) {
+                    return false; // semantic error?
+                }
+                else if(aType.equals(DataType.DOUBLE)) {
+                    return (double)aVal >= (double)bVal;
+                }
+                else if(aType.equals(DataType.INTEGER)) {
+                    return (int)aVal >= (int)bVal;
+                }
+                break;
+        }
+
+        return false;
+    }
+
+    // list[0] == type; list[1] == value;
+    public List<Object> getValue() throws SemanticException {
+        var list = new ArrayList<>();
+        if(subNodes.size() == 1) {
+            JottTree node = subNodes.get(0);
+            if(node instanceof Operand) {
+                return ((Operand) node).getValue();
+            }
+            else if (node instanceof StringLiteral) {
+                list.add(DataType.STRING);
+                list.add(((StringLiteral) node).getValue());
+                return list;
+            }
+            else if (node instanceof Bool) {
+                list.add(DataType.BOOLEAN);
+                list.add(((Bool) node).getValue());
+                return list;
+            }
+        }
+        else {
+            var op = subNodes.get(1);
+            if (op instanceof RelOp) {
+                boolean val = getRelOpValue(((RelOp) op).getToken().getToken(), subNodes.get(0), subNodes.get(2));
+                list.add(DataType.BOOLEAN);
+                list.add(val);
+                return list;
+            }
+            else if (op instanceof MathOp) {
+                var val = getMathOpValue(((MathOp) op).getValue(), subNodes.get(0), subNodes.get(2));
+            }
+        }
     }
 
     @Override
