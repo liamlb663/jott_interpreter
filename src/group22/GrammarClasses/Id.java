@@ -3,6 +3,7 @@ package group22.GrammarClasses;
 import group22.DataType;
 import group22.SemanticException;
 import group22.SyntaxException;
+import group22.RuntimeException;
 import provided.*;
 
 import java.util.ArrayList;
@@ -70,6 +71,26 @@ public class Id implements JottTree {
         }
 
         return true;
+    }
+
+    public <T> T getValue(DataType dataType) throws RuntimeException {
+        if (!Program.scopeManager.isVarDeclared(id.getToken())) {
+            throw new RuntimeException(
+                    "Called getValue() on id with no value set to it yet.",
+                    id.getFilename(),
+                    id.getLineNum()
+            );
+        }
+
+        if (Program.scopeManager.getDataType(id.getToken()) != dataType) {
+            throw new RuntimeException(
+                    "Tried to get value with wrong datatype provided.",
+                    id.getFilename(),
+                    id.getLineNum()
+            );
+        }
+
+        return (T) Program.scopeManager.getVariable(id.getToken());
     }
 
     @Override

@@ -88,6 +88,6 @@ public class Asmt implements JottTree {
     }
 
     public void execute() {
-        //TODO
+        Program.scopeManager.setVariable(id.id.getToken(), expr.getValue());
     }
 }
