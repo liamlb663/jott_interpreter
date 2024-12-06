@@ -7,7 +7,7 @@ import provided.*;
 import java.util.ArrayList;
 
 public class ElseIf implements JottTree{
-    private final Expr exprNode;
+    public final Expr exprNode;
     private final Body bodyNode;
     public final String filename;
     public final int startingLineNumber;
