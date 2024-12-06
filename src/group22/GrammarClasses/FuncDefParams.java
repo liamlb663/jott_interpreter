@@ -71,12 +71,23 @@ public class FuncDefParams {
         return sB.toString();
     }
 
-    public ArrayList<DataType> getParams() {
+    public ArrayList<DataType> getParamTypes() {
         ArrayList<DataType> output = new ArrayList<>();
 
         output.add(DataType.fromString(type.convertToJott()));
         for (FuncDefParamsT param : params) {
             output.add(DataType.fromString(param.type.convertToJott()));
+        }
+
+        return output;
+    }
+
+    public ArrayList<DataType> getParamNames() {
+        ArrayList<DataType> output = new ArrayList<>();
+
+        output.add(DataType.fromString(id.convertToJott()));
+        for (FuncDefParamsT param : params) {
+            output.add(DataType.fromString(param.id.convertToJott()));
         }
 
         return output;

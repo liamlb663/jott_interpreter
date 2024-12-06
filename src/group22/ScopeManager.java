@@ -1,6 +1,7 @@
 package group22;
 
 import group22.DataType;
+import group22.GrammarClasses.FBody;
 
 import javax.xml.crypto.Data;
 import java.util.*;
@@ -17,12 +18,16 @@ public class ScopeManager {
     }
 
     private class Function {
+        ArrayList<String> parameterNames;
         ArrayList<DataType> parameterTypes;
         DataType returnType;
+        FBody body;
 
-        Function(ArrayList<DataType> parameterTypes, DataType returnType) {
+        Function(ArrayList<String> parameterNames, ArrayList<DataType> parameterTypes, DataType returnType, FBody body) {
+            this.parameterNames = parameterNames;
             this.parameterTypes = parameterTypes;
             this.returnType = returnType;
+            this.body = body;
         }
     }
 
@@ -58,8 +63,12 @@ public class ScopeManager {
         }
     }
 
-    public void declareFunction(String func, DataType type, ArrayList<DataType> params) {
-        functions.put(func, new Function(params, type));
+    public void declareFunction(String func, DataType type, FBody body, ArrayList<DataType> paramTypes, ArrayList<String> paramNames) {
+        if (paramNames.size() != paramTypes.size()) {
+            throw new IllegalArgumentException("Parameter names and types must have the same length.");
+        }
+
+        functions.put(func, new Function(paramNames, paramTypes, type, body));
     }
 
     public void declareVariable(String var, DataType type) {
@@ -104,6 +113,45 @@ public class ScopeManager {
 
     public boolean isFunctionDeclared(String func) {
         return functions.containsKey(func);
+    }
+
+    public boolean validateArgs(ArrayList<Object> args, ArrayList<DataType> expectedTypes) {
+        if (args.size() != expectedTypes.size()) {
+            throw new IllegalArgumentException("Mismatch in the number of arguments and expected types");
+        }
+
+        for (int i = 0; i < args.size(); i++) {
+            Object arg = args.get(i);
+            DataType expectedType = expectedTypes.get(i);
+
+            if (!expectedType.isCompatible(arg)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public void executeFunction(String func, ArrayList<Object> args) {
+        Function function = functions.get(func);
+
+        if (!validateArgs(args, function.parameterTypes)) {
+            throw new IllegalArgumentException("Arguments do not match the function's parameter types.");
+        }
+
+        newScope(functions.get(func).returnType);
+
+        ArrayList<DataType> paramTypes = function.parameterTypes;
+        for (int i = 0; i < args.size(); i++) {
+            String paramName = function.parameterNames.get(i);
+            declareVariable(paramName, paramTypes.get(i));
+            setVariable(paramName, args.get(i));
+        }
+
+
+        function.body.execute();
+
+        dropScope();
     }
 
     public ArrayList<DataType> getFunctionParameterTypes(String func) {
