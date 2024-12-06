@@ -89,6 +89,13 @@ public class Params implements JottTree {
     }
 
     public void execute() {
-        //TODO
+        if (exprNode != null) {
+            exprNode.execute();
+        }
+        if (paramsTNodes != null) {
+            for (ParamsT t : paramsTNodes) {
+                t.execute();
+            }
+        }
     }
 }

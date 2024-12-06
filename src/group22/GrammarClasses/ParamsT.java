@@ -46,6 +46,6 @@ public class ParamsT implements JottTree {
     }
 
     public void execute() {
-        //TODO
+        exprNode.execute();
     }
 }
