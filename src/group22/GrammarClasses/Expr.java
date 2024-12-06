@@ -3,6 +3,7 @@ package group22.GrammarClasses;
 import group22.DataType;
 import group22.SemanticException;
 import group22.SyntaxException;
+import group22.RuntimeException;
 import provided.JottParser;
 import provided.JottTree;
 import provided.Token;
@@ -182,31 +183,46 @@ public class Expr implements JottTree {
         Object bVal = null;
         DataType bType = null;
 
+        String filename = "";
+        int lineNumber = -1;
+
         if (a instanceof Id aID) {
+            filename = aID.getToken().getFilename();
+            lineNumber = aID.getToken().getLineNum();
             if (Program.scopeManager.isVarDeclared(aID.getToken().getToken())) {
                 aVal = Program.scopeManager.getVariable(aID.getToken().getToken());
+                if(aVal == null) {
+                    throw new RuntimeException("Attempting to retrieve value of unassigned variable", id.getToken().getFilename(), id.getToken().getLineNum());
+                }
                 aType = Program.scopeManager.getDataType(aID.getToken().getToken());
             } else {
-                throw new RuntimeException(String.format("Variable %s not defined in current scope", aID.getToken().getToken()));
+                throw new RuntimeException(String.format("Variable %s not defined in current scope", aID.getToken().getToken()), filename, lineNumber);
             }
-        } else if (a instanceof Number) {
-            aVal = ((Number) a).getValue();
-            aType = ((Number) b).getDataType();
+        } else if (a instanceof Number aNum) {
+            filename = aNum.getToken().getFilename();
+            lineNumber = aNum.getToken().getLineNum();
+            aVal = aNum.getValue();
+            aType = aNum.getDataType();
         } else if (a instanceof FuncCall aFC) {
+            filename = aFC.getToken().getFilename();
+            lineNumber = aFC.getToken().getLineNum();
             if (Program.scopeManager.isFunctionDeclared(aFC.getToken().getToken())) {
                 aVal = aFC.evaluateFunction();
                 aType = Program.scopeManager.getFunctionReturnType(aFC.getToken().getToken());
             } else {
-                throw new RuntimeException(String.format("Function %s not defined in current scope", aFC.getToken().getToken()));
+                throw new RuntimeException(String.format("Function %s not defined in current scope", aFC.getToken().getToken()), filename, lineNumber);
             }
         }
 
         if (b instanceof Id bID) {
             if (Program.scopeManager.isVarDeclared(bID.getToken().getToken())) {
                 bVal = Program.scopeManager.getVariable(bID.getToken().getToken());
+                if(bVal == null) {
+                    throw new RuntimeException("Attempting to retrieve value of unassigned variable", bID.getToken().getFilename(), bID.getToken().getLineNum());
+                }
                 bType = Program.scopeManager.getDataType(bID.getToken().getToken());
             } else {
-                throw new RuntimeException(String.format("Variable %s not defined in current scope", bID.getToken().getToken()));
+                throw new RuntimeException(String.format("Variable %s not defined in current scope", bID.getToken().getToken()), filename, lineNumber);
             }
         } else if (b instanceof Number) {
             bVal = ((Number) b).getValue();
@@ -217,42 +233,40 @@ public class Expr implements JottTree {
                 bVal = bFC.evaluateFunction();
                 bType = Program.scopeManager.getFunctionReturnType(bFC.getToken().getToken());
             } else {
-                throw new RuntimeException(String.format("Function %s not defined in current scope", bFC.getToken().getToken()));
+                throw new RuntimeException(String.format("Function %s not defined in current scope", bFC.getToken().getToken()), filename, lineNumber);
             }
         }
 
         if (aType == null || bType == null || aVal == null || bVal == null) {
-            return new Bool(new Token(String.valueOf(false), "", -1, TokenType.STRING));
+            return new Bool(new Token(String.valueOf(false), filename, lineNumber, TokenType.ID_KEYWORD));
         }
 
         if (!aType.equals(bType)) {
-            return new Bool(new Token(String.valueOf(false), "", -1, TokenType.STRING));
+            return new Bool(new Token(String.valueOf(false), filename, lineNumber, TokenType.ID_KEYWORD));
         }
         switch (relOp) {
             case "==":
-                return new Bool(new Token(String.valueOf(aVal.equals(bVal)), "", -1, TokenType.STRING));
+                return new Bool(new Token(String.valueOf(aVal.equals(bVal)), filename, lineNumber, TokenType.ID_KEYWORD));
             case "<=":
                 if (aType.equals(DataType.BOOLEAN) || aType.equals(DataType.STRING)) {
-                    return new Bool(new Token(String.valueOf(false), "", -1, TokenType.STRING));
-                    // semantic error?
+                    return new Bool(new Token(String.valueOf(false), filename, lineNumber, TokenType.ID_KEYWORD));
                 } else if (aType.equals(DataType.DOUBLE)) {
-                    return new Bool(new Token(String.valueOf((double) aVal <= (double) bVal), "", -1, TokenType.STRING));
+                    return new Bool(new Token(String.valueOf((double) aVal <= (double) bVal), filename, lineNumber, TokenType.ID_KEYWORD));
                 } else if (aType.equals(DataType.INTEGER)) {
-                    return new Bool(new Token(String.valueOf((int) aVal <= (int) bVal), "", -1, TokenType.STRING));
+                    return new Bool(new Token(String.valueOf((int) aVal <= (int) bVal), filename, lineNumber, TokenType.ID_KEYWORD));
                 }
                 break;
             case ">=":
                 if (aType.equals(DataType.BOOLEAN) || aType.equals(DataType.STRING)) {
-                    return new Bool(new Token(String.valueOf(false), "", -1, TokenType.STRING));
-                    // semantic error?
+                    return new Bool(new Token(String.valueOf(false), filename, lineNumber, TokenType.ID_KEYWORD));
                 } else if (aType.equals(DataType.DOUBLE)) {
-                    return new Bool(new Token(String.valueOf((double) aVal >= (double) bVal), "", -1, TokenType.STRING));
+                    return new Bool(new Token(String.valueOf((double) aVal >= (double) bVal), filename, lineNumber, TokenType.ID_KEYWORD));
                 } else if (aType.equals(DataType.INTEGER)) {
-                    return new Bool(new Token(String.valueOf((int) aVal >= (int) bVal), "", -1, TokenType.STRING));
+                    return new Bool(new Token(String.valueOf((int) aVal >= (int) bVal), filename, lineNumber, TokenType.ID_KEYWORD));
                 }
                 break;
         }
-        return new Bool(new Token(String.valueOf(false), "", -1, TokenType.STRING));
+        return new Bool(new Token(String.valueOf(false), filename, lineNumber, TokenType.ID_KEYWORD));
     }
 
     private Number getMathOpValue(String mathOp, JottTree aJ, JottTree bJ) throws RuntimeException {
@@ -264,31 +278,46 @@ public class Expr implements JottTree {
         Object bVal = null;
         DataType bType = null;
 
+        String filename = "";
+        int lineNumber = -1;
+
         if (a instanceof Id aID) {
+            filename = aID.getToken().getFilename();
+            lineNumber = aID.getToken().getLineNum();
             if (Program.scopeManager.isVarDeclared(aID.getToken().getToken())) {
                 aVal = Program.scopeManager.getVariable(aID.getToken().getToken());
+                if(aVal == null) {
+                    throw new RuntimeException("Attempting to retrieve value of unassigned variable", aID.getToken().getFilename(), id.getToken().getLineNum());
+                }
                 aType = Program.scopeManager.getDataType(aID.getToken().getToken());
             } else {
-                throw new RuntimeException(String.format("Variable %s not defined in current scope", aID.getToken().getToken()));
+                throw new RuntimeException(String.format("Variable %s not defined in current scope", aID.getToken().getToken()), filename, lineNumber);
             }
-        } else if (a instanceof Number) {
-            aVal = ((Number) a).getValue();
-            aType = ((Number) b).getDataType();
+        } else if (a instanceof Number aNum) {
+            filename = aNum.getToken().getFilename();
+            lineNumber = aNum.getToken().getLineNum();
+            aVal = aNum.getValue();
+            aType = aNum.getDataType();
         } else if (a instanceof FuncCall aFC) {
+            filename = aFC.getToken().getFilename();
+            lineNumber = aFC.getToken().getLineNum();
             if (Program.scopeManager.isFunctionDeclared(aFC.getToken().getToken())) {
                 aVal = aFC.evaluateFunction();
                 aType = Program.scopeManager.getFunctionReturnType(aFC.getToken().getToken());
             } else {
-                throw new RuntimeException(String.format("Function %s not defined in current scope", aFC.getToken().getToken()));
+                throw new RuntimeException(String.format("Function %s not defined in current scope", aFC.getToken().getToken()), filename, lineNumber);
             }
         }
 
         if (b instanceof Id bID) {
             if (Program.scopeManager.isVarDeclared(bID.getToken().getToken())) {
                 bVal = Program.scopeManager.getVariable(bID.getToken().getToken());
+                if(bVal == null) {
+                    throw new RuntimeException("Attempting to retrieve value of unassigned variable", bID.getToken().getFilename(), bID.getToken().getLineNum());
+                }
                 bType = Program.scopeManager.getDataType(bID.getToken().getToken());
             } else {
-                throw new RuntimeException(String.format("Variable %s not defined in current scope", bID.getToken().getToken()));
+                throw new RuntimeException(String.format("Variable %s not defined in current scope", bID.getToken().getToken()), filename, lineNumber);
             }
         } else if (b instanceof Number) {
             bVal = ((Number) b).getValue();
@@ -299,72 +328,72 @@ public class Expr implements JottTree {
                 bVal = bFC.evaluateFunction();
                 bType = Program.scopeManager.getFunctionReturnType(bFC.getToken().getToken());
             } else {
-                throw new RuntimeException(String.format("Function %s not defined in current scope", bFC.getToken().getToken()));
+                throw new RuntimeException(String.format("Function %s not defined in current scope", bFC.getToken().getToken()), filename, lineNumber);
             }
         }
 
         if (aType == null || bType == null || aVal == null || bVal == null) {
-            throw new RuntimeException("Cannot perform mathematical operation because operand does not exist");
+            throw new RuntimeException("Cannot perform mathematical operation because operand does not exist", filename, lineNumber);
         }
 
         if (!aType.equals(bType)) {
-            throw new RuntimeException("Cannot perform mathematical operations on operands of different Types");
+            throw new RuntimeException("Cannot perform mathematical operations on operands of different Types", filename, lineNumber);
         }
 
         switch (mathOp) {
             case "+":
                 if (aType.equals(DataType.INTEGER)) {
                     return new Number(new Token(
-                            String.valueOf((int) aVal + (int) bVal), "", -1, TokenType.NUMBER),
+                            String.valueOf((int) aVal + (int) bVal), filename, lineNumber, TokenType.NUMBER),
                             DataType.INTEGER);
                 } else if (bType.equals(DataType.DOUBLE)) {
                     return new Number(new Token(
-                            String.valueOf((double) aVal + (double) bVal), "", -1, TokenType.NUMBER),
+                            String.valueOf((double) aVal + (double) bVal), filename, lineNumber, TokenType.NUMBER),
                             DataType.DOUBLE);
                 }
                 break;
             case "-":
                 if (aType.equals(DataType.INTEGER)) {
                     return new Number(new Token(
-                            String.valueOf((int) aVal - (int) bVal), "", -1, TokenType.NUMBER),
+                            String.valueOf((int) aVal - (int) bVal), filename, lineNumber, TokenType.NUMBER),
                             DataType.INTEGER);
                 } else if (bType.equals(DataType.DOUBLE)) {
                     return new Number(new Token(
-                            String.valueOf((double) aVal - (double) bVal), "", -1, TokenType.NUMBER),
+                            String.valueOf((double) aVal - (double) bVal), filename, lineNumber, TokenType.NUMBER),
                             DataType.DOUBLE);
                 }
                 break;
             case "*":
                 if (aType.equals(DataType.INTEGER)) {
                     return new Number(new Token(
-                            String.valueOf((int) aVal * (int) bVal), "", -1, TokenType.NUMBER),
+                            String.valueOf((int) aVal * (int) bVal), filename, lineNumber, TokenType.NUMBER),
                             DataType.INTEGER);
                 } else if (bType.equals(DataType.DOUBLE)) {
                     return new Number(new Token(
-                            String.valueOf((double) aVal * (double) bVal), "", -1, TokenType.NUMBER),
+                            String.valueOf((double) aVal * (double) bVal), filename, lineNumber, TokenType.NUMBER),
                             DataType.DOUBLE);
                 }
                 break;
             case "/":
                 if(bType.equals(DataType.INTEGER) && (int) bVal == 0) {
-                    throw new RuntimeException(String.format("Cannot divide by zero! (Dividing %d by %d)", (int) aVal, (int) bVal));
+                    throw new RuntimeException(String.format("Cannot divide by zero! (Dividing %d by %d)", (int) aVal, (int) bVal), filename, lineNumber);
                 }
                 else if(bType.equals(DataType.DOUBLE) && (int) bVal == 0) {
-                    throw new RuntimeException(String.format("Cannot divide by zero! (Dividing %f by %f)", (double) aVal, (double) bVal));
+                    throw new RuntimeException(String.format("Cannot divide by zero! (Dividing %f by %f)", (double) aVal, (double) bVal), filename, lineNumber);
                 }
 
                 if (aType.equals(DataType.INTEGER)) {
                     return new Number(new Token(
-                            String.valueOf((int) aVal / (int) bVal), "", -1, TokenType.NUMBER),
+                            String.valueOf((int) aVal / (int) bVal), filename, lineNumber, TokenType.NUMBER),
                             DataType.INTEGER);
                 } else if (bType.equals(DataType.DOUBLE)) {
                     return new Number(new Token(
-                            String.valueOf((double) aVal / (double) bVal), "", -1, TokenType.NUMBER),
+                            String.valueOf((double) aVal / (double) bVal), filename, lineNumber, TokenType.NUMBER),
                             DataType.DOUBLE);
                 }
                 break;
         }
-        throw new RuntimeException("Unknown error occurred during mathematical operation.");
+        throw new RuntimeException("Unknown error occurred during mathematical operation.", filename, lineNumber);
     }
 
     public JottTree getValue() throws RuntimeException {
@@ -377,7 +406,21 @@ public class Expr implements JottTree {
                 }
                 else if (sub instanceof Id id) {
                     if (Program.scopeManager.isVarDeclared(id.getToken().getToken())) {
-                        return Program.scopeManager.getVariable(id.getToken().getToken());
+                        DataType type = Program.scopeManager.getDataType(id.convertToJott());
+                        var variable = Program.scopeManager.getVariable(id.convertToJott());
+                        if(variable == null) {
+                            throw new RuntimeException("Attempting to retrieve value of unassigned variable", id.getToken().getFilename(), id.getToken().getLineNum());
+                        }
+                        switch (type) {
+                            case BOOLEAN:
+                                return new Bool(new Token(variable.toString(), id.getToken().getFilename(), id.getToken().getLineNum(), TokenType.ID_KEYWORD));
+                            case DOUBLE:
+                                return new Number(new Token(variable.toString(), id.getToken().getFilename(), id.getToken().getLineNum(), TokenType.NUMBER), DataType.DOUBLE);
+                            case INTEGER:
+                                return new Number(new Token(variable.toString(), id.getToken().getFilename(), id.getToken().getLineNum(), TokenType.NUMBER), DataType.INTEGER);
+                            case STRING:
+                                return new StringLiteral(new Token(variable.toString(), id.getToken().getFilename(), id.getToken().getLineNum(), TokenType.STRING));
+                        }
                     } else {
                         throw new RuntimeException(String.format("Variable not defined in scope for expression: %s", convertToJott()));
                     }
