@@ -39,10 +39,6 @@ public class Bool implements JottTree {
         return true;
     }
 
-    public boolean getValue() {
-        return bool.getToken().equals("True");
-    }
-
     public void execute() {
     }
 }
