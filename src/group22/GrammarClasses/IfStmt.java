@@ -129,11 +129,15 @@ public class IfStmt implements JottTree{
         }
         if (elseIfNodes != null) {
             for (ElseIf e : elseIfNodes) {
-                e.execute();
+                cond = (Bool)e.exprNode.getValue();
+                if (cond.getValue()) {
+                    e.execute();
+                    return;
+                }
             }
         }
         if (elseNode != null) {
-            elseNode.execute();
+                elseNode.execute();
         }
     }
 }
