@@ -71,6 +71,6 @@ public class VarDec implements JottTree {
     }
 
     public void execute() {
-        //TODO
+        Program.scopeManager.declareVariable(id.getToken().getToken(), DataType.fromString(type.convertToJott()));
     }
 }

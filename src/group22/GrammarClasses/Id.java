@@ -73,24 +73,23 @@ public class Id implements JottTree {
         return true;
     }
 
-    public <T> T getValue(DataType dataType) throws RuntimeException {
-        if (!Program.scopeManager.isVarDeclared(id.getToken())) {
-            throw new RuntimeException(
-                    "Called getValue() on id with no value set to it yet.",
+    public JottTree getValue() throws RuntimeException {
+        switch (Program.scopeManager.getDataType(id.getToken())) {
+            case DOUBLE, INTEGER -> {
+                return new Number(id, Program.scopeManager.getDataType(id.getToken()));
+            }
+            case STRING -> {
+                return new StringLiteral(id);
+            }
+            case BOOLEAN -> {
+                return new Bool(id);
+            }
+            case null, default -> throw new RuntimeException(
+                    "Something went HORRIBLY WRONG :OOOO",
                     id.getFilename(),
                     id.getLineNum()
             );
         }
-
-        if (Program.scopeManager.getDataType(id.getToken()) != dataType) {
-            throw new RuntimeException(
-                    "Tried to get value with wrong datatype provided.",
-                    id.getFilename(),
-                    id.getLineNum()
-            );
-        }
-
-        return (T) Program.scopeManager.getVariable(id.getToken());
     }
 
     @Override
