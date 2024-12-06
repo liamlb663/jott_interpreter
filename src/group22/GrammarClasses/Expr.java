@@ -169,7 +169,7 @@ public class Expr implements JottTree {
                         "Cannot perform mathematical or relational operations on string type",
                         "", -1
                 );
-            } else if (subNodes.get(1) instanceof RelOp && leftType == DataType.BOOLEAN) {
+            } else if (subNodes.get(1) instanceof MathOp && leftType == DataType.BOOLEAN) {
                 throw new SemanticException(
                         "Cannot perform math operations between two booleans",
                         tokenFirstOp.getFilename(),
