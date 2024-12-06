@@ -91,6 +91,9 @@ public class FuncCall implements JottTree{
     // if concat: just concatenate the string tokens and make a new StringLiteral?
     // if length: ?
     public void execute() {
-        //TODO
+        idNode;
+        paramsNode;
+
+        Program.scopeManager.executeFunction(idNode.getToken().getToken(), args);
     }
 }

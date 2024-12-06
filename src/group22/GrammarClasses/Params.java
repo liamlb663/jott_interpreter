@@ -70,6 +70,23 @@ public class Params implements JottTree {
         return output;
     }
 
+    public ArrayList<Object> getValues() {
+        ArrayList<Object> output = new ArrayList<>();
+
+        /* TODO: Expr needs getValue
+        if (exprNode != null) {
+            output.add(exprNode.getDataType());
+        }
+        if (paramsTNodes != null) {
+            for (ParamsT param : paramsTNodes) {
+                output.add(param.getType());
+            }
+        }
+        */
+
+        return output;
+    }
+
     public boolean validateTree() throws SemanticException {
         if (exprNode != null) {
             exprNode.validateTree();

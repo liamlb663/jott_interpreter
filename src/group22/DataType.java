@@ -9,22 +9,22 @@ public enum DataType {
 
     public boolean isCompatible(Object value) {
         if (value == null) {
-            return this == VOID; // VOID type is compatible with null
+            return this == VOID;
         }
 
         switch (this) {
             case INTEGER:
-                return value == DataType.INTEGER;
+                return value instanceof Integer;
             case DOUBLE:
-                return value == DataType.DOUBLE;
+                return value instanceof Double;
             case BOOLEAN:
-                return value == DataType.BOOLEAN;
+                return value instanceof Boolean;
             case STRING:
-                return value == DataType.STRING;
+                return value instanceof String;
             case VOID:
-                return false; // VOID should not have any compatible non-null value
+                return false;
             default:
-                return false; // Undefined behavior for unexpected cases
+                return false;
         }
     }
 
