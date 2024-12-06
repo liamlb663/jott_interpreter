@@ -190,6 +190,9 @@ public class Expr implements JottTree {
         Boolean firstBool = (firstValOpNode instanceof Bool) ? firstValOpNode.convertToJott().equals("True") : null;
         Boolean secondBool = (secondValOpNode instanceof Bool) ? secondValOpNode.convertToJott().equals("True") : null;
 
+        String firstStr = (firstValOpNode instanceof StringLiteral) ? firstValOpNode.convertToJott() : null;
+        String secondStr = (secondValOpNode instanceof StringLiteral) ? secondValOpNode.convertToJott() : null;
+
         var firstOpVal = (opDataType == DataType.INTEGER) ? Integer.parseInt(firstValOpNode.convertToJott()) :
                 Double.parseDouble(firstValOpNode.convertToJott());
         var secondOpVal = (opDataType == DataType.INTEGER) ? Integer.parseInt(secondValOpNode.convertToJott()) :
@@ -208,6 +211,8 @@ public class Expr implements JottTree {
             case "==" -> {
                 if (firstBool != null) {
                     calcBool = firstBool.equals(secondBool);
+                } else if (firstStr != null) {
+                    calcBool = firstStr.equals(secondStr);
                 } else {
                     calcBool = firstOpVal == secondOpVal;
                 }
@@ -215,6 +220,8 @@ public class Expr implements JottTree {
             case "!=" -> {
                 if (firstBool != null) {
                     calcBool = !firstBool.equals(secondBool);
+                } else if (firstStr != null) {
+                    calcBool = !firstStr.equals(secondStr);
                 } else {
                     calcBool = firstOpVal != secondOpVal;
                 }
