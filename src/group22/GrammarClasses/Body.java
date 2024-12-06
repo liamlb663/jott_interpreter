@@ -91,6 +91,9 @@ public class Body implements JottTree {
     }
 
     public void execute() {
-        //TODO
+        for (BodyStmt b : bodyStmts) {
+            b.execute();
+        }
+        returnStmt.execute();
     }
 }

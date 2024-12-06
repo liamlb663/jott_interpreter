@@ -84,6 +84,9 @@ public class ElseIf implements JottTree{
     }
 
     public void execute() {
-        //TODO
+        Bool cond = (Bool)exprNode.getValue();
+        if (cond.getValue()) {
+            bodyNode.execute();
+        }
     }
 }

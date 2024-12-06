@@ -64,6 +64,10 @@ public class FBody implements JottTree {
     }
 
     public void execute() {
-        //TODO
+        // Execute the Variable Declarations
+        for (VarDec varDec : varDecs) {
+            varDec.execute();
+        }
+        body.execute();
     }
 }
