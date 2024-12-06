@@ -191,6 +191,9 @@ public class Expr implements JottTree {
             lineNumber = aID.getToken().getLineNum();
             if (Program.scopeManager.isVarDeclared(aID.getToken().getToken())) {
                 aVal = Program.scopeManager.getVariable(aID.getToken().getToken());
+                if(aVal == null) {
+                    throw new RuntimeException("Attempting to retrieve value of unassigned variable", id.getToken().getFilename(), id.getToken().getLineNum());
+                }
                 aType = Program.scopeManager.getDataType(aID.getToken().getToken());
             } else {
                 throw new RuntimeException(String.format("Variable %s not defined in current scope", aID.getToken().getToken()), filename, lineNumber);
@@ -214,6 +217,9 @@ public class Expr implements JottTree {
         if (b instanceof Id bID) {
             if (Program.scopeManager.isVarDeclared(bID.getToken().getToken())) {
                 bVal = Program.scopeManager.getVariable(bID.getToken().getToken());
+                if(bVal == null) {
+                    throw new RuntimeException("Attempting to retrieve value of unassigned variable", bID.getToken().getFilename(), bID.getToken().getLineNum());
+                }
                 bType = Program.scopeManager.getDataType(bID.getToken().getToken());
             } else {
                 throw new RuntimeException(String.format("Variable %s not defined in current scope", bID.getToken().getToken()), filename, lineNumber);
@@ -280,6 +286,9 @@ public class Expr implements JottTree {
             lineNumber = aID.getToken().getLineNum();
             if (Program.scopeManager.isVarDeclared(aID.getToken().getToken())) {
                 aVal = Program.scopeManager.getVariable(aID.getToken().getToken());
+                if(aVal == null) {
+                    throw new RuntimeException("Attempting to retrieve value of unassigned variable", aID.getToken().getFilename(), id.getToken().getLineNum());
+                }
                 aType = Program.scopeManager.getDataType(aID.getToken().getToken());
             } else {
                 throw new RuntimeException(String.format("Variable %s not defined in current scope", aID.getToken().getToken()), filename, lineNumber);
@@ -303,6 +312,9 @@ public class Expr implements JottTree {
         if (b instanceof Id bID) {
             if (Program.scopeManager.isVarDeclared(bID.getToken().getToken())) {
                 bVal = Program.scopeManager.getVariable(bID.getToken().getToken());
+                if(bVal == null) {
+                    throw new RuntimeException("Attempting to retrieve value of unassigned variable", bID.getToken().getFilename(), bID.getToken().getLineNum());
+                }
                 bType = Program.scopeManager.getDataType(bID.getToken().getToken());
             } else {
                 throw new RuntimeException(String.format("Variable %s not defined in current scope", bID.getToken().getToken()), filename, lineNumber);
@@ -396,6 +408,9 @@ public class Expr implements JottTree {
                     if (Program.scopeManager.isVarDeclared(id.getToken().getToken())) {
                         DataType type = Program.scopeManager.getDataType(id.convertToJott());
                         var variable = Program.scopeManager.getVariable(id.convertToJott());
+                        if(variable == null) {
+                            throw new RuntimeException("Attempting to retrieve value of unassigned variable", id.getToken().getFilename(), id.getToken().getLineNum());
+                        }
                         switch (type) {
                             case BOOLEAN:
                                 return new Bool(new Token(variable.toString(), id.getToken().getFilename(), id.getToken().getLineNum(), TokenType.ID_KEYWORD));
