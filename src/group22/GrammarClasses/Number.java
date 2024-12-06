@@ -60,6 +60,14 @@ public class Number implements JottTree {
         return true;
     }
 
+    public Object getValue() {
+        if(type.equals(DataType.DOUBLE)) {
+            return Double.parseDouble(number.getToken());
+        } else {
+            return Integer.parseInt(number.getToken());
+        }
+    }
+
     public double getDoubleValue() {
         return Double.parseDouble(number.getToken());
     }
