@@ -1,5 +1,6 @@
 package provided;
 
+import group22.RuntimeException;
 import group22.SemanticException;
 
 /**
@@ -25,5 +26,5 @@ public interface JottTree {
 	/**
 	 * This will execute the Jott code represented by this JottTree node.
 	 */
-	public void execute();
+	public void execute() throws RuntimeException;
 }
