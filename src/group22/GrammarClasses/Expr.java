@@ -329,8 +329,6 @@ public class Expr implements JottTree {
 
         if (valNode instanceof Operand) {
             return ((Operand) valNode).getValue();
-        } else if (valNode instanceof StringLiteral) {
-            return valNode;
         } else {
             return valNode;
         }
