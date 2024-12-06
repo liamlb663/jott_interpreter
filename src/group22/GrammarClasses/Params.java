@@ -73,16 +73,16 @@ public class Params implements JottTree {
     public ArrayList<Object> getValues() {
         ArrayList<Object> output = new ArrayList<>();
 
-        /* TODO: Expr needs getValue
         if (exprNode != null) {
-            output.add(exprNode.getDataType());
+            JottTree value = exprNode.getValue();
+            value.
+            output.add();
         }
         if (paramsTNodes != null) {
             for (ParamsT param : paramsTNodes) {
                 output.add(param.getType());
             }
         }
-        */
 
         return output;
     }
