@@ -202,53 +202,37 @@ public class Expr implements JottTree {
             // TODO: Figure out if we need fuzzy checking because of doubles
             case ">" -> {
                 if (firstVal.type == DataType.INTEGER) {
-                    calcBool = ((int) firstVal.value) > ((int) secondVal.value);
+                    calcBool = ((Integer) firstVal.value) > ((Integer) secondVal.value);
                 } else {
-                    calcBool = ((double) firstVal.value) > ((double) secondVal.value);
+                    calcBool = ((Double) firstVal.value) > ((Double) secondVal.value);
                 }
             }
             case ">=" -> {
                 if (firstVal.type == DataType.INTEGER) {
-                    calcBool = ((int) firstVal.value) >= ((int) secondVal.value);
+                    calcBool = ((Integer) firstVal.value) >= ((Integer) secondVal.value);
                 } else {
-                    calcBool = ((double) firstVal.value) >= ((double) secondVal.value);
+                    calcBool = ((Double) firstVal.value) >= ((Double) secondVal.value);
                 }
             }
             case "<" -> {
                 if (firstVal.type == DataType.INTEGER) {
-                    calcBool = ((int) firstVal.value) < ((int) secondVal.value);
+                    calcBool = ((Integer) firstVal.value) < ((Integer) secondVal.value);
                 } else {
-                    calcBool = ((double) firstVal.value) < ((double) secondVal.value);
+                    calcBool = ((Double) firstVal.value) < ((Double) secondVal.value);
                 }
             }
             case "<=" -> {
                 if (firstVal.type == DataType.INTEGER) {
-                    calcBool = ((int) firstVal.value) <= ((int) secondVal.value);
+                    calcBool = ((Integer) firstVal.value) <= ((Integer) secondVal.value);
                 } else {
-                    calcBool = ((double) firstVal.value) <= ((double) secondVal.value);
+                    calcBool = ((Double) firstVal.value) <= ((Double) secondVal.value);
                 }
             }
             case "==" -> {
-                if (firstVal.type == DataType.BOOLEAN) {
-                    calcBool = ((boolean) firstVal.value) == (boolean) secondVal.value;
-                } else if (firstVal.type == DataType.STRING) {
-                    calcBool = ((String) firstVal.value).equals((String) secondVal.value);
-                } else if (firstVal.type == DataType.INTEGER) {
-                    calcBool = ((int) firstVal.value) == ((int) secondVal.value);
-                } else {
-                    calcBool = ((double) firstVal.value) == ((double) secondVal.value);
-                }
+                calcBool = firstVal.value.equals(secondVal.value);
             }
             case "!=" -> {
-                if (firstVal.type == DataType.BOOLEAN) {
-                    calcBool = ((boolean) firstVal.value) ^ (boolean) secondVal.value; // this will XOR it
-                } else if (firstVal.type == DataType.STRING) {
-                    calcBool = !((String) firstVal.value).equals((String) secondVal.value);
-                } else if (firstVal.type == DataType.INTEGER) {
-                    calcBool = ((int) firstVal.value) != ((int) secondVal.value);
-                } else {
-                    calcBool = ((double) firstVal.value) != ((double) secondVal.value);
-                }
+                calcBool = !firstVal.value.equals(secondVal.value);
             }
             default -> throw new RuntimeException(
                     "Unknown RelOp of " + relOp + " used",
@@ -266,55 +250,93 @@ public class Expr implements JottTree {
     }
 
     private Data getMathOpValue(String mathOp) throws RuntimeException {
-        // If we're in a MathOp, then we know we must be dealing with numbers However, these can be from function
-        // calls, IDs, or just hard-coded so we get it into a concrete format with getValue(). Then, we cast both based
-        // on the first data type since they've been validated to be the same types
         Data firstOpNum = subNodes.get(0).execute();
         Data secondOpNum = subNodes.get(2).execute();
 
-        var firstOpVal = (firstOpNum.type == DataType.INTEGER) ? (int) firstOpNum.value : (double) firstOpNum.value;
-        var secondOpVal = (secondOpNum.type == DataType.INTEGER) ? (int) secondOpNum.value : (double) secondOpNum.value;
-
         switch (mathOp) {
             case "+" -> {
-                return new Data(
-                        firstOpVal + secondOpVal,
-                        firstOpNum.type,
-                        firstOpNum.fileName,
-                        firstOpNum.lineNumber
-                );
-            }
-            case "-" -> {
-                return new Data(
-                        firstOpVal - secondOpVal,
-                        firstOpNum.type,
-                        firstOpNum.fileName,
-                        firstOpNum.lineNumber
-                );
-            }
-            case "*" -> {
-                return new Data(
-                        firstOpVal * secondOpVal,
-                        firstOpNum.type,
-                        firstOpNum.fileName,
-                        firstOpNum.lineNumber
-                );
-            }
-            case "/" -> {
-                if (secondOpVal == 0) {
-                    throw new RuntimeException(
-                            "Cannot divide by zero",
+                if (firstOpNum.type == DataType.INTEGER) {
+                    return new Data(
+                            ((Integer) firstOpNum.value) + ((Integer) secondOpNum.value),
+                            firstOpNum.type,
+                            firstOpNum.fileName,
+                            firstOpNum.lineNumber
+                    );
+                } else {
+                    return new Data(
+                            ((Double) firstOpNum.value) + ((Double) secondOpNum.value),
+                            firstOpNum.type,
                             firstOpNum.fileName,
                             firstOpNum.lineNumber
                     );
                 }
+            }
+            case "-" -> {
+                if (firstOpNum.type == DataType.INTEGER) {
+                    return new Data(
+                            ((Integer) firstOpNum.value) - ((Integer) secondOpNum.value),
+                            firstOpNum.type,
+                            firstOpNum.fileName,
+                            firstOpNum.lineNumber
+                    );
+                } else {
+                    return new Data(
+                            ((Double) firstOpNum.value) - ((Double) secondOpNum.value),
+                            firstOpNum.type,
+                            firstOpNum.fileName,
+                            firstOpNum.lineNumber
+                    );
+                }
+            }
+            case "*" -> {
+                if (firstOpNum.type == DataType.INTEGER) {
+                    return new Data(
+                            ((Integer) firstOpNum.value) * ((Integer) secondOpNum.value),
+                            firstOpNum.type,
+                            firstOpNum.fileName,
+                            firstOpNum.lineNumber
+                    );
+                } else {
+                    return new Data(
+                            ((Double) firstOpNum.value) * ((Double) secondOpNum.value),
+                            firstOpNum.type,
+                            firstOpNum.fileName,
+                            firstOpNum.lineNumber
+                    );
+                }
+            }
+            case "/" -> {
+                if (firstOpNum.type == DataType.INTEGER) {
+                    if (((Integer) secondOpNum.value) == 0) {
+                        throw new RuntimeException(
+                                "Cannot divide by zero",
+                                firstOpNum.fileName,
+                                firstOpNum.lineNumber
+                        );
+                    }
 
-                return new Data(
-                        firstOpVal / secondOpVal,
-                        firstOpNum.type,
-                        firstOpNum.fileName,
-                        firstOpNum.lineNumber
-                );
+                    return new Data(
+                            ((Integer) firstOpNum.value) / ((Integer) secondOpNum.value),
+                            firstOpNum.type,
+                            firstOpNum.fileName,
+                            firstOpNum.lineNumber
+                    );
+                } else {
+                    if (((Double) secondOpNum.value) == 0) {
+                        throw new RuntimeException(
+                                "Cannot divide by zero",
+                                firstOpNum.fileName,
+                                firstOpNum.lineNumber
+                        );
+                    }
+
+                    return new Data(
+                            ((Double) firstOpNum.value) + ((Double) secondOpNum.value),
+                            firstOpNum.type,
+                            firstOpNum.fileName,
+                            firstOpNum.lineNumber
+                    );
+                }
             }
             default -> throw new RuntimeException(
                     "Ran into unknown math operation",

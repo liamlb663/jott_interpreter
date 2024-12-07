@@ -84,11 +84,11 @@ public class WhileLoop implements JottTree{
 
     public Data execute() throws RuntimeException {
         Data tempVar = exprNode.execute();
-        boolean cond = tempVar.value.equals("True");
+        boolean cond = (boolean) tempVar.value;
 
         while (cond) {
             bodyNode.execute();
-            cond = exprNode.execute().value.equals("True");
+            cond = (boolean) exprNode.execute().value;
         }
 
         return null;
