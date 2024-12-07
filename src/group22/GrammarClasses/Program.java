@@ -67,7 +67,7 @@ public class Program implements JottTree {
     }
 
     public Data execute() throws RuntimeException {
-        return scopeManager.executeFunction("main", null);
+        return scopeManager.executeFunction("main", new ArrayList<>());
     }
 }
 
