@@ -4,7 +4,6 @@ import group22.Data;
 import group22.DataType;
 import group22.GrammarClasses.FBody;
 
-import javax.xml.crypto.Data;
 import java.util.*;
 
 public class ScopeManager {
