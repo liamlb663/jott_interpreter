@@ -4,6 +4,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import group22.RuntimeException;
+import group22.SyntaxException;
 import group22.SemanticException;
 import provided.JottParser;
 import provided.JottTokenizer;
@@ -35,9 +36,8 @@ public class Jott {
         JottTree root;
         try {
             root = JottParser.parse(tokens);
-        } catch (Exception e) {
-            System.err.println("Very Bad Error during parsing: " + e.getMessage());
-            e.printStackTrace();
+        } catch (SyntaxException e) {
+            System.err.println(e.getMessage());
             return;
         }
 

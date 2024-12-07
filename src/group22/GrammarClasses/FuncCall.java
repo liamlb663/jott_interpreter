@@ -93,6 +93,6 @@ public class FuncCall implements JottTree{
     // if concat: just concatenate the string tokens and make a new StringLiteral?
     // if length: ?
     public Data execute() throws RuntimeException {
-        return Program.scopeManager.executeFunction(idNode.getToken().getToken(), paramsNode.getValues());
+        return Program.scopeManager.executeFunction(idNode.getToken().getToken(), paramsNode.getValues(), idNode.getToken().getFilename(), idNode.getToken().getLineNum());
     }
 }
