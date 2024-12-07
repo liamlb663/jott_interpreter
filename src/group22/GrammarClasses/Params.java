@@ -72,7 +72,7 @@ public class Params implements JottTree {
         return output;
     }
 
-    public ArrayList<Object> getValues() {
+    public ArrayList<Object> getValues() throws RuntimeException {
         ArrayList<Object> output = new ArrayList<>();
 
         if (exprNode != null) {
@@ -115,5 +115,6 @@ public class Params implements JottTree {
                 t.execute();
             }
         }
+        return null;
     }
 }
