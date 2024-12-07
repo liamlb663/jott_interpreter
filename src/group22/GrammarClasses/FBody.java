@@ -67,7 +67,7 @@ public class FBody implements JottTree {
 
     public Data execute() throws RuntimeException {
         for (VarDec varDec : varDecs) {
-            varDec.validateTree();
+            varDec.execute();
         }
 
         return body.execute();
