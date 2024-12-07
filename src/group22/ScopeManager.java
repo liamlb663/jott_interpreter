@@ -140,6 +140,14 @@ public class ScopeManager {
             return null;
         }
 
+        if (func.strip().toLowerCase().equals("concat")) {
+            return new Data((Object)((String)args.get(0) + (String)args.get(1)), DataType.STRING, "", 0);
+        }
+
+        if (func.strip().toLowerCase().equals("length")) {
+            return new Data((Object)((String)args.get(0)).length(), DataType.INTEGER, "", 0);
+        }
+
         Function function = functions.get(func);
 
         if (!validateArgs(args, function.parameterTypes)) {
