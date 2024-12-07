@@ -76,7 +76,7 @@ public class Asmt implements JottTree {
         DataType rhsType = expr.getDataType(); // Assuming Expr has a method to get its type
 
         // Check if the types are compatible
-        if (!lhsType.isCompatible(rhsType)) {
+        if (lhsType != rhsType) {
             throw new SemanticException(
                     "Type mismatch in assignment: " + lhsType + " cannot be assigned from " + rhsType,
                     id.id.getFilename(), id.id.getLineNum()
