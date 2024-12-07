@@ -69,7 +69,7 @@ public class VarDec implements JottTree {
     }
 
     public Data execute() throws RuntimeException {
+        Program.scopeManager.declareVariable(id.convertToJott(), DataType.fromString(type.convertToJott()));
         return null;
-        //Program.scopeManager.declareVariable(id.getToken().getToken(), DataType.fromString(type.convertToJott()));
     }
 }

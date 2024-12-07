@@ -39,7 +39,13 @@ public class ScopeManager {
     public ScopeManager() {
         functions = new HashMap<>();
         DataType[] concatParams = {DataType.STRING, DataType.STRING};
-        functions.put("concat", new Function(new ArrayList<DataType>(Arrays.asList(concatParams)), DataType.STRING));
+        functions.put(
+                "concat",
+                new Function(
+                        new ArrayList<DataType>(Arrays.asList(concatParams)),
+                        DataType.STRING
+                )
+        );
         DataType[] lengthParams = {DataType.STRING};
         functions.put("length", new Function(new ArrayList<DataType>(Arrays.asList(lengthParams)), DataType.INTEGER));
         //print is not added here but rather handled in FuncCall's validateTree and execute

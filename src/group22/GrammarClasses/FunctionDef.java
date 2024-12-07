@@ -79,7 +79,7 @@ public class FunctionDef implements JottTree {
                 returnType.convertToJott() + "{" + body.convertToJott() + "}";
     }
 
-    void registerFunction() {
+    void registerFunction() throws SemanticException{
         if (id.convertToJott().equals("main")) {
             if (params != null) {
                 throw new SemanticException("Main function should not take any parameters", id.id.getFilename(), id.id.getLineNum());
@@ -97,7 +97,7 @@ public class FunctionDef implements JottTree {
         // Declare function after to avoid potential recursion
         ArrayList<DataType> declareParamTypes = new ArrayList<>();
         if (params != null) {declareParamTypes = params.getParamTypes();}
-        ArrayList<DataType> declareParamNames = new ArrayList<>();
+        ArrayList<String> declareParamNames = new ArrayList<>();
         if (params != null) {declareParamNames = params.getParamNames();}
         Program.scopeManager.declareFunction(
             id.convertToJott(),
