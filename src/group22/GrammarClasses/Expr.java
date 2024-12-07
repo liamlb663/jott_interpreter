@@ -150,12 +150,11 @@ public class Expr implements JottTree {
             }
         }
 
-        Token leftToken = ((Operand) subNodes.get(0)).getToken();
-
         // For mathematical or relational operations, ensure operands are compatible
         if (subNodes.size() > 1) {
             DataType leftType = ((Operand) subNodes.get(0)).getDataType();
             DataType rightType = ((Operand) subNodes.get(2)).getDataType();
+            Token leftToken = ((Operand) subNodes.get(0)).getToken();
             // Check for type compatibility between operands
             if (leftType != rightType) {
                 throw new SemanticException(
