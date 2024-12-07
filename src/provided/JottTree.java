@@ -1,6 +1,7 @@
 package provided;
 
 import group22.SemanticException;
+import group22.Data;
 
 /**
  * Interface for all Jott parse tree nodes
@@ -25,5 +26,5 @@ public interface JottTree {
 	/**
 	 * This will execute the Jott code represented by this JottTree node.
 	 */
-	public void execute();
+	public Data execute();
 }
