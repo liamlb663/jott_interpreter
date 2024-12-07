@@ -1,5 +1,7 @@
 package group22.GrammarClasses;
+import group22.Data;
 import group22.DataType;
+import group22.RuntimeException;
 import group22.SemanticException;
 import group22.SyntaxException;
 import provided.*;
@@ -80,11 +82,15 @@ public class WhileLoop implements JottTree{
         return condIsBool() && exprOk && bodyOk;
     }
 
-    public void execute() {
-        Bool cond = (Bool)exprNode.getValue();
-        while (cond.getValue()) {
+    public Data execute() throws RuntimeException {
+        Data tempVar = exprNode.execute();
+        boolean cond = tempVar.value.equals("True");
+
+        while (cond) {
             bodyNode.execute();
-            cond = (Bool)exprNode.getValue();
+            cond = exprNode.execute().value.equals("True");
         }
+
+        return null;
     }
 }
