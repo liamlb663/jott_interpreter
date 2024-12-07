@@ -65,8 +65,8 @@ public class Program implements JottTree {
         return true;
     }
 
-    public void execute() {
-
+    public Data execute() {
+        return scopeManager.executeFunction("main", null);
     }
 }
 

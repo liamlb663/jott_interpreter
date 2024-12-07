@@ -1,5 +1,6 @@
 package group22.GrammarClasses;
 
+import group22.Data;
 import group22.SemanticException;
 import group22.SyntaxException;
 import provided.JottParser;
@@ -63,7 +64,11 @@ public class FBody implements JottTree {
         return (body.validateTree());
     }
 
-    public void execute() {
-        //TODO
+    public Data execute() {
+        for (VarDec varDec : varDecs) {
+            varDec.validateTree();
+        }
+
+        return body.execute();
     }
 }
