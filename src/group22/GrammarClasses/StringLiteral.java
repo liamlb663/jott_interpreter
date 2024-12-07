@@ -1,7 +1,7 @@
 package group22.GrammarClasses;
 
-import group22.SemanticException;
-import group22.SyntaxException;
+import group22.*;
+import group22.RuntimeException;
 import provided.JottParser;
 import provided.JottTree;
 import provided.Token;
@@ -50,7 +50,12 @@ public class StringLiteral implements JottTree {
     }
 
     @Override
-    public void execute() {
-
+    public Data execute() throws RuntimeException {
+        return new Data(
+                stringLiteral.getToken(),
+                DataType.STRING,
+                stringLiteral.getFilename(),
+                stringLiteral.getLineNum()
+        );
     }
 }

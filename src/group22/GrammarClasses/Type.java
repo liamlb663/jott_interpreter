@@ -1,5 +1,7 @@
 package group22.GrammarClasses;
 
+import group22.Data;
+import group22.RuntimeException;
 import group22.SyntaxException;
 import provided.JottParser;
 import provided.JottTree;
@@ -58,7 +60,7 @@ public class Type implements JottTree {
     }
 
     @Override
-    public void execute() {
-        // TODO
+    public Data execute() throws RuntimeException {
+        return null;
     }
 }
