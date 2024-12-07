@@ -136,7 +136,12 @@ public class ScopeManager {
 
     public Data executeFunction(String func, ArrayList<Object> args, String name, int number) throws RuntimeException {
         if (func.strip().toLowerCase().equals("print")) {
-            System.out.println(args.get(0));
+            if (args.get(0) instanceof String) {
+                String output = (String)args.get(0);
+                System.out.println(output.substring(1, output.length() - 1));
+            } else {
+                System.out.println(args.get(0));
+            }
             return null;
         }
 
