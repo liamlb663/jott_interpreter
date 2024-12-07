@@ -1,5 +1,6 @@
 package group22.GrammarClasses;
 
+import group22.Data;
 import group22.SyntaxException;
 import provided.JottParser;
 import provided.Token;
@@ -37,7 +38,7 @@ public class FunctionReturn {
         return true;
     }
 
-    public void execute() {
-        // TO DO
+    public Data execute() {
+        return null;
     }
 }

@@ -1,6 +1,7 @@
 package group22.GrammarClasses;
 
 import group22.*;
+import group22.RuntimeException;
 import provided.*;
 
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class ParamsT implements JottTree {
         return (exprNode.validateTree());
     }
 
-    public void execute() {
-        //TODO
+    public Data execute() throws RuntimeException {
+        return exprNode.execute();
     }
 }

@@ -1,5 +1,7 @@
 package group22.GrammarClasses;
+import group22.Data;
 import group22.DataType;
+import group22.RuntimeException;
 import group22.SyntaxException;
 import group22.SemanticException;
 import group22.GrammarClasses.Program;
@@ -90,9 +92,7 @@ public class FuncCall implements JottTree{
     // if print: sout(params.getExpr.execute())
     // if concat: just concatenate the string tokens and make a new StringLiteral?
     // if length: ?
-    public void execute() {
-
-        // TODO get args from params. That is the hard part
-        Program.scopeManager.executeFunction(idNode.getToken().getToken(), null);
+    public Data execute() throws RuntimeException {
+        return Program.scopeManager.executeFunction(idNode.getToken().getToken(), paramsNode.getValues());
     }
 }
