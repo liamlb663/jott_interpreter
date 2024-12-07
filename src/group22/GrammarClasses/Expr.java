@@ -149,6 +149,9 @@ public class Expr implements JottTree {
                 return false;
             }
         }
+
+        Token leftToken = ((Operand) subNodes.get(0)).getToken();
+
         // For mathematical or relational operations, ensure operands are compatible
         if (subNodes.size() > 1) {
             DataType leftType = ((Operand) subNodes.get(0)).getDataType();
@@ -157,7 +160,8 @@ public class Expr implements JottTree {
             if (leftType != rightType) {
                 throw new SemanticException(
                         "Type mismatch between operands",
-                        "", -1
+                        leftToken.getFilename(),
+                        leftToken.getLineNum()
                 );
             }
             if (leftType == DataType.STRING || leftType == DataType.BOOLEAN) {
@@ -165,7 +169,8 @@ public class Expr implements JottTree {
                 if (subNodes.get(1) instanceof MathOp) {
                     throw new SemanticException(
                             "Cannot perform mathematical operations on string or boolean type",
-                            "", -1
+                            leftToken.getFilename(),
+                            leftToken.getLineNum()
                     );
                 }
                 // If relational operation, booleans and strings can only do equality comparisons
@@ -175,7 +180,8 @@ public class Expr implements JottTree {
                     if (!(comparisonString.equals("==") || comparisonString.equals("!="))) {
                         throw new SemanticException(
                                 "Cannot perform non-equality relational operations on string or boolean type",
-                                "", -1
+                                leftToken.getFilename(),
+                                leftToken.getLineNum()
                         );
                     }
                 }
