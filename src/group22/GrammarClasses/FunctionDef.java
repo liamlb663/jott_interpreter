@@ -97,7 +97,7 @@ public class FunctionDef implements JottTree {
         // Declare function after to avoid potential recursion
         ArrayList<DataType> declareParamTypes = new ArrayList<>();
         if (params != null) {declareParamTypes = params.getParamTypes();}
-        ArrayList<DataType> declareParamNames = new ArrayList<>();
+        ArrayList<String> declareParamNames = new ArrayList<>();
         if (params != null) {declareParamNames = params.getParamNames();}
         Program.scopeManager.declareFunction(
             id.convertToJott(),

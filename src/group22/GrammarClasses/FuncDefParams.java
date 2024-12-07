@@ -84,12 +84,12 @@ public class FuncDefParams {
         return output;
     }
 
-    public ArrayList<DataType> getParamNames() {
-        ArrayList<DataType> output = new ArrayList<>();
+    public ArrayList<String> getParamNames() {
+        ArrayList<String> output = new ArrayList<>();
 
-        output.add(DataType.fromString(id.convertToJott()));
+        output.add(id.convertToJott());
         for (FuncDefParamsT param : params) {
-            output.add(DataType.fromString(param.id.convertToJott()));
+            output.add(param.id.convertToJott());
         }
 
         return output;
