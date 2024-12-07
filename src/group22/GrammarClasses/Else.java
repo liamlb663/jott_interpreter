@@ -66,6 +66,8 @@ public class Else implements JottTree{
         return true;
     }
     public void execute() {
-        //TODO
+        if (bodyNode != null) {
+            bodyNode.execute();
+        }
     }
 }

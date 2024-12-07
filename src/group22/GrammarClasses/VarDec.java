@@ -1,5 +1,10 @@
 package group22.GrammarClasses;
 
+import group22.Data;
+import group22.DataType;
+import group22.ScopeManager;
+import group22.SemanticException;
+import group22.SyntaxException;
 import group22.*;
 import group22.RuntimeException;
 import provided.JottTree;

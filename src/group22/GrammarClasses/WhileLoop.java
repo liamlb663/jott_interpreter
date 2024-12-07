@@ -81,6 +81,10 @@ public class WhileLoop implements JottTree{
     }
 
     public void execute() {
-        //TODO
+        Bool cond = (Bool)exprNode.getValue();
+        while (cond.getValue()) {
+            bodyNode.execute();
+            cond = (Bool)exprNode.getValue();
+        }
     }
 }

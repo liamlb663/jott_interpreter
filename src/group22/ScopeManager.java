@@ -4,7 +4,6 @@ import group22.Data;
 import group22.DataType;
 import group22.GrammarClasses.FBody;
 
-import javax.xml.crypto.Data;
 import java.util.*;
 
 public class ScopeManager {
@@ -38,16 +37,12 @@ public class ScopeManager {
 
     public ScopeManager() {
         functions = new HashMap<>();
+        String[] concatParamNames = {"a", "b"};
         DataType[] concatParams = {DataType.STRING, DataType.STRING};
-        functions.put(
-                "concat",
-                new Function(
-                        new ArrayList<DataType>(Arrays.asList(concatParams)),
-                        DataType.STRING
-                )
-        );
+        functions.put("concat", new Function(new ArrayList<String>(Arrays.asList(concatParamNames)), new ArrayList<DataType>(Arrays.asList(concatParams)), DataType.STRING, null));
+        String[] lengthParamName = {"input"};
         DataType[] lengthParams = {DataType.STRING};
-        functions.put("length", new Function(new ArrayList<DataType>(Arrays.asList(lengthParams)), DataType.INTEGER));
+        functions.put("length", new Function(new ArrayList<String>(Arrays.asList(lengthParamName)), new ArrayList<DataType>(Arrays.asList(lengthParams)), DataType.INTEGER, null));
         //print is not added here but rather handled in FuncCall's validateTree and execute
 
         scopes = new Stack<>();
@@ -139,7 +134,7 @@ public class ScopeManager {
         return true;
     }
 
-    public Data executeFunction(String func, ArrayList<Object> args) {
+    public Data executeFunction(String func, ArrayList<Object> args) throws RuntimeException {
         Function function = functions.get(func);
 
         if (!validateArgs(args, function.parameterTypes)) {

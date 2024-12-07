@@ -122,6 +122,22 @@ public class IfStmt implements JottTree{
         return condIsBool() && uniformReturns() && exprOk && bodyOk;
     }
     public void execute() {
-        //TODO
+        Bool cond = (Bool)exprNode.getValue();
+        if (cond.getValue()) {
+            bodyNode.execute();
+            return;
+        }
+        if (elseIfNodes != null) {
+            for (ElseIf e : elseIfNodes) {
+                cond = (Bool)e.exprNode.getValue();
+                if (cond.getValue()) {
+                    e.execute();
+                    return;
+                }
+            }
+        }
+        if (elseNode != null) {
+                elseNode.execute();
+        }
     }
 }
