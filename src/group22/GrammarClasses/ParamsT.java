@@ -42,10 +42,6 @@ public class ParamsT implements JottTree {
         return exprNode.getDataType();
     }
 
-    public JottTree getValue() throws RuntimeException {
-        return exprNode.getValue();
-    }
-
     public boolean validateTree() throws SemanticException {
         return (exprNode.validateTree());
     }

@@ -1,8 +1,6 @@
 package group22.GrammarClasses;
 
-import group22.DataType;
-import group22.SemanticException;
-import group22.SyntaxException;
+import group22.*;
 import group22.RuntimeException;
 import provided.JottParser;
 import provided.JottTree;
@@ -181,168 +179,151 @@ public class Expr implements JottTree {
 
     }
 
-    private Bool getRelOpValue(String relOp, Operand firstOp, Operand secondOp) throws RuntimeException {
-        Token tokenFirstOp = firstOp.getToken();
-        JottTree firstValOpNode = firstOp.getValue();
-        JottTree secondValOpNode = secondOp.getValue();
-        DataType opDataType = Program.scopeManager.getDataType(tokenFirstOp.getToken());
-
-        Boolean firstBool = (firstValOpNode instanceof Bool) ? firstValOpNode.convertToJott().equals("True") : null;
-        Boolean secondBool = (secondValOpNode instanceof Bool) ? secondValOpNode.convertToJott().equals("True") : null;
-
-        String firstStr = (firstValOpNode instanceof StringLiteral) ? firstValOpNode.convertToJott() : null;
-        String secondStr = (secondValOpNode instanceof StringLiteral) ? secondValOpNode.convertToJott() : null;
-
-        var firstOpVal = (opDataType == DataType.INTEGER) ? Integer.parseInt(firstValOpNode.convertToJott()) :
-                Double.parseDouble(firstValOpNode.convertToJott());
-        var secondOpVal = (opDataType == DataType.INTEGER) ? Integer.parseInt(secondValOpNode.convertToJott()) :
-                Double.parseDouble(secondValOpNode.convertToJott());
+    private Data getRelOpValue(String relOp) throws RuntimeException {
+        Data firstVal = subNodes.get(0).execute();
+        Data secondVal = subNodes.get(2).execute();
 
         boolean calcBool;
 
         // TODO: We have to fix validation since using binary operators such as > or < on booleans isn't valid
-        // TODO: Using compareTo with valid Integer or Double in some comparisons
         switch (relOp) {
             // TODO: Figure out if we need fuzzy checking because of doubles
-            case ">" -> calcBool = firstOpVal > secondOpVal;
-            case ">=" -> calcBool = firstOpVal >= secondOpVal;
-            case "<" -> calcBool = firstOpVal < secondOpVal;
-            case "<=" -> calcBool = firstOpVal <= secondOpVal;
-            case "==" -> {
-                if (firstBool != null) {
-                    calcBool = firstBool.equals(secondBool);
-                } else if (firstStr != null) {
-                    calcBool = firstStr.equals(secondStr);
+            case ">" -> {
+                if (firstVal.type == DataType.INTEGER) {
+                    calcBool = ((int) firstVal.value) > ((int) secondVal.value);
                 } else {
-                    calcBool = firstOpVal == secondOpVal;
+                    calcBool = ((double) firstVal.value) > ((double) secondVal.value);
+                }
+            }
+            case ">=" -> {
+                if (firstVal.type == DataType.INTEGER) {
+                    calcBool = ((int) firstVal.value) >= ((int) secondVal.value);
+                } else {
+                    calcBool = ((double) firstVal.value) >= ((double) secondVal.value);
+                }
+            }
+            case "<" -> {
+                if (firstVal.type == DataType.INTEGER) {
+                    calcBool = ((int) firstVal.value) < ((int) secondVal.value);
+                } else {
+                    calcBool = ((double) firstVal.value) < ((double) secondVal.value);
+                }
+            }
+            case "<=" -> {
+                if (firstVal.type == DataType.INTEGER) {
+                    calcBool = ((int) firstVal.value) <= ((int) secondVal.value);
+                } else {
+                    calcBool = ((double) firstVal.value) <= ((double) secondVal.value);
+                }
+            }
+            case "==" -> {
+                if (firstVal.type == DataType.BOOLEAN) {
+                    calcBool = ((boolean) firstVal.value) == (boolean) secondVal.value;
+                } else if (firstVal.type == DataType.STRING) {
+                    calcBool = ((String) firstVal.value).equals((String) secondVal.value);
+                } else if (firstVal.type == DataType.INTEGER) {
+                    calcBool = ((int) firstVal.value) == ((int) secondVal.value);
+                } else {
+                    calcBool = ((double) firstVal.value) == ((double) secondVal.value);
                 }
             }
             case "!=" -> {
-                if (firstBool != null) {
-                    calcBool = !firstBool.equals(secondBool);
-                } else if (firstStr != null) {
-                    calcBool = !firstStr.equals(secondStr);
+                if (firstVal.type == DataType.BOOLEAN) {
+                    calcBool = ((boolean) firstVal.value) ^ (boolean) secondVal.value; // this will XOR it
+                } else if (firstVal.type == DataType.STRING) {
+                    calcBool = !((String) firstVal.value).equals((String) secondVal.value);
+                } else if (firstVal.type == DataType.INTEGER) {
+                    calcBool = ((int) firstVal.value) != ((int) secondVal.value);
                 } else {
-                    calcBool = firstOpVal != secondOpVal;
+                    calcBool = ((double) firstVal.value) != ((double) secondVal.value);
                 }
             }
             default -> throw new RuntimeException(
                     "Unknown RelOp of " + relOp + " used",
-                    tokenFirstOp.getFilename(),
-                    tokenFirstOp.getLineNum()
+                    firstVal.fileName,
+                    firstVal.lineNumber
             );
         }
 
-        String calcBoolStr = String.valueOf(calcBool).substring(0, 1).toUpperCase() +
-                String.valueOf(calcBool).substring(1);
-
-        return  new Bool(
-                new Token(
-                        calcBoolStr,
-                        tokenFirstOp.getFilename(),
-                        tokenFirstOp.getLineNum(),
-                        TokenType.ID_KEYWORD
-                )
+        return new Data(
+                calcBool,
+                firstVal.type,
+                firstVal.fileName,
+                firstVal.lineNumber
         );
     }
 
-    private Number getMathOpValue(String mathOp, Operand firstOp, Operand secondOp) throws RuntimeException {
+    private Data getMathOpValue(String mathOp) throws RuntimeException {
         // If we're in a MathOp, then we know we must be dealing with numbers However, these can be from function
         // calls, IDs, or just hard-coded so we get it into a concrete format with getValue(). Then, we cast both based
         // on the first data type since they've been validated to be the same types
-        Token tokenFirstOp = firstOp.getToken();
-        Number firstOpNum = (Number) firstOp.getValue();
-        Number secondOpNum = (Number) secondOp.getValue();
-        DataType opDataType = Program.scopeManager.getDataType(tokenFirstOp.getToken());
+        Data firstOpNum = subNodes.get(0).execute();
+        Data secondOpNum = subNodes.get(2).execute();
 
-        var firstOpVal = (opDataType == DataType.INTEGER) ?
-                Integer.parseInt(firstOpNum.convertToJott()) : Double.parseDouble(firstOpNum.convertToJott());
-        var secondOpVal = (opDataType == DataType.INTEGER) ?
-                Integer.parseInt(secondOpNum.convertToJott()) : Double.parseDouble(secondOpNum.convertToJott());
+        var firstOpVal = (firstOpNum.type == DataType.INTEGER) ? (int) firstOpNum.value : (double) firstOpNum.value;
+        var secondOpVal = (secondOpNum.type == DataType.INTEGER) ? (int) secondOpNum.value : (double) secondOpNum.value;
 
         switch (mathOp) {
             case "+" -> {
-                return new Number(
-                        new Token(
-                                String.valueOf(firstOpVal + secondOpVal),
-                                tokenFirstOp.getFilename(),
-                                tokenFirstOp.getLineNum(),
-                                TokenType.NUMBER
-                        ),
-                        opDataType
+                return new Data(
+                        firstOpVal + secondOpVal,
+                        firstOpNum.type,
+                        firstOpNum.fileName,
+                        firstOpNum.lineNumber
                 );
             }
             case "-" -> {
-                return new Number(
-                        new Token(
-                                String.valueOf(firstOpVal - secondOpVal),
-                                tokenFirstOp.getFilename(),
-                                tokenFirstOp.getLineNum(),
-                                TokenType.NUMBER
-                        ),
-                        opDataType
+                return new Data(
+                        firstOpVal - secondOpVal,
+                        firstOpNum.type,
+                        firstOpNum.fileName,
+                        firstOpNum.lineNumber
                 );
             }
             case "*" -> {
-                return new Number(
-                        new Token(
-                                String.valueOf(firstOpVal * secondOpVal),
-                                tokenFirstOp.getFilename(),
-                                tokenFirstOp.getLineNum(),
-                                TokenType.NUMBER
-                        ),
-                        opDataType
+                return new Data(
+                        firstOpVal * secondOpVal,
+                        firstOpNum.type,
+                        firstOpNum.fileName,
+                        firstOpNum.lineNumber
                 );
             }
             case "/" -> {
                 if (secondOpVal == 0) {
                     throw new RuntimeException(
                             "Cannot divide by zero",
-                            tokenFirstOp.getFilename(),
-                            tokenFirstOp.getLineNum()
+                            firstOpNum.fileName,
+                            firstOpNum.lineNumber
                     );
                 }
 
-                return new Number(
-                        new Token(
-                                String.valueOf(firstOpVal / secondOpVal),
-                                tokenFirstOp.getFilename(),
-                                tokenFirstOp.getLineNum(),
-                                TokenType.NUMBER
-                        ),
-                        opDataType
+                return new Data(
+                        firstOpVal / secondOpVal,
+                        firstOpNum.type,
+                        firstOpNum.fileName,
+                        firstOpNum.lineNumber
                 );
             }
             default -> throw new RuntimeException(
                     "Ran into unknown math operation",
-                    tokenFirstOp.getFilename(),
-                    tokenFirstOp.getLineNum()
+                    firstOpNum.fileName,
+                    firstOpNum.lineNumber
             );
         }
     }
 
-    public JottTree getValue() throws RuntimeException {
+    @Override
+    public Data execute() throws RuntimeException {
         if (subNodes.size() != 1) {
             var calcOp = subNodes.get(1);
 
             if (calcOp instanceof RelOp) {
-                return getRelOpValue(calcOp.convertToJott(), (Operand) subNodes.get(0), (Operand) subNodes.get(2));
+                return getRelOpValue(calcOp.convertToJott());
             } else if (calcOp instanceof MathOp) {
-                return getMathOpValue(calcOp.convertToJott(), (Operand) subNodes.get(0), (Operand) subNodes.get(2));
+                return getMathOpValue(calcOp.convertToJott());
             }
         }
 
-        JottTree valNode = subNodes.get(0);
-
-        if (valNode instanceof Operand) {
-            return ((Operand) valNode).getValue();
-        } else {
-            return valNode;
-        }
-    }
-
-    @Override
-    public void execute() {
-
+        return subNodes.get(0).execute();
     }
 }

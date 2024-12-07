@@ -1,8 +1,7 @@
 package group22.GrammarClasses;
 
-import group22.DataType;
-import group22.SemanticException;
-import group22.SyntaxException;
+import group22.*;
+import group22.RuntimeException;
 import provided.JottParser;
 import provided.JottTree;
 import provided.Token;
@@ -87,7 +86,10 @@ public class Asmt implements JottTree {
         return true;
     }
 
-    public void execute() {
-        Program.scopeManager.setVariable(id.id.getToken(), expr.getValue());
+    public Data execute() throws RuntimeException {
+        Data tempVar = expr.execute();
+
+        Program.scopeManager.setVariable(id.id.getToken(), tempVar.value);
+        return tempVar;
     }
 }

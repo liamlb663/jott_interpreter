@@ -1,8 +1,6 @@
 package group22.GrammarClasses;
 
-import group22.DataType;
-import group22.SemanticException;
-import group22.SyntaxException;
+import group22.*;
 import group22.RuntimeException;
 import provided.*;
 
@@ -73,7 +71,8 @@ public class Id implements JottTree {
         return true;
     }
 
-    public JottTree getValue() throws RuntimeException {
+    @Override
+    public Data execute() throws RuntimeException{
         if (!Program.scopeManager.isVarDeclared(id.getToken())) {
             throw new RuntimeException(
                     "Tried to get value of ID that isn't declared yet",
@@ -94,63 +93,11 @@ public class Id implements JottTree {
 
         DataType valType = Program.scopeManager.getDataType(id.getToken());
 
-        switch (valType) {
-            case INTEGER -> {
-                return new Number(
-                        new Token(
-                                String.valueOf((int) val),
-                                id.getFilename(),
-                                id.getLineNum(),
-                                TokenType.NUMBER
-                        ),
-                        valType
-                );
-            }
-            case DOUBLE -> {
-                return new Number(
-                        new Token(
-                                String.valueOf((double) val),
-                                id.getFilename(),
-                                id.getLineNum(),
-                                TokenType.NUMBER
-                        ),
-                        valType
-                );
-            }
-            case STRING -> {
-                return new StringLiteral(
-                        new Token(
-                                (String) val,
-                                id.getFilename(),
-                                id.getLineNum(),
-                                TokenType.STRING
-                        )
-                );
-            }
-            case BOOLEAN -> {
-                boolean condVal = (boolean) val;
-                String condValStr = String.valueOf(condVal).substring(0, 1).toUpperCase() +
-                        String.valueOf(condVal).substring(1);
-
-                return new Bool(
-                        new Token(
-                                condValStr,
-                                id.getFilename(),
-                                id.getLineNum(),
-                                TokenType.ID_KEYWORD
-                        )
-                );
-            }
-            case null, default -> throw new RuntimeException(
-                    "Something went HORRIBLY WRONG :OOOO",
-                    id.getFilename(),
-                    id.getLineNum()
-            );
-        }
-    }
-
-    @Override
-    public void execute() {
-        // TODO
+        return new Data(
+                val,
+                valType,
+                id.getFilename(),
+                id.getLineNum()
+        );
     }
 }
