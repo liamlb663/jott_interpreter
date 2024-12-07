@@ -1,5 +1,6 @@
 package group22;
 
+import group22.Data;
 import group22.DataType;
 import group22.GrammarClasses.FBody;
 
@@ -132,7 +133,7 @@ public class ScopeManager {
         return true;
     }
 
-    public void executeFunction(String func, ArrayList<Object> args) {
+    public Data executeFunction(String func, ArrayList<Object> args) {
         Function function = functions.get(func);
 
         if (!validateArgs(args, function.parameterTypes)) {
@@ -149,9 +150,11 @@ public class ScopeManager {
         }
 
 
-        function.body.execute();
+        Data output = function.body.execute();
 
         dropScope();
+
+        return output;
     }
 
     public ArrayList<DataType> getFunctionParameterTypes(String func) {
