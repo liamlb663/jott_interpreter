@@ -1,6 +1,8 @@
 package group22.GrammarClasses;
 
+import group22.Data;
 import group22.DataType;
+import group22.RuntimeException;
 import group22.SyntaxException;
 import group22.GrammarClasses.*;
 import provided.JottParser;
@@ -71,12 +73,23 @@ public class FuncDefParams {
         return sB.toString();
     }
 
-    public ArrayList<DataType> getParams() {
+    public ArrayList<DataType> getParamTypes() {
         ArrayList<DataType> output = new ArrayList<>();
 
         output.add(DataType.fromString(type.convertToJott()));
         for (FuncDefParamsT param : params) {
             output.add(DataType.fromString(param.type.convertToJott()));
+        }
+
+        return output;
+    }
+
+    public ArrayList<DataType> getParamNames() {
+        ArrayList<DataType> output = new ArrayList<>();
+
+        output.add(DataType.fromString(id.convertToJott()));
+        for (FuncDefParamsT param : params) {
+            output.add(DataType.fromString(param.id.convertToJott()));
         }
 
         return output;
@@ -92,8 +105,8 @@ public class FuncDefParams {
         return true;
     }
 
-    public void execute() {
-        // TO DO
+    public Data execute() throws RuntimeException {
+        return null;
     }
 
 }

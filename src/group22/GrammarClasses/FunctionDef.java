@@ -1,6 +1,7 @@
 package group22.GrammarClasses;
 
 import group22.*;
+import group22.RuntimeException;
 import group22.GrammarClasses.Program;
 import provided.*;
 
@@ -78,11 +79,7 @@ public class FunctionDef implements JottTree {
                 returnType.convertToJott() + "{" + body.convertToJott() + "}";
     }
 
-    public boolean validateTree() throws SemanticException {
-
-        id.validateTree();
-        returnType.validateTree();
-
+    void registerFunction() {
         if (id.convertToJott().equals("main")) {
             if (params != null) {
                 throw new SemanticException("Main function should not take any parameters", id.id.getFilename(), id.id.getLineNum());
@@ -98,19 +95,32 @@ public class FunctionDef implements JottTree {
         Program.scopeManager.dropScope();
 
         // Declare function after to avoid potential recursion
-        ArrayList<DataType> declareParams = new ArrayList<>();
-        if (params != null) {declareParams = params.getParams();}
+        ArrayList<DataType> declareParamTypes = new ArrayList<>();
+        if (params != null) {declareParamTypes = params.getParamTypes();}
+        ArrayList<DataType> declareParamNames = new ArrayList<>();
+        if (params != null) {declareParamNames = params.getParamNames();}
         Program.scopeManager.declareFunction(
             id.convertToJott(),
             DataType.fromString(returnType.convertToJott()),
-            declareParams
+            body,
+            declareParamTypes,
+            declareParamNames
         );
+
+    }
+
+    public boolean validateTree() throws SemanticException {
+
+        id.validateTree();
+        returnType.validateTree();
+
+        registerFunction();
 
         return true;
     }
 
-    public void execute() {
-        // TO DO
+    public Data execute() throws RuntimeException {
+        return null;
     }
 
 }

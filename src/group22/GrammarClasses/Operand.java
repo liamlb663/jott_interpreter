@@ -118,6 +118,10 @@ public class Operand implements JottTree {
         return subNode.validateTree();
     }
 
+    public JottTree getSubNode() {
+        return subNode;
+    }
+
     @Override
     public void execute() {
         // TODO

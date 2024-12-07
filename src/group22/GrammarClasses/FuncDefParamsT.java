@@ -54,7 +54,7 @@ public class FuncDefParamsT implements JottTree {
         return true;
     }
 
-    public void execute() {
-        // TO DO
+    public Data execute() {
+        return null;
     }
 }

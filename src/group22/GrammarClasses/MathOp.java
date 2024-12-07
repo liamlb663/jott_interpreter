@@ -51,6 +51,10 @@ public class MathOp implements JottTree {
         return true;
     }
 
+    public String getValue() {
+        return operator.getToken();
+    }
+
     @Override
     public void execute() {
         // TODO

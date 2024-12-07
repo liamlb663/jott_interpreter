@@ -1,5 +1,6 @@
 package group22.GrammarClasses;
 
+import group22.Data;
 import group22.DataType;
 import group22.ScopeManager;
 import group22.SemanticException;
@@ -70,7 +71,9 @@ public class VarDec implements JottTree {
         return true;
     }
 
-    public void execute() {
-        //TODO
+    public Data execute() {
+        Program.scopeManager.declareVariable(id.getToken().getToken(), DataType.fromString(type.convertToJott()));
+
+        return null;
     }
 }

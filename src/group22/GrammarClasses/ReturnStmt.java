@@ -1,5 +1,8 @@
 package group22.GrammarClasses;
 
+import group22.Data;
+import group22.DataType;
+import group22.RuntimeException;
 import group22.SyntaxException;
 import group22.SemanticException;
 import provided.JottParser;
@@ -71,9 +74,7 @@ public class ReturnStmt implements JottTree {
         return (true);
     }
 
-    public void execute() {
-        if (expr != null) {
-            expr.execute();
-        }
+    public Data execute() throws RuntimeException {
+        return expr.execute();
     }
 }
