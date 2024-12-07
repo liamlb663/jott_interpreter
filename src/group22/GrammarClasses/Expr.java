@@ -162,12 +162,25 @@ public class Expr implements JottTree {
                         "", -1
                 );
             }
-            // For mathematical operations, ensure that operands are numbers (int or double)
-            if (leftType == DataType.STRING) {
-                throw new SemanticException(
-                        "Cannot perform mathematical or relational operations on string type",
-                        "", -1
-                );
+            if (leftType == DataType.STRING || leftType == DataType.BOOLEAN) {
+                // For mathematical operations, ensure that operands are numbers (int or double)
+                if (subNodes.get(1) instanceof MathOp) {
+                    throw new SemanticException(
+                            "Cannot perform mathematical operations on string or boolean type",
+                            "", -1
+                    );
+                }
+                // If relational operation, booleans and strings can only do equality comparisons
+                else {
+                    RelOp comparison = (RelOp) subNodes.get(1);
+                    String comparisonString = comparison.getToken().getToken();
+                    if (!(comparisonString.equals("==") || comparisonString.equals("!="))) {
+                        throw new SemanticException(
+                                "Cannot perform non-equality relational operations on string or boolean type",
+                                "", -1
+                        );
+                    }
+                }
             }
         }
         return true;
