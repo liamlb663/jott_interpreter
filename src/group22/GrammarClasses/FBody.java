@@ -69,7 +69,6 @@ public class FBody implements JottTree {
         for (VarDec varDec : varDecs) {
             varDec.execute();
         }
-
         return body.execute();
     }
 }

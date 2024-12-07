@@ -5,7 +5,6 @@ import group22.DataType;
 import group22.RuntimeException;
 import group22.SyntaxException;
 import group22.SemanticException;
-import group22.GrammarClasses.Program;
 import provided.JottParser;
 import provided.JottTree;
 import provided.Token;

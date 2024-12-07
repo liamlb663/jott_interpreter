@@ -106,7 +106,14 @@ public class Params implements JottTree {
         return true;
     }
 
-    public Data execute() throws RuntimeException{
-        return exprNode.execute();
+    public Data execute() throws RuntimeException {
+        if (exprNode != null) {
+            exprNode.execute();
+        }
+        if (paramsTNodes != null) {
+            for (ParamsT t : paramsTNodes) {
+                t.execute();
+            }
+        }
     }
 }
