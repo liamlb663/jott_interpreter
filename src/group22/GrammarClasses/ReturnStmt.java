@@ -75,6 +75,8 @@ public class ReturnStmt implements JottTree {
     }
 
     public Data execute() throws RuntimeException {
+        if (expr == null) return null;
+
         return expr.execute();
     }
 }

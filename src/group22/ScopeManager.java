@@ -135,6 +135,11 @@ public class ScopeManager {
     }
 
     public Data executeFunction(String func, ArrayList<Object> args) throws RuntimeException {
+        if (func.strip().toLowerCase().equals("print")) {
+            System.out.println(args.get(0));
+            return null;
+        }
+
         Function function = functions.get(func);
 
         if (!validateArgs(args, function.parameterTypes)) {
