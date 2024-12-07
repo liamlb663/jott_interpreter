@@ -90,6 +90,6 @@ public class Asmt implements JottTree {
         Data tempVar = expr.execute();
 
         Program.scopeManager.setVariable(id.id.getToken(), tempVar.value);
-        return tempVar;
+        return null;
     }
 }

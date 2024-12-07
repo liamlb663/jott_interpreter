@@ -63,11 +63,20 @@ public class Number implements JottTree {
 
     @Override
     public Data execute() throws RuntimeException {
-        return new Data(
-                type == DataType.INTEGER ? Integer.parseInt(number.getToken()) : Double.parseDouble(number.getToken()),
-                type,
-                number.getFilename(),
-                number.getLineNum()
-        );
+        if (type == DataType.DOUBLE) {
+            return new Data(
+                    Double.parseDouble(number.getToken()),
+                    type,
+                    number.getFilename(),
+                    number.getLineNum()
+            );
+        } else {
+            return new Data(
+                    Integer.parseInt(number.getToken()),
+                    type,
+                    number.getFilename(),
+                    number.getLineNum()
+            );
+        }
     }
 }
