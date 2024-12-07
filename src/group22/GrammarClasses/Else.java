@@ -1,4 +1,6 @@
 package group22.GrammarClasses;
+import group22.Data;
+import group22.RuntimeException;
 import group22.SemanticException;
 import group22.SyntaxException;
 import provided.*;
@@ -65,9 +67,10 @@ public class Else implements JottTree{
         }
         return true;
     }
-    public void execute() {
+    public Data execute() throws RuntimeException {
         if (bodyNode != null) {
-            bodyNode.execute();
+            return bodyNode.execute();
         }
+        return null;
     }
 }

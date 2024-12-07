@@ -1,5 +1,7 @@
 package group22.GrammarClasses;
+import group22.Data;
 import group22.DataType;
+import group22.RuntimeException;
 import group22.SemanticException;
 import group22.SyntaxException;
 import provided.*;
@@ -121,23 +123,23 @@ public class IfStmt implements JottTree{
         }
         return condIsBool() && uniformReturns() && exprOk && bodyOk;
     }
-    public void execute() {
-        Bool cond = (Bool)exprNode.getValue();
-        if (cond.getValue()) {
-            bodyNode.execute();
-            return;
+    public Data execute() throws RuntimeException {
+        Boolean cond = (Boolean)exprNode.execute().value;
+        if (cond) {
+            return bodyNode.execute();
         }
         if (elseIfNodes != null) {
             for (ElseIf e : elseIfNodes) {
-                cond = (Bool)e.exprNode.getValue();
-                if (cond.getValue()) {
-                    e.execute();
-                    return;
+                cond = (Boolean)e.exprNode.execute().value;
+                if (cond) {
+                    return e.execute();
                 }
             }
         }
         if (elseNode != null) {
-                elseNode.execute();
+            return elseNode.execute();
         }
+
+        return null;
     }
 }

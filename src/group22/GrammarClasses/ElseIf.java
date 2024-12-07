@@ -1,5 +1,7 @@
 package group22.GrammarClasses;
+import group22.Data;
 import group22.DataType;
+import group22.RuntimeException;
 import group22.SemanticException;
 import group22.SyntaxException;
 import provided.*;
@@ -83,10 +85,11 @@ public class ElseIf implements JottTree{
         return exprNode.validateTree() && bodyNode.validateTree() && condIsBool();
     }
 
-    public void execute() {
-        Bool cond = (Bool)exprNode.getValue();
-        if (cond.getValue()) {
-            bodyNode.execute();
+    public Data execute() throws RuntimeException {
+        Boolean cond = (Boolean)exprNode.execute().value;
+        if (cond) {
+            return bodyNode.execute();
         }
+        return null;
     }
 }
