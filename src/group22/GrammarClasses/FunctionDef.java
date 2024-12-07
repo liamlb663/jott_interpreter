@@ -1,6 +1,7 @@
 package group22.GrammarClasses;
 
 import group22.*;
+import group22.RuntimeException;
 import group22.GrammarClasses.Program;
 import provided.*;
 
@@ -118,8 +119,8 @@ public class FunctionDef implements JottTree {
         return true;
     }
 
-    public void execute() {
-
+    public Data execute() throws RuntimeException {
+        return null;
     }
 
 }

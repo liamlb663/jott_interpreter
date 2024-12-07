@@ -1,4 +1,5 @@
 package group22.GrammarClasses;
+import group22.Data;
 import group22.DataType;
 import group22.RuntimeException;
 import group22.SyntaxException;
@@ -91,29 +92,7 @@ public class FuncCall implements JottTree{
     // if print: sout(params.getExpr.execute())
     // if concat: just concatenate the string tokens and make a new StringLiteral?
     // if length: ?
-    public void execute() throws RuntimeException {
-
-        // TODO get args from params. That is the hard part
-        ArrayList<JottTree> values = paramsNode.getValues();
-
-        ArrayList<Object> paramValues = new ArrayList<>();
-
-        for (JottTree currValue : values) {
-            if (currValue instanceof Bool) {
-                paramValues.add(currValue.convertToJott().equals("True"));
-            } else if (currValue instanceof StringLiteral) {
-                paramValues.add(currValue.convertToJott());
-            } else {
-                Number tempVal = (Number) currValue;
-
-                if (tempVal.getDataType() == DataType.INTEGER) {
-                    paramValues.add(Integer.parseInt(tempVal.convertToJott()));
-                } else {
-                    paramValues.add(Double.parseDouble(tempVal.convertToJott()));
-                }
-            }
-        }
-
-        Program.scopeManager.executeFunction(idNode.getToken().getToken(), paramValues);
+    public Data execute() throws RuntimeException {
+        return Program.scopeManager.executeFunction(idNode.getToken().getToken(), paramsNode.getValues());
     }
 }

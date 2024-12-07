@@ -50,7 +50,7 @@ public class ParamsT implements JottTree {
         return (exprNode.validateTree());
     }
 
-    public void execute() {
-        //TODO
+    public Data execute() throws RuntimeException {
+        return exprNode.execute();
     }
 }

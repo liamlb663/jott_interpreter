@@ -3,6 +3,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import group22.RuntimeException;
 import group22.SemanticException;
 import provided.JottParser;
 import provided.JottTokenizer;
@@ -43,6 +44,12 @@ public class Jott {
         try {
             root.validateTree();
         } catch (SemanticException e) {
+            System.err.println(e.getMessage());
+        }
+
+        try {
+            root.execute();
+        } catch (RuntimeException e) {
             System.err.println(e.getMessage());
         }
     }

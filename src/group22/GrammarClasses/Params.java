@@ -1,7 +1,8 @@
 package group22.GrammarClasses;
-import group22.RuntimeException;
 import group22.SemanticException;
+import group22.Data;
 import group22.DataType;
+import group22.RuntimeException;
 import group22.SyntaxException;
 import provided.*;
 
@@ -71,14 +72,16 @@ public class Params implements JottTree {
         return output;
     }
 
-    public ArrayList<JottTree> getValues() throws RuntimeException {
-        ArrayList<JottTree> output = new ArrayList<>();
+    public ArrayList<Object> getValues() {
+        ArrayList<Object> output = new ArrayList<>();
 
-        if (exprNode != null) output.add(exprNode.getValue());
-
+        if (exprNode != null) {
+            Data value = exprNode.execute();
+            output.add(value.value);
+        }
         if (paramsTNodes != null) {
             for (ParamsT param : paramsTNodes) {
-                output.add(param.getValue());
+                output.add(param.execute().value);
             }
         }
 
@@ -103,7 +106,7 @@ public class Params implements JottTree {
         return true;
     }
 
-    public void execute() {
-        //TODO
+    public Data execute() throws RuntimeException{
+        return exprNode.execute();
     }
 }
