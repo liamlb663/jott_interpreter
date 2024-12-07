@@ -45,12 +45,14 @@ public class Jott {
             root.validateTree();
         } catch (SemanticException e) {
             System.err.println(e.getMessage());
+            return;
         }
 
         try {
             root.execute();
         } catch (RuntimeException e) {
             System.err.println(e.getMessage());
+            return;
         }
     }
 }
