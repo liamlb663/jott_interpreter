@@ -1,6 +1,7 @@
 package group22.GrammarClasses;
 
 import group22.Data;
+import group22.RuntimeException;
 import group22.SemanticException;
 import group22.SyntaxException;
 import provided.JottTree;
@@ -79,7 +80,7 @@ public class BodyStmt implements JottTree {
     }
 
     @Override
-    public Data execute() {
+    public Data execute() throws RuntimeException {
         return subNode.execute();
     }
 }

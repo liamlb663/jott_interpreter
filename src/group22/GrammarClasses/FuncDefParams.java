@@ -1,6 +1,8 @@
 package group22.GrammarClasses;
 
+import group22.Data;
 import group22.DataType;
+import group22.RuntimeException;
 import group22.SyntaxException;
 import group22.GrammarClasses.*;
 import provided.JottParser;
@@ -103,8 +105,8 @@ public class FuncDefParams {
         return true;
     }
 
-    public void execute() {
-        // TO DO
+    public Data execute() throws RuntimeException {
+        return null;
     }
 
 }

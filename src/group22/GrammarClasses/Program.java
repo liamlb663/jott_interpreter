@@ -1,6 +1,7 @@
 package group22.GrammarClasses;
 
 import group22.*;
+import group22.RuntimeException;
 import provided.*;
 
 import java.util.ArrayList;
@@ -65,7 +66,7 @@ public class Program implements JottTree {
         return true;
     }
 
-    public Data execute() {
+    public Data execute() throws RuntimeException {
         return scopeManager.executeFunction("main", null);
     }
 }

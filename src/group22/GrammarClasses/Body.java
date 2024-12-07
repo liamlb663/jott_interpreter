@@ -2,6 +2,7 @@ package group22.GrammarClasses;
 
 import group22.Data;
 import group22.DataType;
+import group22.RuntimeException;
 import group22.SemanticException;
 import group22.SyntaxException;
 import provided.JottParser;
@@ -91,7 +92,7 @@ public class Body implements JottTree {
         return true;
     }
 
-    public Data execute() {
+    public Data execute() throws RuntimeException {
         Data returnValue = null; // Variable to store the return value
 
         for (BodyStmt b : bodyStmts) {
