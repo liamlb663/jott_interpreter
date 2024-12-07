@@ -1,5 +1,8 @@
 package group22.GrammarClasses;
 
+import group22.Data;
+import group22.DataType;
+import group22.RuntimeException;
 import group22.SyntaxException;
 import provided.JottParser;
 import provided.JottTree;
@@ -39,10 +42,12 @@ public class Bool implements JottTree {
         return true;
     }
 
-    public boolean getValue() {
-        return bool.getToken().equals("True");
-    }
-
-    public void execute() {
+    public Data execute() throws RuntimeException {
+        return new Data(
+                bool.getToken().equals("True"),
+                DataType.BOOLEAN,
+                bool.getFilename(),
+                bool.getLineNum()
+        );
     }
 }

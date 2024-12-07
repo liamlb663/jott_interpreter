@@ -1,8 +1,7 @@
 package group22.GrammarClasses;
 
-import group22.DataType;
-import group22.SemanticException;
-import group22.SyntaxException;
+import group22.*;
+import group22.RuntimeException;
 import provided.*;
 
 import java.util.ArrayList;
@@ -73,7 +72,32 @@ public class Id implements JottTree {
     }
 
     @Override
-    public void execute() {
-        // TODO
+    public Data execute() throws RuntimeException{
+        if (!Program.scopeManager.isVarDeclared(id.getToken())) {
+            throw new RuntimeException(
+                    "Tried to get value of ID that isn't declared yet",
+                    id.getFilename(),
+                    id.getLineNum()
+            );
+        }
+
+        Object val = Program.scopeManager.getVariable(id.getToken());
+
+        if (val == null) {
+            throw new RuntimeException(
+                    "Tried to get value of ID that isn't assigned yet",
+                    id.getFilename(),
+                    id.getLineNum()
+            );
+        }
+
+        DataType valType = Program.scopeManager.getDataType(id.getToken());
+
+        return new Data(
+                val,
+                valType,
+                id.getFilename(),
+                id.getLineNum()
+        );
     }
 }

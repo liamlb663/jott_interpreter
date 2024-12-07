@@ -1,8 +1,7 @@
 package group22.GrammarClasses;
 
-import group22.DataType;
-import group22.SemanticException;
-import group22.SyntaxException;
+import group22.*;
+import group22.RuntimeException;
 import provided.JottParser;
 import provided.JottTree;
 import provided.Token;
@@ -118,12 +117,8 @@ public class Operand implements JottTree {
         return subNode.validateTree();
     }
 
-    public JottTree getSubNode() {
-        return subNode;
-    }
-
     @Override
-    public void execute() {
-        // TODO
+    public Data execute() throws RuntimeException {
+        return subNode.execute();
     }
 }

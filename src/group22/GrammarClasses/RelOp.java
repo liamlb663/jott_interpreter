@@ -1,5 +1,7 @@
 package group22.GrammarClasses;
 
+import group22.Data;
+import group22.RuntimeException;
 import group22.SyntaxException;
 import provided.JottTree;
 import provided.Token;
@@ -55,7 +57,7 @@ public class RelOp implements JottTree {
     }
 
     @Override
-    public void execute() {
-        // Execution logic can be added if needed (e.g., evaluation in a comparison)
+    public Data execute() throws RuntimeException {
+        return null;
     }
 }

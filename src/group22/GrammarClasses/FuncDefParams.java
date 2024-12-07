@@ -88,6 +88,7 @@ public class FuncDefParams {
         ArrayList<String> output = new ArrayList<>();
 
         output.add(id.convertToJott());
+
         for (FuncDefParamsT param : params) {
             output.add(param.id.convertToJott());
         }

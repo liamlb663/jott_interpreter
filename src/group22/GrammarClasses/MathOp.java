@@ -1,5 +1,7 @@
 package group22.GrammarClasses;
 
+import group22.Data;
+import group22.RuntimeException;
 import group22.SyntaxException;
 import provided.JottTree;
 import provided.Token;
@@ -51,12 +53,8 @@ public class MathOp implements JottTree {
         return true;
     }
 
-    public String getValue() {
-        return operator.getToken();
-    }
-
     @Override
-    public void execute() {
-        // TODO
+    public Data execute() throws RuntimeException {
+        return null;
     }
 }

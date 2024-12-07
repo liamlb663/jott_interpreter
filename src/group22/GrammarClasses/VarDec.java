@@ -5,6 +5,8 @@ import group22.DataType;
 import group22.ScopeManager;
 import group22.SemanticException;
 import group22.SyntaxException;
+import group22.*;
+import group22.RuntimeException;
 import provided.JottTree;
 import provided.Token;
 import provided.TokenType;
@@ -71,9 +73,8 @@ public class VarDec implements JottTree {
         return true;
     }
 
-    public Data execute() {
-        Program.scopeManager.declareVariable(id.getToken().getToken(), DataType.fromString(type.convertToJott()));
-
+    public Data execute() throws RuntimeException {
+        Program.scopeManager.declareVariable(id.convertToJott(), DataType.fromString(type.convertToJott()));
         return null;
     }
 }

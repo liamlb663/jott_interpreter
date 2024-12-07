@@ -1,13 +1,14 @@
 package group22.GrammarClasses;
 
+import group22.Data;
 import group22.DataType;
+import group22.RuntimeException;
 import group22.SyntaxException;
 import provided.JottParser;
 import provided.JottTree;
 import provided.Token;
 import provided.TokenType;
 
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 
 public class Number implements JottTree {
@@ -60,24 +61,13 @@ public class Number implements JottTree {
         return true;
     }
 
-    public Object getValue() {
-        if(type.equals(DataType.DOUBLE)) {
-            return Double.parseDouble(number.getToken());
-        } else {
-            return Integer.parseInt(number.getToken());
-        }
-    }
-
-    public double getDoubleValue() {
-        return Double.parseDouble(number.getToken());
-    }
-
-    public int getIntValue() {
-        return Integer.parseInt(number.getToken());
-    }
-
     @Override
-    public void execute() {
-        // TODO
+    public Data execute() throws RuntimeException {
+        return new Data(
+                type == DataType.INTEGER ? Integer.parseInt(number.getToken()) : Double.parseDouble(number.getToken()),
+                type,
+                number.getFilename(),
+                number.getLineNum()
+        );
     }
 }
