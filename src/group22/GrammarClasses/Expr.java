@@ -330,7 +330,7 @@ public class Expr implements JottTree {
                     }
 
                     return new Data(
-                            ((Double) firstOpNum.value) + ((Double) secondOpNum.value),
+                            ((Double) firstOpNum.value) / ((Double) secondOpNum.value),
                             firstOpNum.type,
                             firstOpNum.fileName,
                             firstOpNum.lineNumber
