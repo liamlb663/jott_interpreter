@@ -61,7 +61,7 @@ public class Operand implements JottTree {
                     tokens.remove(0);
 
                     tokens.add(0,
-                            new Token(currToken + nextToken.getToken(),
+                            new Token(currToken.getToken() + nextToken.getToken(),
                                     nextToken.getFilename(),
                                     nextToken.getLineNum(),
                                     nextToken.getTokenType()
