@@ -30,6 +30,9 @@ public class Operand implements JottTree {
         try {
             switch (currToken.getTokenType()) {
                 case ID_KEYWORD -> {
+                    if (currToken.getToken().equals("True") || currToken.getToken().equals("False")) {
+                        return new Operand(Bool.parse(tokens));
+                    }
                     return new Operand(Id.parse(tokens));
                 }
                 case NUMBER -> {
