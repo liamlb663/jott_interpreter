@@ -146,11 +146,24 @@ public class ScopeManager {
         }
 
         if (func.strip().toLowerCase().equals("concat")) {
-            return new Data((Object)((String)args.get(0) + (String)args.get(1)), DataType.STRING, "", 0);
+            String leftSide = (String) args.get(0);
+            String rightSide = (String) args.get(1);
+
+            return new Data(
+                    leftSide.substring(0, leftSide.length() - 1) + rightSide.substring(1),
+                    DataType.STRING,
+                    "",
+                    0
+            );
         }
 
         if (func.strip().toLowerCase().equals("length")) {
-            return new Data((Object)((String)args.get(0)).length(), DataType.INTEGER, "", 0);
+            return new Data(
+                    (((String)args.get(0)).length() - 2),
+                    DataType.INTEGER,
+                    "",
+                    0
+            );
         }
 
         Function function = functions.get(func);
